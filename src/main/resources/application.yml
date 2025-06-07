@@ -1,0 +1,28 @@
+server:
+    port: 8080
+    
+spring:
+    jpa:
+        hibernate:
+            ddl-auto: update
+        # show-sql: true
+    datasource:
+        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/homestay-booking
+        username: root
+        password: 27072004
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    application:
+        name: homestay
+    # config pagination start 1, not 0
+    data:
+        web:
+            pageable:
+                one-indexed-parameters: true
+    # config pagination end
+
+logging:
+    level:
+        org:
+            springframework:
+                web:
+                    client: DEBUG
