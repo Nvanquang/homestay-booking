@@ -1,4 +1,4 @@
-package vn.quangkhongbiet.homestay_booking.domain.homestay.dto;
+package vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response;
 
 import java.time.Instant;
 

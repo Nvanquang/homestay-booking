@@ -8,7 +8,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-    boolean existsById(long id);
+    boolean existsById(Long id);
 
     boolean existsByEmail(String email);
 }

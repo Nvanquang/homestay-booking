@@ -10,9 +10,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.ResHomestayCreateDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.ResHomestayDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.ResHomestayUpdatedDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
@@ -31,7 +31,7 @@ public class HomestayServiceImpl implements HomestayService {
     private final AmenityRepository amenityRepository;
 
     @Override
-    public boolean existsById(long id) {
+    public Boolean existsById(Long id) {
         return this.homestayRepository.existsById(id);
     }
 
@@ -85,7 +85,7 @@ public class HomestayServiceImpl implements HomestayService {
             if (updatedHomestay.getStatus() != null) {
                 existingHomestay.setStatus(updatedHomestay.getStatus());
             }
-            if (updatedHomestay.getMaxGuests() != 0) { // Kiểm tra khác 0 vì maxGuests là kiểu int
+            if (updatedHomestay.getMaxGuests() != 0) { // Kiểm tra khác 0 vì maxGuests là kiểu Integer
                 existingHomestay.setMaxGuests(updatedHomestay.getMaxGuests());
             }
             // image

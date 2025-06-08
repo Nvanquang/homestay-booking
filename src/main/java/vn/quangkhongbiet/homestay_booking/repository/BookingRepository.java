@@ -10,7 +10,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpecificationExecutor<Booking> {
-    boolean existsById(long id);
+    boolean existsById(Long id);
 
     List<Booking> findByIdIn(List<Long> ids);
 }

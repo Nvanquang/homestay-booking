@@ -10,7 +10,7 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 
 @Repository
 public interface HomestayRepository extends JpaRepository<Homestay, Long>, JpaSpecificationExecutor<Homestay> {
-    boolean existsById(long id);
+    boolean existsById(Long id);
 
     List<Homestay> findByIdIn(List<Long> ids);
 }

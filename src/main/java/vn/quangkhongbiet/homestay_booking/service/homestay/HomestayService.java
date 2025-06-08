@@ -5,14 +5,14 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.ResHomestayCreateDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.ResHomestayDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.ResHomestayUpdatedDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 
 public interface HomestayService {
-    boolean existsById(long id);
+    Boolean existsById(Long id);
 
     Homestay createHomestay(Homestay homestay);
 

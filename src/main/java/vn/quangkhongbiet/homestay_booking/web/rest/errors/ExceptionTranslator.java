@@ -47,7 +47,7 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     private static final String FIELD_ERRORS_KEY = "fieldErrors";
     private static final String MESSAGE_KEY = "message";
     private static final String PATH_KEY = "path";
-    private static final boolean CASUAL_CHAIN_ENABLED = false;
+    private static final Boolean CASUAL_CHAIN_ENABLED = false;
 
     @Value("${spring.application.name}")
     private String applicationName;
@@ -133,7 +133,7 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         return problem;
     }
 
-    private String extractTitle(Throwable err, int statusCode) {
+    private String extractTitle(Throwable err, Integer statusCode) {
         return getCustomizedTitle(err) != null ? getCustomizedTitle(err) : extractTitleForResponseStatus(err, statusCode);
     }
 
@@ -153,7 +153,7 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
             .toList();
     }
 
-    private String extractTitleForResponseStatus(Throwable err, int statusCode) {
+    private String extractTitleForResponseStatus(Throwable err, Integer statusCode) {
         ResponseStatus specialStatus = extractResponseStatus(err);
         return specialStatus == null ? HttpStatus.valueOf(statusCode).getReasonPhrase() : specialStatus.reason();
     }
@@ -242,12 +242,12 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         return Optional.ofNullable(null);
     }
 
-    private boolean isCasualChainEnabled() {
+    private Boolean isCasualChainEnabled() {
         // Customize as per the needs
         return CASUAL_CHAIN_ENABLED;
     }
 
-    private boolean containsPackageName(String message) {
+    private Boolean containsPackageName(String message) {
         // This list is for sure not complete
         return StringUtils.containsAny(message, "org.", "java.", "net.", "jakarta.", "javax.", "com.", "io.", "de.", "com.mycompany.myapp");
     }

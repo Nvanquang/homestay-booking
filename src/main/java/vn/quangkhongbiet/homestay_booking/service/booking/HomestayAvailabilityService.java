@@ -19,7 +19,7 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 @Service
 @RequiredArgsConstructor
 public class HomestayAvailabilityService {
-    private static final int NIGHT_MAX = 365;
+    private static final Integer NIGHT_MAX = 365;
 
     private final HomestayAvailabilityRepository availabilityRepository;
 

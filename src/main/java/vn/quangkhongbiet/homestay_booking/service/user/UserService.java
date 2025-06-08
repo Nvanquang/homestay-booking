@@ -12,9 +12,9 @@ import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 
 public interface UserService {
-    boolean existsById(long id);
+    Boolean existsById(Long id);
 
-    boolean existsByEmail(String email);
+    Boolean existsByEmail(String email);
     
     User createUser(User user);
 

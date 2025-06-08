@@ -21,7 +21,7 @@ public class ResBookingDTO {
     private Long id;
     private LocalDate checkinDate;
     private LocalDate checkoutDate;
-    private int guests;
+    private Integer guests;
     private BookingStatus status;
     private BigDecimal subtotal;
     private BigDecimal fee;

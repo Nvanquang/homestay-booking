@@ -42,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
 
     @Override
-    public boolean existsById(long id) {
+    public Boolean existsById(Long id) {
         return this.bookingRepository.existsById(id);
     }
 
@@ -209,13 +209,13 @@ public class BookingServiceImpl implements BookingService {
         // convert User to ResUser
         ResUser resUser = booking.getUser() != null
                 ? new ResUser(booking.getUser().getId(), booking.getUser().getFullName())
-                : new ResUser(0, null);
+                : new ResUser(null, null);
         builder.user(resUser);
 
         // convert Homestay to ResHomestay
         ResHomestay resHomestay = booking.getHomestay() != null ? new ResHomestay(booking.getHomestay().getId(),
                 booking.getHomestay().getName(), booking.getHomestay().getAddress())
-                : new ResHomestay(0, null, null);
+                : new ResHomestay(null, null, null);
         builder.homestay(resHomestay);
         return builder.build();
     }

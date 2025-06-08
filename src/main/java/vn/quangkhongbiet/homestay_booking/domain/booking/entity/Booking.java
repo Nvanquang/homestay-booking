@@ -31,7 +31,7 @@ public class Booking {
     private LocalDate checkoutDate;
 
     @Min(value = 1, message = "Số lượng khách phải ít nhất là 1")
-    private int guests;
+    private Integer guests;
 
     @NotNull(message = "Trạng thái đặt phòng là bắt buộc")
     @Enumerated(EnumType.STRING)

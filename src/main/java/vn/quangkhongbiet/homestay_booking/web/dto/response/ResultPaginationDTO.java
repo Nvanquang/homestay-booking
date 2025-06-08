@@ -18,9 +18,9 @@ public class ResultPaginationDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public class Meta {
-        private int page;
-        private int pageSize;
-        private int pages;
-        private long total;
+        private Integer page;
+        private Integer pageSize;
+        private Integer pages;
+        private Long total;
     }
 }

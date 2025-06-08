@@ -28,12 +28,12 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public boolean existsById(long id){
+    public Boolean existsById(Long id){
         return this.userRepository.existsById(id);
     }
 
     @Override
-    public boolean existsByEmail(String email){
+    public Boolean existsByEmail(String email){
         return this.userRepository.existsByEmail(email);
     }
 
@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
                .gender(user.getGender());
 
         // Map Role to ResRole
-        ResRole resRole = user.getRole() != null ? new ResRole(user.getRole().getId(), user.getRole().getName()) : new ResRole(0, null);
+        ResRole resRole = user.getRole() != null ? new ResRole(user.getRole().getId(), user.getRole().getName()) : new ResRole(null, null);
         builder.role(resRole);
     }
 }

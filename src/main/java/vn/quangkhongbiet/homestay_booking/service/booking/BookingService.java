@@ -11,7 +11,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 
 public interface BookingService {
-    boolean existsById(long id);
+    Boolean existsById(Long id);
 
     Booking book(ReqBooking request);
 

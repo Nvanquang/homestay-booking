@@ -29,7 +29,7 @@ public class Role {
     private String description;
 
     @NotNull(message = "Trạng thái hoạt động là bắt buộc")
-    private boolean active;
+    private Boolean active;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     @JsonIgnore

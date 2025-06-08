@@ -11,7 +11,7 @@ public class DiscountService {
 
 
     // Return a negative amount
-    public BigDecimal getDiscountAmount(BigDecimal subtotal, int nights) {
+    public BigDecimal getDiscountAmount(BigDecimal subtotal, Integer nights) {
         BigDecimal discount = BigDecimal.ZERO;
 
         if (nights >= LONG_STAY) {

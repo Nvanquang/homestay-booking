@@ -1,4 +1,4 @@
-package vn.quangkhongbiet.homestay_booking.domain.homestay.dto;
+package vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResUser {
-    private long id;
+    private Long id;
     private String fullName;
 }

@@ -1,4 +1,4 @@
-package vn.quangkhongbiet.homestay_booking.domain.homestay.dto;
+package vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class ResHomestayDTO {
     private String description;
     private HomestayStatus status;
     private String address;
-    private int maxGuests;
+    private Integer maxGuests;
     private Location location;
     private List<String> images;
     private List<String> amenities;

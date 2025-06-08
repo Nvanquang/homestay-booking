@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResRole {
-    private long id;
+    private Long id;
     private String name;
 }
