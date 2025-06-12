@@ -19,6 +19,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.service.booking.BookingService;
+import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
@@ -37,6 +38,7 @@ public class BookingController {
     }
 
     @PostMapping("/bookings")
+    @ApiMessage("Đặt phòng thành công")
     public ResponseEntity<?> bookHomestay(@Valid @RequestBody ReqBooking request) {
         if (request == null) {
             throw new BadRequestAlertException("Dữ liệu đặt phòng không được null", ENTITY_NAME, "bookingnull");
@@ -46,6 +48,7 @@ public class BookingController {
     }
 
     @GetMapping("/bookings/{id}")
+    @ApiMessage("Lấy thông tin đặt phòng thành công")
     public ResponseEntity<ResBookingDTO> getBookingById(@PathVariable("id") Long id) {
         if (id == null) {
             throw new BadRequestAlertException("ID đặt phòng không được null", ENTITY_NAME, "idnull");
@@ -57,11 +60,13 @@ public class BookingController {
     }
 
     @GetMapping("/bookings")
+    @ApiMessage("Lấy danh sách đặt phòng thành công")
     public ResponseEntity<ResultPaginationDTO> getAllBookings(@Filter Specification<Booking> spec, Pageable pageable) {
         return ResponseEntity.ok(bookingService.findAllBookings(spec, pageable));
     }
 
     @PatchMapping("/bookings")
+    @ApiMessage("Cập nhật thông tin đặt phòng thành công")
     public ResponseEntity<?> updatePartialBooking(@Valid @RequestBody Booking booking) {
         if (booking.getId() == null) {
             throw new BadRequestAlertException("ID đặt phòng không được null", ENTITY_NAME, "idnull");

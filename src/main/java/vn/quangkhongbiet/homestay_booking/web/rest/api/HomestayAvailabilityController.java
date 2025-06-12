@@ -13,6 +13,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailabi
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailabilityId;
 import vn.quangkhongbiet.homestay_booking.service.booking.HomestayAvailabilityService;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
+import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
@@ -31,6 +32,7 @@ public class HomestayAvailabilityController {
     private final HomestayService homestayService;
 
     @PostMapping("/availabilities")
+    @ApiMessage("Tạo phòng trống thành công")
     public ResponseEntity<?> createHomestayAvailability(@Valid @RequestBody HomestayAvailability availability) {
         if (availability == null) {
             throw new BadRequestAlertException("Phòng trống không được null", "HomestayAvailability", "homestayavailabilitynull");
@@ -40,6 +42,7 @@ public class HomestayAvailabilityController {
     }
 
     @GetMapping("/availabilities/{id}")
+    @ApiMessage("Lấy thông tin phòng trống thành công")
     public ResponseEntity<?> getAvailabilityById(@PathVariable("id") HomestayAvailabilityId id) {
         if (id == null) {
             throw new BadRequestAlertException("HomestayAvailabilityId không được null", "HomestayAvailability", "idnull");
@@ -52,6 +55,7 @@ public class HomestayAvailabilityController {
     
 
     @GetMapping("/availabilities")
+    @ApiMessage("Lấy tất cả phòng trống thành công")
     public String getAll(@RequestParam String param) {
         return new String();
     }

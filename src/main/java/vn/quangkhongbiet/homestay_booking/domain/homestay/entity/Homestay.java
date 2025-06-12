@@ -11,8 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
 import java.util.List;
 
-import org.springframework.data.geo.Point;
-
 @Entity
 @Table(name = "homestays")
 @Data
@@ -29,7 +27,7 @@ public class Homestay {
     private String name;
 
     @Size(max = 2000, message = "Mô tả không được vượt quá 2000 ký tự")
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @NotNull(message = "Trạng thái homestay là bắt buộc")
@@ -46,13 +44,13 @@ public class Homestay {
     @Size(max = 255, message = "Địa chỉ không được vượt quá 255 ký tự")
     private String address;
 
-    @NotNull
-    private Double longitude;
+    // @NotNull
+    // private Double longitude;
 
-    @NotNull
-    private Double latitude;
+    // @NotNull
+    // private Double latitude;
 
-    private Point geom;
+    // private Point geom;
 
     // @NotNull(message = "Vị trí là bắt buộc")
     @ManyToOne

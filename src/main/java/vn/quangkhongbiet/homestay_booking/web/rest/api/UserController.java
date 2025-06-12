@@ -20,6 +20,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.dto.ResUserCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.ResUserUpdatedDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
+import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
@@ -39,6 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
+    @ApiMessage("Tạo người dùng thành công")
     public ResponseEntity<ResUserCreateDTO> createUser(@Valid @RequestBody User user) {
         if (user == null) {
             throw new BadRequestAlertException("Dữ liệu người dùng không được null", ENTITY_NAME, "idnull");
@@ -51,6 +53,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
+    @ApiMessage("Lấy thông tin người dùng thành công")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
         if (id == null) {
             throw new BadRequestAlertException("ID người dùng không được null", ENTITY_NAME, "idnull");
@@ -62,11 +65,13 @@ public class UserController {
     }
 
     @GetMapping("/users")
+    @ApiMessage("Lấy tất cả người dùng thành công")
     public ResponseEntity<ResultPaginationDTO> getAllUsers(Pageable pageable, @Filter Specification<User> spec) {
         return ResponseEntity.ok(userService.findAllUsers(spec, pageable));
     }
 
     @PatchMapping("/users")
+    @ApiMessage("Cập nhật người dùng thành công")
     public ResponseEntity<ResUserUpdatedDTO> updatePartialUser(@Valid @RequestBody User user) {
         if (user.getId() == null) {
             throw new BadRequestAlertException("ID người dùng không được null", ENTITY_NAME, "idnull");
@@ -80,6 +85,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
+    @ApiMessage("Xóa người dùng thành công")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         if (id == null) {
             throw new BadRequestAlertException("ID người dùng không được null", ENTITY_NAME, "idnull");
