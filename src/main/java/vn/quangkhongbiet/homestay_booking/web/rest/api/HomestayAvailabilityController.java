@@ -1,5 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.web.rest.api;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,12 +35,12 @@ public class HomestayAvailabilityController {
 
     @PostMapping("/availabilities")
     @ApiMessage("Tạo phòng trống thành công")
-    public ResponseEntity<?> createHomestayAvailability(@Valid @RequestBody HomestayAvailability availability) {
-        if (availability == null) {
+    public ResponseEntity<?> createHomestayAvailability(@Valid @RequestBody List<HomestayAvailability> availabilities) {
+        if (availabilities == null) {
             throw new BadRequestAlertException("Phòng trống không được null", "HomestayAvailability", "homestayavailabilitynull");
         }   
-        HomestayAvailability createdAvailability = availabilityService.createAvailability(availability);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdAvailability);
+        availabilityService.saveAll(availabilities);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     @GetMapping("/availabilities/{id}")

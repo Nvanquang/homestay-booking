@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
@@ -26,16 +27,13 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class BookingController {
 
     private static final String ENTITY_NAME = "booking";
 
     private BookingService bookingService;
-
-    public BookingController(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
 
     @PostMapping("/bookings")
     @ApiMessage("Đặt phòng thành công")

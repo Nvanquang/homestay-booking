@@ -11,4 +11,6 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 @Repository
 public interface AmenityRepository extends JpaRepository<Amenity, Long>, JpaSpecificationExecutor<Amenity> {
     List<Amenity> findByIdIn(List<Long> ids);
+
+    boolean existsByName(String name);
 }

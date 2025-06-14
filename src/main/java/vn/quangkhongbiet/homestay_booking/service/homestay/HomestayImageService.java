@@ -1,21 +1,16 @@
 package vn.quangkhongbiet.homestay_booking.service.homestay;
 
-import java.util.Optional;
+import java.util.List;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.multipart.MultipartFile;
 
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 
 public interface HomestayImageService {
-    HomestayImage createHomestayImage(HomestayImage homestayImage);
+    List<HomestayImage> createHomestayImages(MultipartFile[] files, Long homestayId, String folder);
 
-    Optional<HomestayImage> findHomestayImageById(Long id);
+    List<HomestayImage> findHomestayImageByHomestayId(long id);
 
-    ResultPaginationDTO findAllHomestayImages(Specification<HomestayImage> spec, Pageable pageable);
+    void deleteImage(long id);
 
-    HomestayImage updateHomestayImage(HomestayImage homestayImage);
-
-    void deleteHomestayImage(Long id);
 }

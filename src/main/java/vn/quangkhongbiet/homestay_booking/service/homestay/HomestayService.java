@@ -1,9 +1,11 @@
 package vn.quangkhongbiet.homestay_booking.service.homestay;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.multipart.MultipartFile;
 
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayDTO;
@@ -14,7 +16,9 @@ import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 public interface HomestayService {
     Boolean existsById(Long id);
 
-    Homestay createHomestay(Homestay homestay);
+    Homestay createHomestay(Homestay homestay, MultipartFile[] files, String folder);
+
+    Homestay addAmenitiesToHomestay(long homestayId, List<Long> amenityIds);
 
     Optional<Homestay> findHomestayById(Long id);
 

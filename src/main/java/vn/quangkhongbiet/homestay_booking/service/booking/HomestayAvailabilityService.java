@@ -51,10 +51,6 @@ public class HomestayAvailabilityService {
         availabilityRepository.saveAll(aDays);
     }
 
-    public HomestayAvailability createAvailability(HomestayAvailability availability){
-        return this.availabilityRepository.save(availability);
-    }
-
     public HomestayAvailability findById(HomestayAvailabilityId id) {
         return this.availabilityRepository.findById(id).get();
     }

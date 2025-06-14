@@ -15,7 +15,5 @@ public interface AmenityService {
 
     ResultPaginationDTO findAllAmenities(Specification<Amenity> spec, Pageable pageable);
 
-    Optional<Amenity> updatepartialAmenity(Amenity amenity);
-
     void deleteAmenity(Long id);
 }
