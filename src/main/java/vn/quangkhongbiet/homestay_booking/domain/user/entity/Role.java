@@ -3,6 +3,8 @@ package vn.quangkhongbiet.homestay_booking.domain.user.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
+import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -15,7 +17,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+@EntityListeners(AuditTrailListener.class)
+public class Role implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

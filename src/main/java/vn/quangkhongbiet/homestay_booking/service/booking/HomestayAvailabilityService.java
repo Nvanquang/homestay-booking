@@ -13,7 +13,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailabi
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailabilityId;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayAvailabilityRepository;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 
 @Service
@@ -39,7 +39,7 @@ public class HomestayAvailabilityService {
                 checkoutDate.minusDays(1)
         );
         if (aDays.isEmpty() || aDays.size() < nights) {
-            throw new BusinessException(ErrorConstants.HOMESTAY_BUSY, "Homestay has been rented!", "homestayAvailability", "homestaybusy");
+            throw new BadRequestAlertException(ErrorConstants.HOMESTAY_BUSY, "Homestay has been rented!", "homestayAvailability", "homestaybusy");
         }
 
         return aDays;
@@ -53,7 +53,7 @@ public class HomestayAvailabilityService {
 
     public HomestayAvailability findById(HomestayAvailabilityId id) {
         return this.availabilityRepository.findById(id).orElseThrow(() -> 
-            new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "HomestayAvailability not found with id", "HomestayAvailability", "homestayavailabilitynotfound"));
+            new EntityNotFoundException (ErrorConstants.ENTITY_NOT_FOUND_TYPE, "HomestayAvailability not found with id", "HomestayAvailability", "homestayavailabilitynotfound"));
     }
 
 }

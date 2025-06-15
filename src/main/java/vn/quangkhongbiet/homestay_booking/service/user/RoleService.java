@@ -1,18 +1,23 @@
 package vn.quangkhongbiet.homestay_booking.service.user;
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 
 public interface RoleService {
-    Role createRole(Role role);
+    public boolean isExistById(Long id);
 
-    Optional<Role> findRoleById(Long id);
+    public boolean isExistByName(String name);
 
-    List<Role> findAllRoles();
+    public Role createRole(Role role);
 
-    Role updateRole(Role role);
+    public Role getById(Long id);
 
-    void deleteRole(Long id);
+    public ResultPaginationDTO getAll(Specification<Role> spec, Pageable pageable);
+
+    public Role updatePartialRole(Role role);
+
+    public void deleteById(Long id);
 }

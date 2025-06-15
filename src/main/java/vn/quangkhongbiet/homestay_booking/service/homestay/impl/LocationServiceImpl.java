@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.address.Location;
 import vn.quangkhongbiet.homestay_booking.repository.LocationRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.LocationService;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public Location findLocationById(Long id) {
-        return locationRepository.findById(id).orElseThrow(() -> new BadRequestAlertException (
+        return locationRepository.findById(id).orElseThrow(() -> new EntityNotFoundException (
                 "Location not found with id!",
                 "Location",
                 "idnotfound"));

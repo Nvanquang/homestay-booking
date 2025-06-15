@@ -3,10 +3,13 @@ package vn.quangkhongbiet.homestay_booking.domain.user.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
+import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.domain.user.constant.Gender;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
 import java.util.List;
@@ -18,7 +21,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@EntityListeners(AuditTrailListener.class)
+public class User implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,6 +50,10 @@ public class User {
     @NotNull(message = "Giới tính là bắt buộc")
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @Column(columnDefinition = "TEXT")
+	@JsonProperty("refresh_token")
+	private String refreshToken;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")

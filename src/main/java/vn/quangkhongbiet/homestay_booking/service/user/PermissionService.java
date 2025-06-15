@@ -1,18 +1,23 @@
 package vn.quangkhongbiet.homestay_booking.service.user;
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 
 public interface PermissionService {
-    Permission createPermission(Permission permission);
+    public boolean isExistsbyId(Long id);
 
-    Optional<Permission> findPermissionById(Long id);
+    public boolean isPermissionExist(Permission permission);
 
-    List<Permission> findAllPermissions();
+    public Permission createPermission(Permission permission);
 
-    Permission updatePermission(Permission permission);
+    public Permission getById(Long id);
 
-    void deletePermission(Long id);
+    public ResultPaginationDTO getAll(Specification<Permission> spec, Pageable pageable);
+
+    public Permission updatePartialPermission(Permission permission);
+
+    public void deleteById(Long id);
 }

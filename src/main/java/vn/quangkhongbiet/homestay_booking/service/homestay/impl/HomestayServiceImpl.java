@@ -24,7 +24,7 @@ import vn.quangkhongbiet.homestay_booking.repository.LocationRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +61,7 @@ public class HomestayServiceImpl implements HomestayService {
     public Homestay addAmenitiesToHomestay(long homestayId, List<Long> amenityIds) {
         // Kiểm tra homestay tồn tại
         Homestay homestay = homestayRepository.findById(homestayId)
-                .orElseThrow(() -> new BadRequestAlertException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
 
         // Kiểm tra hoặc tạo amenity
@@ -79,7 +79,7 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public Homestay findHomestayById(Long id) {
-        return homestayRepository.findById(id).orElseThrow(() -> new BadRequestAlertException(
+        return homestayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
     }
 
@@ -118,7 +118,7 @@ public class HomestayServiceImpl implements HomestayService {
                 existingHomestay.setMaxGuests(updatedHomestay.getMaxGuests());
             }
             return this.homestayRepository.save(existingHomestay);
-        }).orElseThrow(() -> new BadRequestAlertException(
+        }).orElseThrow(() -> new EntityNotFoundException(
                 "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
     }
 
@@ -126,7 +126,7 @@ public class HomestayServiceImpl implements HomestayService {
     public void deleteHomestay(Long id) {
 
         Homestay homestay = this.homestayRepository.findById(id)
-                .orElseThrow(() -> new BadRequestAlertException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
         // Check if the homestay has images and remove them
         homestay.getImages().forEach(image -> {

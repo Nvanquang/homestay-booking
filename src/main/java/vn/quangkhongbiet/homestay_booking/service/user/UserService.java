@@ -19,6 +19,8 @@ public interface UserService {
 
     User findUserById(Long id);
 
+    User getUserByEmail(String email);
+
     ResultPaginationDTO findAllUsers(Specification<User> spec, Pageable pageable);
 
     User updatePartialUser(UpdateUserDTO dto);
@@ -30,4 +32,8 @@ public interface UserService {
     ResUserUpdatedDTO convertToResUpdatedUserDTO(User user);
 
     ResUserDTO convertToResUserDTO(User user);
+
+    public void updateUserToken(String email, String token);
+
+    public User getUserByRefreshTokenAndEmail(String token, String email);
 }

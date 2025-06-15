@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,8 @@ import vn.quangkhongbiet.homestay_booking.repository.RoleRepository;
 import vn.quangkhongbiet.homestay_booking.repository.UserRepository;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EmailAlreadyUsedException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private static final String ENTITY_NAME = "User";
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Boolean existsById(Long id) {
@@ -45,21 +46,27 @@ public class UserServiceImpl implements UserService {
     public User createUser(User user) {
 
         if (user.getEmail() != null && userRepository.existsByEmail(user.getEmail())) {
-            throw new EmailAlreadyUsedException(ErrorConstants.EMAIL_ALREADY_USED_TYPE, "Email already exists", ENTITY_NAME,
-                    "emailalreadyexists");
+            throw new EmailAlreadyUsedException();
         }
         // check role
         if (user.getRole() != null) {
             Optional<Role> roleOptional = this.roleRepository.findById(user.getRole().getId());
             user.setRole(roleOptional.isPresent() ? roleOptional.get() : null);
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Override
     public User findUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestAlertException("User not found with id", ENTITY_NAME, "usernotfound"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id", ENTITY_NAME, "usernotfound"));
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Email not found", ENTITY_NAME, "emailnotfound"));
     }
 
     @Override
@@ -97,13 +104,13 @@ public class UserServiceImpl implements UserService {
             }
             // role
             return this.userRepository.save(existingUser);
-        }).orElseThrow(() -> new BadRequestAlertException("User not found with id", ENTITY_NAME, "usernotfound"));
+        }).orElseThrow(() -> new EntityNotFoundException("User not found with id", ENTITY_NAME, "usernotfound"));
     }
 
     @Override
     public void deleteUser(Long id) {
         if (!this.userRepository.existsById(id)) {
-            throw new BadRequestAlertException("User not found with id", ENTITY_NAME, "usernotfound");
+            throw new EntityNotFoundException("User not found with id", ENTITY_NAME, "usernotfound");
         }
         userRepository.deleteById(id);
     }
@@ -148,4 +155,22 @@ public class UserServiceImpl implements UserService {
                 : new ResRole(null, null);
         builder.role(resRole);
     }
+
+    @Override
+    public void updateUserToken(String email, String token) {
+        User user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Email not found", ENTITY_NAME, "emailnotfound"));
+        if (user != null) {
+            user.setRefreshToken(token);
+            this.userRepository.save(user);
+        } else {
+            // throw new NoSuchElementException("User not found");
+        }
+    }
+
+    @Override
+    public User getUserByRefreshTokenAndEmail(String token, String email) {
+        return this.userRepository.findByRefreshTokenAndEmail(token, email);
+    }
+
 }

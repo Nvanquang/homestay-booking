@@ -29,7 +29,7 @@ import vn.quangkhongbiet.homestay_booking.service.booking.HomestayAvailabilitySe
 import vn.quangkhongbiet.homestay_booking.service.booking.PriceService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 
 @Service
@@ -87,11 +87,11 @@ public class BookingServiceImpl implements BookingService {
         LocalDate currentDate = LocalDate.now();
         // check user, homestay
         if (!this.userRepository.existsById(request.getUserId())) {
-            throw new BadRequestAlertException("User not foud with id!", ENTITY_NAME, "usernotfound");
+            throw new EntityNotFoundException("User not foud with id!", ENTITY_NAME, "usernotfound");
         }
 
         if (!this.homestayRepository.existsById(request.getUserId())) {
-            throw new BadRequestAlertException("Homestay not foud with id!", ENTITY_NAME, "usernotfound");
+            throw new EntityNotFoundException("Homestay not foud with id!", ENTITY_NAME, "usernotfound");
         }
 
         if (checkinDate.isBefore(currentDate) || checkinDate.isAfter(checkoutDate)) {
@@ -101,8 +101,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public void validateHomestay(ReqBooking request) {
-        Homestay homestay = homestayRepository.findById(request.getHomestayId()).orElseThrow(() -> new BusinessException(
-                ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Homestay not found with id" + request.getHomestayId(),
+        Homestay homestay = homestayRepository.findById(request.getHomestayId()).orElseThrow(() -> new EntityNotFoundException(
+                ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Homestay not found with id",
                 ENTITY_NAME, "homestaynotfound"));
 
         if (homestay.getStatus() != HomestayStatus.ACTIVE) {
@@ -118,8 +118,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findBookingById(Long id) {
-        return bookingRepository.findById(id).orElseThrow(() -> new BusinessException(
-                ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Booking not found with id" + id, ENTITY_NAME,
+        return bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException (
+                ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Booking not found with id", ENTITY_NAME,
                 "bookingnotfound"));
     }
 
@@ -151,7 +151,7 @@ public class BookingServiceImpl implements BookingService {
             validatePaymentStatus(existingBooking, dto);
             updateBookingFields(existingBooking, dto);
             return bookingRepository.save(existingBooking);
-        }).orElseThrow(() -> new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE,
+        }).orElseThrow(() -> new EntityNotFoundException(ErrorConstants.ENTITY_NOT_FOUND_TYPE,
                 "Booking not found with id" + dto.getId(), ENTITY_NAME, "bookingnotfound"));
     }
 

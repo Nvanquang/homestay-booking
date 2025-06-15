@@ -1,27 +1,27 @@
 package vn.quangkhongbiet.homestay_booking.web.rest.errors;
 
 import java.net.URI;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponseException;
-import tech.jhipster.web.rest.errors.ProblemDetailWithCause;
+
 import tech.jhipster.web.rest.errors.ProblemDetailWithCause.ProblemDetailWithCauseBuilder;
 
-@SuppressWarnings("java:S110") // Inheritance tree of classes should not be too deep
-public class BadRequestAlertException extends ErrorResponseException {
 
+public class UnauthorizedException extends ErrorResponseException {
     private final String entityName;
 
     private final String errorKey;
 
-    public BadRequestAlertException(String defaultMessage, String entityName, String errorKey) {
-        this(ErrorConstants.DEFAULT_TYPE, defaultMessage, entityName, errorKey);
+    public UnauthorizedException(String defaultMessage, String entityName, String errorKey) {
+        this(ErrorConstants.UNAUTHORIZED, defaultMessage, entityName, errorKey);
     }
 
-    public BadRequestAlertException(URI type, String defaultMessage, String entityName, String errorKey) {
+    public UnauthorizedException(URI type, String defaultMessage, String entityName, String errorKey) {
         super(
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.UNAUTHORIZED,
             ProblemDetailWithCauseBuilder.instance()
-                .withStatus(HttpStatus.BAD_REQUEST.value())
+                .withStatus(HttpStatus.UNAUTHORIZED.value())
                 .withType(type)
                 .withDetail(defaultMessage)
                 .withProperty("message", "error." + errorKey)
@@ -41,8 +41,5 @@ public class BadRequestAlertException extends ErrorResponseException {
         return errorKey;
     }
 
-    public ProblemDetailWithCause getProblemDetailWithCause() {
-        return (ProblemDetailWithCause) this.getBody();
-    }
+    
 }
-

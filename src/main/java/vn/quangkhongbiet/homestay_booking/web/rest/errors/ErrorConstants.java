@@ -22,6 +22,8 @@ public final class ErrorConstants {
     public static final URI NIGHTS_INVALID = URI.create(PROBLEM_BASE_URL + "/nights-invalid");
     public static final URI HOMESTAY_BUSY = URI.create(PROBLEM_BASE_URL + "/homestay-busy");
 
+    public static final URI UNAUTHORIZED = URI.create(PROBLEM_BASE_URL + "/unauthorized");
+
     private ErrorConstants() {
     }
 }

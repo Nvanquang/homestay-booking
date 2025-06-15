@@ -13,6 +13,7 @@ import vn.quangkhongbiet.homestay_booking.repository.AmenityRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.AmenityService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +37,7 @@ public class AmenityServiceImpl implements AmenityService {
 
     @Override
     public Amenity findAmenityById(Long id) {
-        return amenityRepository.findById(id).orElseThrow(() -> new BadRequestAlertException(
+        return amenityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Amwnity not found with id!",
                 ENTITY_NAME,
                 "idnotfound"));
@@ -61,8 +62,8 @@ public class AmenityServiceImpl implements AmenityService {
     @Override
     public void deleteAmenity(Long id) {
         if (!amenityRepository.existsById(id)) {
-            throw new BadRequestAlertException(
-                    "Amwnity not found with id!",
+            throw new EntityNotFoundException(
+                    "Amenity not found with id!",
                     ENTITY_NAME,
                     "idnotfound");
         }

@@ -20,6 +20,7 @@ import vn.quangkhongbiet.homestay_booking.repository.HomestayImageRepository;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -73,7 +74,7 @@ public class HomestayImageServiceImpl implements HomestayImageService{
     void validateHomestayIdAndFolder(Long homestayId, String folder){
         // Kiểm tra homestayId
         if (!homestayRepository.existsById(homestayId)) {
-            throw new BadRequestAlertException(
+            throw new EntityNotFoundException(
                     "Homestay not found with id",
                     ENTITY_NAME,
                     "homestaynotfound"
@@ -140,7 +141,7 @@ public class HomestayImageServiceImpl implements HomestayImageService{
     @Override
     public List<HomestayImage> findHomestayImageByHomestayId(long id) {
         if(!homestayRepository.existsById(id)) {
-            throw new BadRequestAlertException(
+            throw new EntityNotFoundException(
                     "Homestay with ID: " + id + " does not exist",
                     ENTITY_NAME,
                     "homestaynotfound"
@@ -154,7 +155,7 @@ public class HomestayImageServiceImpl implements HomestayImageService{
     public void deleteImage(long id) {
         // Find the image in the database
         HomestayImage homestayImage = homestayImageRepository.findById(id)
-                .orElseThrow(() -> new BadRequestAlertException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "Image with ID: " + id + " not found", ENTITY_NAME, "imagenotfound"));
 
         // Delete from Cloudinary

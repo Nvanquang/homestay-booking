@@ -3,6 +3,8 @@ package vn.quangkhongbiet.homestay_booking.domain.user.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
+import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -10,14 +12,12 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
-// @Table(name = "permissions", uniqueConstraints = {
-//         @UniqueConstraint(columnNames = { "apiPath", "method" })
-// })
 @Table(name = "permissions")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Permission {
+@EntityListeners(AuditTrailListener.class)
+public class Permission implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

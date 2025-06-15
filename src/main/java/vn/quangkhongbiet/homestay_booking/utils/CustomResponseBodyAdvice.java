@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletResponse;
-import tech.jhipster.web.rest.errors.ProblemDetailWithCause;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResponseDTO;
 
@@ -20,8 +19,7 @@ public class CustomResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        // Only wrap if not already an ProblemDetailWithCause
-        return !returnType.getParameterType().equals(ProblemDetailWithCause.class);
+        return true;
     }
 
     @Override

@@ -3,6 +3,8 @@ package vn.quangkhongbiet.homestay_booking.domain.homestay.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
+import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatus;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.address.Location;
 
@@ -17,7 +19,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Homestay {
+@EntityListeners(AuditTrailListener.class)
+public class Homestay implements Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
