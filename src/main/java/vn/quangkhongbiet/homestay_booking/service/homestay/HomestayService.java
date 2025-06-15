@@ -1,12 +1,12 @@
 package vn.quangkhongbiet.homestay_booking.service.homestay;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
@@ -20,11 +20,11 @@ public interface HomestayService {
 
     Homestay addAmenitiesToHomestay(long homestayId, List<Long> amenityIds);
 
-    Optional<Homestay> findHomestayById(Long id);
+    Homestay findHomestayById(Long id);
 
     ResultPaginationDTO findAllHomestays(Specification<Homestay> spec, Pageable pageable);
 
-    Optional<Homestay> updatePartialHomestay(Homestay homestay);
+    Homestay updatePartialHomestay(UpdateHomestayDTO homestay);
 
     void deleteHomestay(Long id);
 

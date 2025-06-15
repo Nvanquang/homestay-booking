@@ -29,7 +29,7 @@ public class HomestayAvailabilityService {
 
         int nights = (int) Duration.between(checkinDate.atStartOfDay(), checkoutDate.atStartOfDay()).toDays();
         if (nights > NIGHT_MAX) {
-            throw new BadRequestAlertException(ErrorConstants.NIGHTS_INVALID, "Số đêm không được quá 365 ngày!", "homestayavailability", "nightsvalid");
+            throw new BadRequestAlertException(ErrorConstants.NIGHTS_INVALID, "Number of nights cannot exceed 365 days!", "homestayavailability", "nightsvalid");
         }
 
         final var aDays = availabilityRepository.findByHomestayIdAndStatusAndDateBetween(
@@ -39,7 +39,7 @@ public class HomestayAvailabilityService {
                 checkoutDate.minusDays(1)
         );
         if (aDays.isEmpty() || aDays.size() < nights) {
-            throw new BusinessException(ErrorConstants.HOMESTAY_BUSY, "Homestay đã được thuê!", "homestayAvailability", "homestaybusy");
+            throw new BusinessException(ErrorConstants.HOMESTAY_BUSY, "Homestay has been rented!", "homestayAvailability", "homestaybusy");
         }
 
         return aDays;
@@ -52,7 +52,8 @@ public class HomestayAvailabilityService {
     }
 
     public HomestayAvailability findById(HomestayAvailabilityId id) {
-        return this.availabilityRepository.findById(id).get();
+        return this.availabilityRepository.findById(id).orElseThrow(() -> 
+            new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "HomestayAvailability not found with id", "HomestayAvailability", "homestayavailabilitynotfound"));
     }
 
 }

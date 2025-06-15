@@ -2,7 +2,6 @@ package vn.quangkhongbiet.homestay_booking.service.booking.impl;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentStatus;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.BookingPrice;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResHomestay;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResUser;
@@ -34,7 +35,7 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
-
+    private static final String ENTITY_NAME = "booking";
     private final BookingRepository bookingRepository;
     private final HomestayRepository homestayRepository;
     private final HomestayAvailabilityService availabilityService;
@@ -47,7 +48,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking book(ReqBooking request) {
+    public Booking createBooking(ReqBooking request) {
         validateRequest(request);
         validateHomestay(request);
 
@@ -57,8 +58,8 @@ public class BookingServiceImpl implements BookingService {
 
         final var aDays = availabilityService.checkAvailabilityForBooking(homestayId, checkinDate, checkoutDate);
 
-        final var price = priceService.calculate(aDays);
-        final var booking = Booking.builder()
+        final BookingPrice price = priceService.calculate(aDays);
+        final Booking booking = Booking.builder()
                 .id(homestayId)
                 .user(this.userRepository.findById(request.getUserId()).get())
                 .homestay(this.homestayRepository.findById(request.getHomestayId()).get())
@@ -85,49 +86,41 @@ public class BookingServiceImpl implements BookingService {
         LocalDate checkoutDate = request.getCheckoutDate();
         LocalDate currentDate = LocalDate.now();
         // check user, homestay
-        if (request.getUserId() == null) {
-            throw new BadRequestAlertException("ID user không được null!", "booking", "idnull");
-        }
-
         if (!this.userRepository.existsById(request.getUserId())) {
-            throw new BadRequestAlertException("ID user không tồn tại!", "booking", "usernotfound");
-        }
-
-        if (request.getHomestayId() == null) {
-            throw new BadRequestAlertException("Homestay không được null!", "booking", "idnull");
+            throw new BadRequestAlertException("User not foud with id!", ENTITY_NAME, "usernotfound");
         }
 
         if (!this.homestayRepository.existsById(request.getUserId())) {
-            throw new BadRequestAlertException("Homestay không tồn tại!", "booking", "usernotfound");
+            throw new BadRequestAlertException("Homestay not foud with id!", ENTITY_NAME, "usernotfound");
         }
 
         if (checkinDate.isBefore(currentDate) || checkinDate.isAfter(checkoutDate)) {
-            throw new BadRequestAlertException(ErrorConstants.CHECKIN_DATE_INVALID, "Ngày checkin không hợp lệ!", "booking", "checkininvalid");
-        }
-
-        if (request.getGuests() <= 0) {
-            throw new BadRequestAlertException(ErrorConstants.GUESTS_INVALID, "Số lượng khách không hợp lệ!", "booking", "guestsinvalid");
+            throw new BadRequestAlertException(ErrorConstants.CHECKIN_DATE_INVALID, "Invalid checkin date!",
+                    ENTITY_NAME, "checkininvalid");
         }
     }
 
     public void validateHomestay(ReqBooking request) {
-        Homestay homestay = homestayRepository.findById(request.getHomestayId()).get();
-        if (homestay == null) {
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Homestay không tồn tại!", "booking", "homestaynotfound");
-        }
+        Homestay homestay = homestayRepository.findById(request.getHomestayId()).orElseThrow(() -> new BusinessException(
+                ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Homestay not found with id" + request.getHomestayId(),
+                ENTITY_NAME, "homestaynotfound"));
 
         if (homestay.getStatus() != HomestayStatus.ACTIVE) {
-            throw new  BadRequestAlertException(ErrorConstants.HOMESTAY_NOT_ACTIVE, "Homestay không hoạt động!", "booking", "homestaynotactive");
+            throw new BadRequestAlertException(ErrorConstants.HOMESTAY_NOT_ACTIVE, "Homestay is not operating!",
+                    ENTITY_NAME, "homestaynotactive");
         }
 
         if (homestay.getMaxGuests() < request.getGuests()) {
-            throw new  BadRequestAlertException(ErrorConstants.GUESTS_INVALID, "Số lượng khách không hợp lệ!", "booking", "guestsinvalid");
+            throw new BadRequestAlertException(ErrorConstants.GUESTS_INVALID, "Invalid number of guests!",
+                    ENTITY_NAME, "guestsinvalid");
         }
     }
 
     @Override
-    public Optional<Booking> findBookingById(Long id) {
-        return bookingRepository.findById(id);
+    public Booking findBookingById(Long id) {
+        return bookingRepository.findById(id).orElseThrow(() -> new BusinessException(
+                ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Booking not found with id" + id, ENTITY_NAME,
+                "bookingnotfound"));
     }
 
     @Override
@@ -151,43 +144,59 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Optional<Booking> updatePartialBooking(Booking updatedBooking) {
-        // update when nguoi dung thanh toan
-        return this.bookingRepository.findById(updatedBooking.getId()).map(existingBooking -> {
-            // Kiểm tra trạng thái booking trước khi cập nhật
-            if (existingBooking.getStatus() == BookingStatus.CANCELLED) {
-                throw new BadRequestAlertException("Không thể cập nhật booking đã bị hủy", "booking",
-                        "bookingcancelled");
-            }
-            if (existingBooking.getStatus() == BookingStatus.COMPLETED) {
-                throw new BadRequestAlertException("Không thể cập nhật booking đã hoàn tất", "booking",
-                        "bookingcompleted");
-            }
-            if (updatedBooking.getStatus() != null) {
-                // Kiểm tra chuyển trạng thái hợp lệ
-                if (existingBooking.getStatus() == BookingStatus.BOOKED
-                        && (updatedBooking.getStatus() != BookingStatus.COMPLETED
-                        && updatedBooking.getStatus() != BookingStatus.CANCELLED)) {
-                    throw new BadRequestAlertException(
-                            "Trạng thái chỉ có thể chuyển từ BOOKED sang COMPLETED hoặc CANCELLED", "booking",
-                            "bookingstatusinvalid");
-                }
-                existingBooking.setStatus(updatedBooking.getStatus());
-            }
-            if (updatedBooking.getPaymentStatus() != null) {
-                // Kiểm tra trạng thái thanh toán hợp lệ
-                if (existingBooking.getPaymentStatus() == PaymentStatus.COMPLETED
-                        && updatedBooking.getPaymentStatus() == PaymentStatus.FAILED) {
-                    throw new BadRequestAlertException("Không thể chuyển từ COMPLETED về FAILED", "booking",
-                            "paymentstatusinvalid");
-                }
-                existingBooking.setPaymentStatus(updatedBooking.getPaymentStatus());
-            }
-            if (updatedBooking.getPaymentDate() != null && updatedBooking.getStatus() == BookingStatus.COMPLETED) {
-                existingBooking.setPaymentDate(updatedBooking.getPaymentDate());
-            }
-            return existingBooking;
-        }).map(this.bookingRepository::save);
+    public Booking updatePartialBooking(UpdateBookingDTO dto) {
+        return bookingRepository.findById(dto.getId()).map(existingBooking -> {
+            validateBookingStatus(existingBooking);
+            validateNewStatus(existingBooking, dto);
+            validatePaymentStatus(existingBooking, dto);
+            updateBookingFields(existingBooking, dto);
+            return bookingRepository.save(existingBooking);
+        }).orElseThrow(() -> new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE,
+                "Booking not found with id" + dto.getId(), ENTITY_NAME, "bookingnotfound"));
+    }
+
+    private void validateBookingStatus(Booking existingBooking) {
+        if (existingBooking.getStatus() == BookingStatus.CANCELLED) {
+            throw new BadRequestAlertException("Unable to update cancelled bookings", ENTITY_NAME, "bookingcancelled");
+        }
+        if (existingBooking.getStatus() == BookingStatus.COMPLETED) {
+            throw new BadRequestAlertException("Unable tp update completed bookings", ENTITY_NAME,
+                    "bookingcompleted");
+        }
+    }
+
+    private void validateNewStatus(Booking existingBooking, UpdateBookingDTO dto) {
+        if (dto.getStatus() == null)
+            return;
+        if (existingBooking.getStatus() == BookingStatus.BOOKED
+                && (dto.getStatus() != BookingStatus.COMPLETED
+                        && dto.getStatus() != BookingStatus.CANCELLED)) {
+            throw new BadRequestAlertException(
+                    "Status can only change from BOOKED to COMPLETED or CANCELLED", ENTITY_NAME,
+                    "bookingstatusinvalid");
+        }
+    }
+
+    private void validatePaymentStatus(Booking existingBooking, UpdateBookingDTO dto) {
+        if (dto.getPaymentStatus() == null)
+            return;
+        if (existingBooking.getPaymentStatus() == PaymentStatus.COMPLETED
+                && dto.getPaymentStatus() == PaymentStatus.FAILED) {
+            throw new BadRequestAlertException("Cannot change from COMPLETED to FAILED", ENTITY_NAME,
+                    "paymentstatusinvalid");
+        }
+    }
+
+    private void updateBookingFields(Booking existingBooking, UpdateBookingDTO dto) {
+        if (dto.getStatus() != null) {
+            existingBooking.setStatus(dto.getStatus());
+        }
+        if (dto.getPaymentStatus() != null) {
+            existingBooking.setPaymentStatus(dto.getPaymentStatus());
+        }
+        if (dto.getPaymentDate() != null && dto.getStatus() == BookingStatus.COMPLETED) {
+            existingBooking.setPaymentDate(dto.getPaymentDate());
+        }
     }
 
     @Override

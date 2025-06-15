@@ -11,60 +11,50 @@ import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class HomestayImageController {
-
     private static final String ENTITY_NAME = "HomestayImage";
 
     private final HomestayImageService homestayImageService;
 
-    @PostMapping("/homestay-images")
+    @PostMapping("/homestay/{homestayId}/images")
     @ApiMessage("Upload homestay images thành công")
-    public ResponseEntity<?> uploadHomestayImages(
-            @RequestParam("files") MultipartFile[] files,
-            @RequestParam("homestayId") Long homestayId,
-            @RequestParam("folder") String folder) {
-        try {
-            // Kiểm tra homestayId có null không
-            if (homestayId == null) {
-                throw new BadRequestAlertException(
-                        "Homestay ID cannot be null",
-                        ENTITY_NAME,
-                        "homestayidnull"
-                );
-            }
+    public ResponseEntity<List<HomestayImage>> uploadHomestayImages(
+            @PathVariable("homestayId") Long homestayId,
+            @RequestPart("files") MultipartFile[] files,
+            @RequestPart("folder") String folder) {
 
-            // Gọi Service để xử lý upload
-            List<HomestayImage> savedImages = homestayImageService.createHomestayImages(files, homestayId, folder);
-            return ResponseEntity.ok(savedImages);
-
-        } catch (BadRequestAlertException e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "entity", e.getEntityName(),
-                    "errorKey", e.getErrorKey(),
-                    "message", e.getMessage()
-            ));
+        if (files == null || files.length == 0) {
+            throw new BadRequestAlertException("No files uploaded", ENTITY_NAME, "nofiles");
         }
+        if (folder == null || folder.trim().isEmpty()) {
+            throw new BadRequestAlertException("Folder name cannot be empty", ENTITY_NAME, "folderempty");
+        }
+        // Gọi Service để xử lý upload
+        List<HomestayImage> savedImages = homestayImageService.createHomestayImages(files, homestayId, folder);
+        return ResponseEntity.ok(savedImages);
     }
 
-    @GetMapping("/homestay-images/{homestayId}")
+    @GetMapping("/homestay/{homestayId}/images")
     @ApiMessage("Lấy hình ảnh theo homestayID thành công")
-    public ResponseEntity<?> findHomestayImageByHomestayId(@PathVariable("homestayId") long homestayId) {
+    public ResponseEntity<List<HomestayImage>> findHomestayImageByHomestayId(
+            @PathVariable("homestayId") Long homestayId) {
+                
         List<HomestayImage> images = homestayImageService.findHomestayImageByHomestayId(homestayId);
         return ResponseEntity.ok(images);
     }
 
     @DeleteMapping("/homestay-images/{id}")
     @ApiMessage("Xoá hình ảnh theo ID thành công")
-    public ResponseEntity<?> deleteImage(@PathVariable("id") Long id) {
-        if(id == null || id <= 0) {
-            throw new BadRequestAlertException("ID phải dương hoặc không được null", ENTITY_NAME, "idnotpositive");
+    public ResponseEntity<Void> deleteImage(@PathVariable("id") Long id) {
+
+        if(id <= 0){
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
         homestayImageService.deleteImage(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

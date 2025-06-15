@@ -12,18 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailability;
-import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailabilityId;
 import vn.quangkhongbiet.homestay_booking.service.booking.HomestayAvailabilityService;
-import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("api/v1")
@@ -31,35 +21,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class HomestayAvailabilityController {
 
     private final HomestayAvailabilityService availabilityService;
-    private final HomestayService homestayService;
 
     @PostMapping("/availabilities")
     @ApiMessage("Tạo phòng trống thành công")
-    public ResponseEntity<?> createHomestayAvailability(@Valid @RequestBody List<HomestayAvailability> availabilities) {
-        if (availabilities == null) {
-            throw new BadRequestAlertException("Phòng trống không được null", "HomestayAvailability", "homestayavailabilitynull");
-        }   
+    public ResponseEntity<HomestayAvailability> createHomestayAvailability(@Valid @RequestBody List<HomestayAvailability> availabilities) {
         availabilityService.saveAll(availabilities);
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
-    }
-
-    @GetMapping("/availabilities/{id}")
-    @ApiMessage("Lấy thông tin phòng trống thành công")
-    public ResponseEntity<?> getAvailabilityById(@PathVariable("id") HomestayAvailabilityId id) {
-        if (id == null) {
-            throw new BadRequestAlertException("HomestayAvailabilityId không được null", "HomestayAvailability", "idnull");
-        } 
-        if(!this.homestayService.existsById(id.getHomestayId())){
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Không tìm thấy Homestay với ID " + id, "HomestayAvailability", "homestaynotfound");
-        }
-        return ResponseEntity.ok(this.availabilityService.findById(id));
-    }
-    
-
-    @GetMapping("/availabilities")
-    @ApiMessage("Lấy tất cả phòng trống thành công")
-    public String getAll(@RequestParam String param) {
-        return new String();
     }
     
 }

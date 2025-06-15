@@ -1,4 +1,4 @@
-package vn.quangkhongbiet.homestay_booking.domain.user.dto;
+package vn.quangkhongbiet.homestay_booking.domain.user.dto.response;
 
 import java.time.Instant;
 
@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResUserUpdatedDTO extends ResUserDTO {
-    private Instant updatedAt;
-    private String updatedBy;
+public class ResUserCreateDTO extends ResUserDTO {
+    private Instant createdAt;
+    private String createdBy;
 }

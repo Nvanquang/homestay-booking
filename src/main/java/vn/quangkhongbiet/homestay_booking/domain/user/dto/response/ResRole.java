@@ -1,4 +1,4 @@
-package vn.quangkhongbiet.homestay_booking.domain.user.dto;
+package vn.quangkhongbiet.homestay_booking.domain.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -17,14 +17,13 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.service.booking.BookingService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,28 +32,25 @@ public class BookingController {
 
     private static final String ENTITY_NAME = "booking";
 
-    private BookingService bookingService;
+    private final BookingService bookingService;
 
     @PostMapping("/bookings")
     @ApiMessage("Đặt phòng thành công")
-    public ResponseEntity<?> bookHomestay(@Valid @RequestBody ReqBooking request) {
-        if (request == null) {
-            throw new BadRequestAlertException("Dữ liệu đặt phòng không được null", ENTITY_NAME, "bookingnull");
-        }   
-        Booking createdBooking = bookingService.book(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.bookingService.convertToResBookingDTO(createdBooking));
+    public ResponseEntity<ResBookingDTO> createBooking(@Valid @RequestBody ReqBooking request) {
+
+        Booking createdBooking = bookingService.createBooking(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(this.bookingService.convertToResBookingDTO(createdBooking));
     }
 
     @GetMapping("/bookings/{id}")
     @ApiMessage("Lấy thông tin đặt phòng thành công")
     public ResponseEntity<ResBookingDTO> getBookingById(@PathVariable("id") Long id) {
-        if (id == null) {
-            throw new BadRequestAlertException("ID đặt phòng không được null", ENTITY_NAME, "idnull");
+
+        if(id <= 0){
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
-        if (!bookingService.existsById(id)) {
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Không tìm thấy đặt phòng với ID " + id, ENTITY_NAME, "bookingnotfound");
-        }
-        return ResponseEntity.ok(this.bookingService.convertToResBookingDTO(bookingService.findBookingById(id).get()));
+        return ResponseEntity.ok(this.bookingService.convertToResBookingDTO(bookingService.findBookingById(id)));
     }
 
     @GetMapping("/bookings")
@@ -63,16 +59,17 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.findAllBookings(spec, pageable));
     }
 
-    @PatchMapping("/bookings")
+    @PatchMapping("/bookings/{id}")
     @ApiMessage("Cập nhật thông tin đặt phòng thành công")
-    public ResponseEntity<?> updatePartialBooking(@Valid @RequestBody Booking booking) {
-        if (booking.getId() == null) {
-            throw new BadRequestAlertException("ID đặt phòng không được null", ENTITY_NAME, "idnull");
+    public ResponseEntity<?> updatePartialBooking(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookingDTO dto) {
+
+        if(id <= 0){
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
-        if (!bookingService.existsById(booking.getId())) {
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Không tìm thấy đặt phòng với ID " + booking.getId(), ENTITY_NAME, "bookingnotfound");
+        if (!id.equals(dto.getId())) {
+            throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idmismatch");
         }
-        Booking updatedBooking = bookingService.updatePartialBooking(booking).get();
-        return ResponseEntity.ok(updatedBooking);
+        Booking updatedBooking = bookingService.updatePartialBooking(dto);
+        return ResponseEntity.ok(this.bookingService.convertToResBookingDTO(updatedBooking));
     }
 }

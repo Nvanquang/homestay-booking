@@ -22,16 +22,14 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
-import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,80 +39,78 @@ public class HomestayController {
     private static final String ENTITY_NAME = "homestay";
 
     private final HomestayService homestayService;
-    private final HomestayImageService homestayImageService;
 
     @PostMapping("/homestays")
     @ApiMessage("Tạo homestay thành công")
     public ResponseEntity<ResHomestayCreateDTO> createHomestay(
-        @Valid @RequestPart("homestay") Homestay homestay,
-        @RequestPart("files") MultipartFile[] files,
-        @RequestPart("folder") String folder) {
-        if (homestay == null) {
-            throw new BadRequestAlertException("Dữ liệu homestay không được null", ENTITY_NAME, "homestaynotfound");
+            @Valid @RequestPart("homestay") Homestay homestay,
+            @RequestPart("files") MultipartFile[] files,
+            @RequestPart("folder") String folder) {
+
+        if (files == null || files.length == 0) {
+            throw new BadRequestAlertException("No files uploaded", ENTITY_NAME, "nofiles");
         }
-        if (homestay.getAmenities() == null || homestay.getAmenities().isEmpty()) {
-            throw new BadRequestAlertException("Homestay phải có ít nhất một tiện nghi", ENTITY_NAME, "amenitiesnotfound");
+        if (folder == null || folder.trim().isEmpty()) {
+            throw new BadRequestAlertException("Folder name cannot be empty", ENTITY_NAME, "folderempty");
         }
-        if (homestay.getLocation() == null) {
-            throw new BadRequestAlertException("Homestay phải có vị trí", ENTITY_NAME, "locationnotfound");
-        }
-        
         Homestay createHomestay = this.homestayService.createHomestay(homestay, files, folder);
-        createHomestay.setImages(this.homestayImageService.createHomestayImages(files, createHomestay.getId(), folder));
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.homestayService.convertToResCreateHomestayDTO(createHomestay));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(this.homestayService.convertToResCreateHomestayDTO(createHomestay));
     }
 
     @GetMapping("/homestays/{id}")
     @ApiMessage("Lấy thông tin homestay thành công")
     public ResponseEntity<Homestay> getHomestayById(@PathVariable("id") Long id) {
-        if (id == null) {
-            throw new BadRequestAlertException("ID homestay không được null", ENTITY_NAME, "idnull");
+
+        if (id <= 0) {
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
-        if (!homestayService.existsById(id)) {
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Không tìm thấy homestay với ID " + id, ENTITY_NAME, "homestaynotfound");
-        }
-        return ResponseEntity.ok(homestayService.findHomestayById(id).get());
+        return ResponseEntity.ok(homestayService.findHomestayById(id));
     }
 
     @GetMapping("/homestays")
     @ApiMessage("Lấy tất cả homestay thành công")
-    public ResponseEntity<ResultPaginationDTO> getAllHomestays(@Filter Specification<Homestay> spec, Pageable pageable) {
+    public ResponseEntity<ResultPaginationDTO> getAllHomestays(@Filter Specification<Homestay> spec,
+            Pageable pageable) {
         return ResponseEntity.ok(this.homestayService.findAllHomestays(spec, pageable));
     }
 
-    @PatchMapping("/homestays/{homestayId}/amenities")
+    @PostMapping("/homestays/{homestayId}/amenities")
     @ApiMessage("Thêm tiện nghi cho homestay thành công")
     public ResponseEntity<?> addAmenitiesToHomestay(
-        @PathVariable("homestayId") Long homestayId,
-        @RequestBody Map<String, List<Long>> request) {
-        if (homestayId == null) {
-            throw new BadRequestAlertException("ID homestay không được null", ENTITY_NAME, "idnull");
+            @PathVariable("homestayId") Long homestayId,
+            @RequestBody Map<String, List<Long>> request) {
+
+        List<Long> amenityIds = request.get("amenities");
+        if (amenityIds == null || amenityIds.isEmpty()) {
+            throw new BadRequestAlertException("Amenities cannot be left blank", ENTITY_NAME,
+                    "amenitiesempty");
         }
-        Homestay updatedHomestay = this.homestayService.addAmenitiesToHomestay(homestayId, request.get("amenities"));
+        Homestay updatedHomestay = this.homestayService.addAmenitiesToHomestay(homestayId, amenityIds);
         return ResponseEntity.ok(this.homestayService.convertToResUpdatedHomestayDTO(updatedHomestay));
     }
 
-    @PatchMapping("/homestays")
+    @PatchMapping("/homestays/{id}")
     @ApiMessage("Cập nhật homestay thành công")
-    public ResponseEntity<ResHomestayUpdatedDTO> updatePartialHomestay(@Valid @RequestBody Homestay homestay) {
-        if (homestay.getId() == null) {
-            throw new BadRequestAlertException("ID homestay không được null", ENTITY_NAME, "idnull");
+    public ResponseEntity<ResHomestayUpdatedDTO> updatePartialHomestay(@PathVariable("id") Long id,
+            @Valid @RequestBody UpdateHomestayDTO dto) {
+
+        if (id <= 0) {
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
-        if (!homestayService.existsById(homestay.getId())) {
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Không tìm thấy homestay với ID " + homestay.getId(), ENTITY_NAME, "homestaynotfound");
+        if (!id.equals(dto.getId())) {
+            throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idmismatch");
         }
-        Homestay updatedHomestay = this.homestayService.updatePartialHomestay(homestay).get();
+        Homestay updatedHomestay = this.homestayService.updatePartialHomestay(dto);
         return ResponseEntity.ok(this.homestayService.convertToResUpdatedHomestayDTO(updatedHomestay));
     }
 
     @DeleteMapping("/homestays/{id}")
     @ApiMessage("Xóa homestay thành công")
     public ResponseEntity<Void> deleteHomestay(@PathVariable("id") Long id) {
-        if (id == null) {
-            throw new BadRequestAlertException("ID homestay không được null", ENTITY_NAME, "idnull");
-        }
-        if (!homestayService.existsById(id)) {
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Không tìm thấy homestay với ID " + id, ENTITY_NAME, "homestaynotfound");
+
+        if(id <= 0){
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
         homestayService.deleteHomestay(id);
         return ResponseEntity.noContent().build();

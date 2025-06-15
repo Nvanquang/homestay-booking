@@ -16,16 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.ResUserCreateDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.ResUserUpdatedDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BusinessException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.EmailAlreadyUsedException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -42,12 +40,7 @@ public class UserController {
     @PostMapping("/users")
     @ApiMessage("Tạo người dùng thành công")
     public ResponseEntity<ResUserCreateDTO> createUser(@Valid @RequestBody User user) {
-        if (user == null) {
-            throw new BadRequestAlertException("Dữ liệu người dùng không được null", ENTITY_NAME, "idnull");
-        }
-        if (user.getEmail() != null && userService.existsByEmail(user.getEmail())) {
-            throw new EmailAlreadyUsedException(ErrorConstants.EMAIL_ALREADY_USED_TYPE, "Email " + user.getEmail() + " đã tồn tại", ENTITY_NAME, "emailalreadyexists");
-        }
+
         User createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(createdUser));
     }
@@ -55,13 +48,11 @@ public class UserController {
     @GetMapping("/users/{id}")
     @ApiMessage("Lấy thông tin người dùng thành công")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-        if (id == null) {
-            throw new BadRequestAlertException("ID người dùng không được null", ENTITY_NAME, "idnull");
+
+        if (id <= 0 ){
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idnull");
         }
-        if (!userService.existsById(id)) {
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Không tìm thấy user với ID " + id, ENTITY_NAME, "usernotfound");
-        }
-        return ResponseEntity.ok(userService.findUserById(id).get());
+        return ResponseEntity.ok(userService.findUserById(id));
     }
 
     @GetMapping("/users")
@@ -70,28 +61,26 @@ public class UserController {
         return ResponseEntity.ok(userService.findAllUsers(spec, pageable));
     }
 
-    @PatchMapping("/users")
+    @PatchMapping("/users/{id}")
     @ApiMessage("Cập nhật người dùng thành công")
-    public ResponseEntity<ResUserUpdatedDTO> updatePartialUser(@Valid @RequestBody User user) {
-        if (user.getId() == null) {
-            throw new BadRequestAlertException("ID người dùng không được null", ENTITY_NAME, "idnull");
-        }
-        if (!userService.existsById(user.getId())) {
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Không tìm thấy homestay với ID " + user.getId(), ENTITY_NAME, "usernotfound");
+    public ResponseEntity<ResUserUpdatedDTO> updatePartialUser(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserDTO dto) {
 
+        if (id <= 0 ){
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idnull");
         }
-        User updatedUser = this.userService.updatePartialUser(user).get();
+        if (!id.equals(dto.getId())) {
+            throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idnull");
+        }
+        User updatedUser = this.userService.updatePartialUser(dto);
         return ResponseEntity.ok(this.userService.convertToResUpdatedUserDTO(updatedUser));
     }
 
     @DeleteMapping("/users/{id}")
     @ApiMessage("Xóa người dùng thành công")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
-        if (id == null) {
-            throw new BadRequestAlertException("ID người dùng không được null", ENTITY_NAME, "idnull");
-        }
-        if (!userService.existsById(id)) {
-            throw new BusinessException(ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Không tìm thấy homestay với ID " + id, ENTITY_NAME, "homestaynotfound");
+
+        if (id <= 0) {
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "invalidid");
         }
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();

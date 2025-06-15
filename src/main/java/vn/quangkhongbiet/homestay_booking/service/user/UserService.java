@@ -1,13 +1,12 @@
 package vn.quangkhongbiet.homestay_booking.service.user;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.ResUserCreateDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.ResUserDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.ResUserUpdatedDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
 
@@ -18,11 +17,11 @@ public interface UserService {
     
     User createUser(User user);
 
-    Optional<User> findUserById(Long id);
+    User findUserById(Long id);
 
     ResultPaginationDTO findAllUsers(Specification<User> spec, Pageable pageable);
 
-    Optional<User> updatePartialUser(User user);
+    User updatePartialUser(UpdateUserDTO dto);
 
     void deleteUser(Long id);
 

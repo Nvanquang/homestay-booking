@@ -28,7 +28,7 @@ public class HomestayImageServiceImpl implements HomestayImageService{
     private static final String ENTITY_NAME = "HomestayImage";
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-    private static final int MAX_FILES = 10;
+    private static final int MAX_FILES = 6;
     private static final Pattern FOLDER_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]+$");
 
     private final HomestayImageRepository homestayImageRepository;
@@ -74,16 +74,13 @@ public class HomestayImageServiceImpl implements HomestayImageService{
         // Kiểm tra homestayId
         if (!homestayRepository.existsById(homestayId)) {
             throw new BadRequestAlertException(
-                    "Homestay with ID: " + homestayId + " does not exist",
+                    "Homestay not found with id",
                     ENTITY_NAME,
                     "homestaynotfound"
             );
         }
 
         // Kiểm tra folder
-        if (folder == null || folder.trim().isEmpty()) {
-            throw new BadRequestAlertException("Folder name cannot be empty", ENTITY_NAME, "folderempty");
-        }
         if (!FOLDER_PATTERN.matcher(folder).matches()) {
             throw new BadRequestAlertException(
                     "Invalid folder name: " + folder + ". Only letters, numbers, underscores, and hyphens are allowed",
@@ -95,9 +92,6 @@ public class HomestayImageServiceImpl implements HomestayImageService{
 
     void validateFile(MultipartFile[] files){
         // Kiểm tra số lượng file
-        if (files == null || files.length == 0) {
-            throw new BadRequestAlertException("No files uploaded", ENTITY_NAME, "nofiles");
-        }
         if (files.length > MAX_FILES) {
             throw new BadRequestAlertException(
                     "Cannot upload more than " + MAX_FILES + " files",
@@ -145,6 +139,13 @@ public class HomestayImageServiceImpl implements HomestayImageService{
 
     @Override
     public List<HomestayImage> findHomestayImageByHomestayId(long id) {
+        if(!homestayRepository.existsById(id)) {
+            throw new BadRequestAlertException(
+                    "Homestay with ID: " + id + " does not exist",
+                    ENTITY_NAME,
+                    "homestaynotfound"
+            );
+        }
         return this.homestayImageRepository.findByHomestayId(id);
     }
 

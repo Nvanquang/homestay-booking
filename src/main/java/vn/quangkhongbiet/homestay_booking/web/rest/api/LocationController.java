@@ -8,7 +8,6 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.address.Locatio
 import vn.quangkhongbiet.homestay_booking.service.homestay.LocationService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 
-import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
@@ -20,10 +19,7 @@ public class LocationController {
 
     @GetMapping("/locations/{id}")
     @ApiMessage("Lấy thông tin địa điểm theo ID thành công")
-    public ResponseEntity<?> findLocationById(@PathVariable("id") Long id) {
-        Optional<Location> location = locationService.findLocationById(id);
-        return location.isPresent()
-                ? ResponseEntity.ok(location.get())
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<Location> findLocationById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(locationService.findLocationById(id));
     }
 }

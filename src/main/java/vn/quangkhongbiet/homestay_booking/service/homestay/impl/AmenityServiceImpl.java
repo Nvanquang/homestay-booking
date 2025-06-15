@@ -26,18 +26,20 @@ public class AmenityServiceImpl implements AmenityService {
     public Amenity createAmenity(Amenity amenity) {
         if (amenityRepository.existsByName(amenity.getName())) {
             throw new BadRequestAlertException(
-                "Tiện nghi với name = : " + amenity.getName() + " already exists",
-                ENTITY_NAME,
-                "amenityexists"
-            );
+                    "Amenity already exists",
+                    ENTITY_NAME,
+                    "amenityexists");
         }
 
         return amenityRepository.save(amenity);
     }
 
     @Override
-    public Optional<Amenity> findAmenityById(Long id) {
-        return amenityRepository.findById(id);
+    public Amenity findAmenityById(Long id) {
+        return amenityRepository.findById(id).orElseThrow(() -> new BadRequestAlertException(
+                "Amwnity not found with id!",
+                ENTITY_NAME,
+                "idnotfound"));
     }
 
     @Override
@@ -60,12 +62,12 @@ public class AmenityServiceImpl implements AmenityService {
     public void deleteAmenity(Long id) {
         if (!amenityRepository.existsById(id)) {
             throw new BadRequestAlertException(
-                "Tiện nghi với ID : " + id + " không tồn tại!",
-                ENTITY_NAME,
-                "idnotfound"
-            );
+                    "Amwnity not found with id!",
+                    ENTITY_NAME,
+                    "idnotfound");
         }
-        // Check if the amenity is used in any homestay and remove it from those homestays
+        // Check if the amenity is used in any homestay and remove it from those
+        // homestays
         Optional<Amenity> amenity = amenityRepository.findById(id);
         Amenity currentAmenity = amenity.get();
         currentAmenity.getHomestays().forEach(homestay -> homestay.getAmenities().remove(currentAmenity));

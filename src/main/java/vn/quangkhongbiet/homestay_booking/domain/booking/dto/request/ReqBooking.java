@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import org.hibernate.validator.constraints.Length;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -17,9 +18,11 @@ import lombok.Setter;
 @Setter
 public class ReqBooking {
     @NotNull(message = "user_id cannot be null")
+    @Positive(message = "user_id must be positive")
     private Long userId;
 
     @NotNull(message = "homestay_id cannot be blank")
+    @Positive(message = "homestay_id must be positive")
     private Long homestayId;
 
     @NotNull(message = "checkin_date cannot be blank")
@@ -29,6 +32,7 @@ public class ReqBooking {
     private LocalDate checkoutDate;
 
     @Positive(message = "guests must be positive")
+    @Min(value = 1, message = "guests must be at least 1")
     private Integer guests;
 
     @Length(max = 500, message = "note cannot be longer than 255 characters")

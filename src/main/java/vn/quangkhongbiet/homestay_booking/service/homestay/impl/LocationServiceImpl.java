@@ -1,13 +1,12 @@
 package vn.quangkhongbiet.homestay_booking.service.homestay.impl;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.address.Location;
 import vn.quangkhongbiet.homestay_booking.repository.LocationRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.LocationService;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +28,11 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Optional<Location> findLocationById(Long id) {
-        return locationRepository.findById(id);
+    public Location findLocationById(Long id) {
+        return locationRepository.findById(id).orElseThrow(() -> new BadRequestAlertException (
+                "Location not found with id!",
+                "Location",
+                "idnotfound"));
     }
 
 }
