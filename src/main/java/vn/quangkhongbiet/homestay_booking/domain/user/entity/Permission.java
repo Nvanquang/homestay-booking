@@ -46,4 +46,11 @@ public class Permission implements Auditable {
     private String createdBy;
     private Instant updatedAt;
     private String updatedBy;
+
+    public Permission(String name, String apiPath, String method, String module) {
+        this.name = name;
+        this.apiPath = apiPath;
+        this.method = method;
+        this.module = module;
+    }
 }
