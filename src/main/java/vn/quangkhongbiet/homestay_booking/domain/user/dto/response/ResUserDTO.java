@@ -18,5 +18,5 @@ public class ResUserDTO {
     private String phoneNumber;
     private String fullName;
     private Gender gender;
-    private ResRole role;
+    private ResUserRole role;
 }

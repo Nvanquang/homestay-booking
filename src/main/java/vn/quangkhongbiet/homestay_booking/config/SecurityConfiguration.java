@@ -23,7 +23,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http,
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
                 
-        String[] whiteList = {"/", "/api/v1/auth/**", "/api/v1/users/**"};
+        String[] whiteList = {"/", "/api/v1/auth/**"};
         http
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(

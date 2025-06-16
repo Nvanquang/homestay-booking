@@ -27,7 +27,7 @@ import vn.quangkhongbiet.homestay_booking.repository.UserRepository;
 import vn.quangkhongbiet.homestay_booking.service.booking.BookingService;
 import vn.quangkhongbiet.homestay_booking.service.booking.HomestayAvailabilityService;
 import vn.quangkhongbiet.homestay_booking.service.booking.PriceService;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
@@ -124,10 +124,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public ResultPaginationDTO findAllBookings(Specification<Booking> spec, Pageable pageable) {
+    public PagedResponse findAllBookings(Specification<Booking> spec, Pageable pageable) {
         Page<Booking> pageBookings = this.bookingRepository.findAll(spec, pageable);
-        ResultPaginationDTO result = new ResultPaginationDTO();
-        ResultPaginationDTO.Meta meta = result.new Meta();
+        PagedResponse result = new PagedResponse();
+        PagedResponse.Meta meta = result.new Meta();
 
         meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());

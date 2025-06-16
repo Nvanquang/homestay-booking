@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.repository.AmenityRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.AmenityService;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
@@ -44,10 +44,10 @@ public class AmenityServiceImpl implements AmenityService {
     }
 
     @Override
-    public ResultPaginationDTO findAllAmenities(Specification<Amenity> spec, Pageable pageable) {
+    public PagedResponse findAllAmenities(Specification<Amenity> spec, Pageable pageable) {
         Page<Amenity> pageAmenities = this.amenityRepository.findAll(spec, pageable);
-        ResultPaginationDTO result = new ResultPaginationDTO();
-        ResultPaginationDTO.Meta meta = result.new Meta();
+        PagedResponse result = new PagedResponse();
+        PagedResponse.Meta meta = result.new Meta();
 
         meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());

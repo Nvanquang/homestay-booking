@@ -23,7 +23,7 @@ import vn.quangkhongbiet.homestay_booking.repository.HomestayRepository;
 import vn.quangkhongbiet.homestay_booking.repository.LocationRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Service
@@ -84,10 +84,10 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
-    public ResultPaginationDTO findAllHomestays(Specification<Homestay> spec, Pageable pageable) {
+    public PagedResponse findAllHomestays(Specification<Homestay> spec, Pageable pageable) {
         Page<Homestay> pageHomestays = this.homestayRepository.findAll(spec, pageable);
-        ResultPaginationDTO result = new ResultPaginationDTO();
-        ResultPaginationDTO.Meta meta = result.new Meta();
+        PagedResponse result = new PagedResponse();
+        PagedResponse.Meta meta = result.new Meta();
 
         meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());

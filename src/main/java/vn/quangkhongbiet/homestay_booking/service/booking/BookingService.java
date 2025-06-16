@@ -7,7 +7,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
 public interface BookingService {
     Boolean existsById(Long id);
@@ -16,7 +16,7 @@ public interface BookingService {
 
     Booking findBookingById(Long id);
 
-    ResultPaginationDTO findAllBookings(Specification<Booking> spec, Pageable pageable);
+    PagedResponse findAllBookings(Specification<Booking> spec, Pageable pageable);
 
     Booking updatePartialBooking(UpdateBookingDTO dto);
 

@@ -11,7 +11,7 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomest
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
 public interface HomestayService {
     Boolean existsById(Long id);
@@ -22,7 +22,7 @@ public interface HomestayService {
 
     Homestay findHomestayById(Long id);
 
-    ResultPaginationDTO findAllHomestays(Specification<Homestay> spec, Pageable pageable);
+    PagedResponse findAllHomestays(Specification<Homestay> spec, Pageable pageable);
 
     Homestay updatePartialHomestay(UpdateHomestayDTO homestay);
 

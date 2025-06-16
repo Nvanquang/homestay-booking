@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletResponse;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResponseDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.ApiResponse;
 
 @RestControllerAdvice
 public class CustomResponseBodyAdvice implements ResponseBodyAdvice<Object> {
@@ -33,7 +33,7 @@ public class CustomResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         HttpServletResponse httpResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int status = httpResponse.getStatus();
 
-        ResponseDTO apiResponse = new ResponseDTO();
+        ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatus(status);
 
         if (body instanceof String || body instanceof Resource) {

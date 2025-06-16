@@ -14,7 +14,7 @@ import com.turkraft.springfilter.boot.Filter;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.service.homestay.AmenityService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 
 @RestController
@@ -44,8 +44,8 @@ public class AmenityController {
 
     @GetMapping("/amenities")
     @ApiMessage("Lấy tất cả tiện nghi thành công")
-    public ResponseEntity<ResultPaginationDTO> findAllAmenities(@Filter Specification<Amenity> spec, Pageable pageable) {
-        ResultPaginationDTO result = amenityService.findAllAmenities(spec, pageable);
+    public ResponseEntity<PagedResponse> findAllAmenities(@Filter Specification<Amenity> spec, Pageable pageable) {
+        PagedResponse result = amenityService.findAllAmenities(spec, pageable);
         return ResponseEntity.ok(result);
     }
 

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRole;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserRole;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
@@ -20,7 +20,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.repository.RoleRepository;
 import vn.quangkhongbiet.homestay_booking.repository.UserRepository;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EmailAlreadyUsedException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
@@ -70,10 +70,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultPaginationDTO findAllUsers(Specification<User> spec, Pageable pageable) {
+    public PagedResponse findAllUsers(Specification<User> spec, Pageable pageable) {
         Page<User> pageUsers = this.userRepository.findAll(spec, pageable);
-        ResultPaginationDTO result = new ResultPaginationDTO();
-        ResultPaginationDTO.Meta meta = result.new Meta();
+        PagedResponse result = new PagedResponse();
+        PagedResponse.Meta meta = result.new Meta();
 
         meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
@@ -151,21 +151,18 @@ public class UserServiceImpl implements UserService {
                 .gender(user.getGender());
 
         // Map Role to ResRole
-        ResRole resRole = user.getRole() != null ? new ResRole(user.getRole().getId(), user.getRole().getName())
-                : new ResRole(null, null);
+        ResUserRole resRole = user.getRole() != null ? new ResUserRole(user.getRole().getId(), user.getRole().getName())
+                : new ResUserRole(null, null);
         builder.role(resRole);
     }
 
     @Override
     public void updateUserToken(String email, String token) {
         User user = this.userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Email not found", ENTITY_NAME, "emailnotfound"));
-        if (user != null) {
-            user.setRefreshToken(token);
-            this.userRepository.save(user);
-        } else {
-            // throw new NoSuchElementException("User not found");
-        }
+                .orElseThrow(() -> new EntityNotFoundException("User not found", ENTITY_NAME, "usernotfound"));
+       
+        user.setRefreshToken(token);
+        this.userRepository.save(user);
     }
 
     @Override

@@ -8,7 +8,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreate
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
 public interface UserService {
     Boolean existsById(Long id);
@@ -21,7 +21,7 @@ public interface UserService {
 
     User getUserByEmail(String email);
 
-    ResultPaginationDTO findAllUsers(Specification<User> spec, Pageable pageable);
+    PagedResponse findAllUsers(Specification<User> spec, Pageable pageable);
 
     User updatePartialUser(UpdateUserDTO dto);
 

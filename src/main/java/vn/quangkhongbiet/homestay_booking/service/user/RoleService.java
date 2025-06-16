@@ -3,8 +3,9 @@ package vn.quangkhongbiet.homestay_booking.service.user;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
 public interface RoleService {
     public boolean isExistById(Long id);
@@ -15,9 +16,11 @@ public interface RoleService {
 
     public Role getById(Long id);
 
-    public ResultPaginationDTO getAll(Specification<Role> spec, Pageable pageable);
+    public PagedResponse getAll(Specification<Role> spec, Pageable pageable);
 
     public Role updatePartialRole(Role role);
 
     public void deleteById(Long id);
+
+    public ResRoleDTO convertToResRoleDTO(Role role);
 }

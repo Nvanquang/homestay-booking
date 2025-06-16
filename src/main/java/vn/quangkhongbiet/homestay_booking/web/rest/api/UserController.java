@@ -22,7 +22,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdate
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 
 @RestController
@@ -57,7 +57,7 @@ public class UserController {
 
     @GetMapping("/users")
     @ApiMessage("Lấy tất cả người dùng thành công")
-    public ResponseEntity<ResultPaginationDTO> getAllUsers(Pageable pageable, @Filter Specification<User> spec) {
+    public ResponseEntity<PagedResponse> getAllUsers(Pageable pageable, @Filter Specification<User> spec) {
         return ResponseEntity.ok(userService.findAllUsers(spec, pageable));
     }
 

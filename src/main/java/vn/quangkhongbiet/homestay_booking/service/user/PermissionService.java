@@ -4,10 +4,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
 public interface PermissionService {
-    public boolean isExistsbyId(Long id);
+    public boolean isExistsById(Long id);
 
     public boolean isPermissionExist(Permission permission);
 
@@ -15,7 +15,7 @@ public interface PermissionService {
 
     public Permission getById(Long id);
 
-    public ResultPaginationDTO getAll(Specification<Permission> spec, Pageable pageable);
+    public PagedResponse getAll(Specification<Permission> spec, Pageable pageable);
 
     public Permission updatePartialPermission(Permission permission);
 

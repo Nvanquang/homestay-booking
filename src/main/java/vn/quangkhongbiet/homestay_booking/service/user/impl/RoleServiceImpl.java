@@ -1,0 +1,127 @@
+package vn.quangkhongbiet.homestay_booking.service.user.impl;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRolePermission;
+import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
+import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
+import vn.quangkhongbiet.homestay_booking.repository.PermissionRepository;
+import vn.quangkhongbiet.homestay_booking.repository.RoleRepository;
+import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+
+@Service
+@RequiredArgsConstructor
+public class RoleServiceImpl implements RoleService {
+
+    private static final String ENTITY_NAME = "Role";
+
+    private final RoleRepository roleRepository;
+
+    private final PermissionRepository permissionRepository;
+
+    @Override
+    public boolean isExistById(Long id) {
+        return roleRepository.existsById(id);
+    }
+
+    @Override
+    public boolean isExistByName(String name) {
+        return roleRepository.existsByName(name);
+    }
+
+    @Override
+    @Transactional
+    public Role createRole(Role role) {
+        role.setPermissions(
+                this.permissionRepository.findByIdIn(role.getPermissions().stream().map(Permission::getId).toList()));
+        return this.roleRepository.save(role);
+    }
+
+    @Override
+    public Role getById(Long id) {
+        return roleRepository.findById(id)
+                .orElseThrow(() -> new BadRequestAlertException("Role with ID " + id + " not found", ENTITY_NAME,
+                        "notfound"));
+    }
+
+    @Override
+    public PagedResponse getAll(Specification<Role> spec, Pageable pageable) {
+        Page<Role> pageRoles = this.roleRepository.findAll(spec, pageable);
+        PagedResponse result = new PagedResponse();
+        PagedResponse.Meta meta = result.new Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setPages(pageRoles.getTotalPages());
+        meta.setTotal(pageRoles.getTotalElements());
+
+        result.setMeta(meta);
+        List<ResRoleDTO> resRoles = pageRoles.getContent().stream()
+                .map(this::convertToResRoleDTO).toList();
+        result.setResult(resRoles);
+
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public Role updatePartialRole(Role role) {
+        return this.roleRepository.findById(role.getId()).map(existingRole -> {
+            if (role.getName() != null) {
+                existingRole.setName(role.getName());
+            }
+            if (role.getDescription() != null) {
+                existingRole.setDescription(role.getDescription());
+            }
+
+            existingRole.setActive(role.getActive());
+
+            if (role.getPermissions() != null && !role.getPermissions().isEmpty()) {
+                existingRole.setPermissions(this.permissionRepository
+                        .findByIdIn(role.getPermissions().stream().map(Permission::getId).toList()));
+            }
+            return this.roleRepository.save(existingRole);
+        }).orElseThrow(() -> new BadRequestAlertException("Role with ID " + role.getId() + " not found", ENTITY_NAME,
+                "notfound"));
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        if (!roleRepository.existsById(id)) {
+            throw new BadRequestAlertException("Role with ID " + id + " not found", ENTITY_NAME, "notfound");
+        }
+        roleRepository.deleteById(id);
+    }
+
+    @Override
+    public ResRoleDTO convertToResRoleDTO(Role role) {
+        List<ResRolePermission> permissions = role.getPermissions().stream()
+                .map(permission -> ResRolePermission.builder()
+                        .apiPath(permission.getApiPath())
+                        .method(permission.getMethod())
+                        .module(permission.getModule())
+                        .build())
+                .toList();
+
+        ResRoleDTO resRoleDTO = ResRoleDTO.builder()
+                .id(role.getId())
+                .name(role.getName())
+                .active(role.getActive())
+                .permissions(permissions)
+                .description(role.getDescription())
+                .build();
+        return resRoleDTO;
+    }
+}

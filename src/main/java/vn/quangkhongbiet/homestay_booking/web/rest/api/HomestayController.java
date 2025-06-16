@@ -28,7 +28,7 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomest
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
-import vn.quangkhongbiet.homestay_booking.web.dto.response.ResultPaginationDTO;
+import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 
 @RestController
@@ -70,7 +70,7 @@ public class HomestayController {
 
     @GetMapping("/homestays")
     @ApiMessage("Lấy tất cả homestay thành công")
-    public ResponseEntity<ResultPaginationDTO> getAllHomestays(@Filter Specification<Homestay> spec,
+    public ResponseEntity<PagedResponse> getAllHomestays(@Filter Specification<Homestay> spec,
             Pageable pageable) {
         return ResponseEntity.ok(this.homestayService.findAllHomestays(spec, pageable));
     }

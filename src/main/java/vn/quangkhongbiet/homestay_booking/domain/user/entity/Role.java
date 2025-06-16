@@ -44,7 +44,6 @@ public class Role implements Auditable {
         joinColumns = @JoinColumn(name = "role_id"),
         inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
-    @JsonIgnore
     private List<Permission> permissions;
 
     private Instant createdAt;
