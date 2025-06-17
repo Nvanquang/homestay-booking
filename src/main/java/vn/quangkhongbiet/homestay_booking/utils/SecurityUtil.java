@@ -35,7 +35,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResLoginDTO;
 @RequiredArgsConstructor
 public class SecurityUtil {
 
-    public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS384;
+    public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
     private final JwtEncoder jwtEncoder;
 
@@ -57,8 +57,8 @@ public class SecurityUtil {
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
-        List<String> role = resLoginDTO.getUser().getRole() != null
-            ? new ArrayList<>(Arrays.asList(resLoginDTO.getUser().getRole().getName().split(",")))
+        List<String> permissions = resLoginDTO.getUser().getRole() != null
+            ? new ArrayList<>(Arrays.asList(resLoginDTO.getUser().getRole().getName()))
             : new ArrayList<>();
         // Arrays.asList("ROLE_USER")
         // @formatter:off
@@ -67,7 +67,7 @@ public class SecurityUtil {
             .expiresAt(validity)
             .subject(email)
             .claim("user", userToken)
-            .claim("permissions", role)
+            .claim("permissions", permissions)
             .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

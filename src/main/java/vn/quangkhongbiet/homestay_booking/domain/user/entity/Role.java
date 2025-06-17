@@ -38,7 +38,7 @@ public class Role implements Auditable {
     @JsonIgnore
     private List<User> users;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "permission_role",
         joinColumns = @JoinColumn(name = "role_id"),

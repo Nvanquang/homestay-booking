@@ -23,6 +23,7 @@ public final class ErrorConstants {
     public static final URI HOMESTAY_BUSY = URI.create(PROBLEM_BASE_URL + "/homestay-busy");
 
     public static final URI UNAUTHORIZED = URI.create(PROBLEM_BASE_URL + "/unauthorized");
+    public static final URI FORBIDDEN = URI.create(PROBLEM_BASE_URL + "/forbidden");
 
     private ErrorConstants() {
     }

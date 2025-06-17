@@ -90,10 +90,9 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         // if (
         // ex instanceof com.mycompany.myapp.service.EmailAlreadyUsedException
         // ) return (ProblemDetailWithCause) new EmailAlreadyUsedException().getBody();
-        // if (
-        // ex instanceof
-        // vn.quangkhongbiet.homestay_booking.web.rest.errors.ValidationException
-        // ) return (ProblemDetailWithCause) new ValidationException().getBody();
+        if (
+        ex instanceof vn.quangkhongbiet.homestay_booking.web.rest.errors.ForbiddenException
+        ) return (ProblemDetailWithCause) new ForbiddenException().getBody();
 
         if (ex instanceof ErrorResponseException exp
                 && exp.getBody() instanceof ProblemDetailWithCause problemDetailWithCause)

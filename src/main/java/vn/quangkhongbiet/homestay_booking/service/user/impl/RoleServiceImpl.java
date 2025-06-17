@@ -42,6 +42,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional
     public Role createRole(Role role) {
+        if(this.roleRepository.existsByName(role.getName())) {
+            throw new BadRequestAlertException("Role with name " + role.getName() + " already exists", ENTITY_NAME, "nameexists");
+        }
         role.setPermissions(
                 this.permissionRepository.findByIdIn(role.getPermissions().stream().map(Permission::getId).toList()));
         return this.roleRepository.save(role);
