@@ -7,8 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentStatus;
@@ -48,6 +50,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @SneakyThrows
+    @Transactional
     public Booking createBooking(ReqBooking request) {
         validateRequest(request);
         validateHomestay(request);
@@ -57,6 +61,8 @@ public class BookingServiceImpl implements BookingService {
         final LocalDate checkoutDate = request.getCheckoutDate();
 
         final var aDays = availabilityService.checkAvailabilityForBooking(homestayId, checkinDate, checkoutDate);
+
+        Thread.sleep(5000);
 
         final BookingPrice price = priceService.calculate(aDays);
         final Booking booking = Booking.builder()

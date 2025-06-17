@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
@@ -43,6 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User createUser(User user) {
 
         if (user.getEmail() != null && userRepository.existsByEmail(user.getEmail())) {
@@ -108,6 +110,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         if (!this.userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found with id", ENTITY_NAME, "usernotfound");

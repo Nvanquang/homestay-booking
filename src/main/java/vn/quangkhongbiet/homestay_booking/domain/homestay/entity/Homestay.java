@@ -60,8 +60,7 @@ public class Homestay implements Auditable {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @NotNull(message = "Homestay phải có ít nhất một tiện nghi")
-    @NotEmpty(message = "Danh sách tiện nghi không được để trống")
+
     @OneToMany(mappedBy = "homestay", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "homestay" })
     private List<HomestayImage> images;

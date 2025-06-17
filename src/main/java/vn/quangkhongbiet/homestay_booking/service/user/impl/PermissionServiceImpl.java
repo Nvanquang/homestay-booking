@@ -34,7 +34,6 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    @Transactional
     public Permission createPermission(Permission permission) {
         if (permission == null) {
             throw new BadRequestAlertException("Permission cannot be null", ENTITY_NAME, "nullpermission");
@@ -69,7 +68,6 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    @Transactional
     public Permission updatePartialPermission(Permission permission) {
         return this.permissionRepository.findById(permission.getId()).map(existingPermission -> {
         if (permission.getName() != null) {

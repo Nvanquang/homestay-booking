@@ -123,6 +123,7 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
+    @Transactional
     public void deleteHomestay(Long id) {
 
         Homestay homestay = this.homestayRepository.findById(id)
