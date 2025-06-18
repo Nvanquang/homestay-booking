@@ -116,7 +116,7 @@ public class BookingServiceImpl implements BookingService {
                     ENTITY_NAME, "homestaynotactive");
         }
 
-        if (homestay.getMaxGuests() < request.getGuests()) {
+        if (homestay.getGuests() < request.getGuests()) {
             throw new BadRequestAlertException(ErrorConstants.GUESTS_INVALID, "Invalid number of guests!",
                     ENTITY_NAME, "guestsinvalid");
         }

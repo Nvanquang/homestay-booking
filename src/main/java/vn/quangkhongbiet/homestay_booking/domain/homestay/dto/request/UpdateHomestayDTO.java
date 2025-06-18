@@ -18,5 +18,5 @@ public class UpdateHomestayDTO {
     private String name;
     private String description;
     private HomestayStatus status;
-    private Integer maxGuests;
+    private Integer guests;
 }

@@ -22,9 +22,11 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.ReqHomestaySearch;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResSearchHomestayDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
@@ -66,6 +68,12 @@ public class HomestayController {
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
         return ResponseEntity.ok(homestayService.findHomestayById(id));
+    }
+
+    @GetMapping("/homestays/search")
+    @ApiMessage("Search homestay thành công")
+    public ResponseEntity<List<ResSearchHomestayDTO>> getAllHomestays(ReqHomestaySearch request) {
+        return ResponseEntity.ok(this.homestayService.searchHomestays(request));
     }
 
     @GetMapping("/homestays")

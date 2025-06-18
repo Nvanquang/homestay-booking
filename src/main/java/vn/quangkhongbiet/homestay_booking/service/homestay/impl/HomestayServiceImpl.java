@@ -1,5 +1,6 @@
 package vn.quangkhongbiet.homestay_booking.service.homestay.impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.ReqHomestaySearch;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResSearchHomestayDTO;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
@@ -23,7 +27,9 @@ import vn.quangkhongbiet.homestay_booking.repository.HomestayRepository;
 import vn.quangkhongbiet.homestay_booking.repository.LocationRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
+import vn.quangkhongbiet.homestay_booking.utils.DateUtil;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Service
@@ -54,7 +60,10 @@ public class HomestayServiceImpl implements HomestayService {
 
         createdHomestay.setImages(this.homestayImageService.createHomestayImages(files, createdHomestay.getId(), folder));
         
-        return homestayRepository.save(createdHomestay);
+        Homestay homestayDB = homestayRepository.save(createdHomestay);
+        // Cập nhật geom cho homestay
+        homestayRepository.updateGeom(homestayDB.getId(), homestayDB.getLongitude(), homestayDB.getLatitude());
+        return homestayDB;
     }
 
     @Override
@@ -81,6 +90,33 @@ public class HomestayServiceImpl implements HomestayService {
     public Homestay findHomestayById(Long id) {
         return homestayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
+    }
+
+    @Override
+    public List<ResSearchHomestayDTO> searchHomestays(ReqHomestaySearch request) {
+        request.setStatus(AvailabilityStatus.AVAILABLE);
+
+        LocalDate checkinDate = request.getCheckinDate();
+        LocalDate checkoutDate = request.getCheckoutDate();
+        final var currentDate = LocalDate.now();
+
+        if (checkinDate.isBefore(currentDate) || checkinDate.isAfter(checkoutDate)) {
+            throw new BadRequestAlertException("Checkin-date invalid", ENTITY_NAME, "checkindateinvalid");
+        }
+
+        int nights = (int) DateUtil.getDiffInDays(checkinDate, checkoutDate);
+        checkoutDate = checkoutDate.minusDays(1);
+
+        return homestayRepository.searchHomestay(
+                request.getLongitude(),
+                request.getLatitude(),
+                request.getRadius(),
+                checkinDate,
+                checkoutDate,
+                nights,
+                request.getGuests(),
+                request.getStatus().toString()
+        );
     }
 
     @Override
@@ -114,8 +150,8 @@ public class HomestayServiceImpl implements HomestayService {
             if (updatedHomestay.getStatus() != null) {
                 existingHomestay.setStatus(updatedHomestay.getStatus());
             }
-            if (updatedHomestay.getMaxGuests() != 0) { // Kiểm tra khác 0 vì maxGuests là kiểu Integer
-                existingHomestay.setMaxGuests(updatedHomestay.getMaxGuests());
+            if (updatedHomestay.getGuests() != 0) { // Kiểm tra khác 0 vì guests là kiểu Integer
+                existingHomestay.setGuests(updatedHomestay.getGuests());
             }
             return this.homestayRepository.save(existingHomestay);
         }).orElseThrow(() -> new EntityNotFoundException(
@@ -170,7 +206,9 @@ public class HomestayServiceImpl implements HomestayService {
                 .description(homestay.getDescription())
                 .status(homestay.getStatus())
                 .address(homestay.getAddress())
-                .maxGuests(homestay.getMaxGuests())
+                .guests(homestay.getGuests())
+                .longitude(homestay.getLongitude())
+                .latitude(homestay.getLatitude())
                 .location(homestay.getLocation());
 
         // Map List<HomestayImage> to List<String>
@@ -186,5 +224,7 @@ public class HomestayServiceImpl implements HomestayService {
         builder.amenities(resAmenities);
 
     }
+
+    
 
 }

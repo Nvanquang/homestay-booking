@@ -47,6 +47,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             // Homestay
             permissions.add(new Permission("Create homestay", "/api/v1/homestays", "POST", "HOMESTAY"));
             permissions.add(new Permission("Get homestay by ID", "/api/v1/homestays/{id}", "GET", "HOMESTAY"));
+            permissions.add(new Permission("Search homestays", "/api/v1/homestays/search", "GET", "HOMESTAY"));
             permissions.add(new Permission("Get all homestays", "/api/v1/homestays", "GET", "HOMESTAY"));
             permissions.add(new Permission("Add amenities to homestay", "/api/v1/homestays/{homestayId}/amenities", "POST", "HOMESTAY"));
             permissions.add(new Permission("Update homestay", "/api/v1/homestays/{id}", "PATCH", "HOMESTAY"));

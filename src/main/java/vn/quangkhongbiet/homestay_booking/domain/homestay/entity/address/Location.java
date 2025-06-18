@@ -10,9 +10,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-// @Table(name = "locations", uniqueConstraints = {
-//     @UniqueConstraint(columnNames = {"city", "district", "ward"})
-// })
 @Table(name = "locations")
 @Data
 @Builder

@@ -18,8 +18,10 @@ public class ResHomestayDTO {
     private String description;
     private HomestayStatus status;
     private String address;
-    private Integer maxGuests;
+    private Integer guests;
     private Location location;
+    private Double longitude;
+    private Double latitude;
     private List<String> images;
     private List<String> amenities;
 }
