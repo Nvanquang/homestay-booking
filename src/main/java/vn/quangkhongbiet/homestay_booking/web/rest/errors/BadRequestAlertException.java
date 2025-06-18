@@ -9,6 +9,8 @@ import tech.jhipster.web.rest.errors.ProblemDetailWithCause.ProblemDetailWithCau
 @SuppressWarnings("java:S110") // Inheritance tree of classes should not be too deep
 public class BadRequestAlertException extends ErrorResponseException {
 
+    private static final long serialVersionUID = 1L;
+
     private final String entityName;
 
     private final String errorKey;

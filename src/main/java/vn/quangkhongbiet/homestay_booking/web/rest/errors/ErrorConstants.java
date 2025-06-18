@@ -16,12 +16,6 @@ public final class ErrorConstants {
     public static final URI MULTIPART_EXCEPTION_TYPE = URI.create(PROBLEM_BASE_URL + "/multipart-error");
 
     public static final URI ENTITY_NOT_FOUND_TYPE = URI.create(PROBLEM_BASE_URL + "/entity-not-found");
-    public static final URI HOMESTAY_NOT_ACTIVE = URI.create(PROBLEM_BASE_URL + "/homestay-not-active");
-    public static final URI GUESTS_INVALID = URI.create(PROBLEM_BASE_URL + "/guests-invalid");
-    public static final URI CHECKIN_DATE_INVALID = URI.create(PROBLEM_BASE_URL + "/checkin-date-invalid");
-    public static final URI NIGHTS_INVALID = URI.create(PROBLEM_BASE_URL + "/nights-invalid");
-    public static final URI HOMESTAY_BUSY = URI.create(PROBLEM_BASE_URL + "/homestay-busy");
-
     public static final URI UNAUTHORIZED = URI.create(PROBLEM_BASE_URL + "/unauthorized");
     public static final URI FORBIDDEN = URI.create(PROBLEM_BASE_URL + "/forbidden");
 

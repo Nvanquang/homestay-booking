@@ -9,6 +9,9 @@ import tech.jhipster.web.rest.errors.ProblemDetailWithCause.ProblemDetailWithCau
 
 
 public class UnauthorizedException extends ErrorResponseException {
+
+    private static final long serialVersionUID = 1L;
+    
     private final String entityName;
 
     private final String errorKey;

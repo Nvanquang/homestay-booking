@@ -9,6 +9,9 @@ import tech.jhipster.web.rest.errors.ProblemDetailWithCause;
 import tech.jhipster.web.rest.errors.ProblemDetailWithCause.ProblemDetailWithCauseBuilder;
 
 public class EntityNotFoundException extends ErrorResponseException {
+
+    private static final long serialVersionUID = 1L;
+    
     private final String entityName;
 
     private final String errorKey;

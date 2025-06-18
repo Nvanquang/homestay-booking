@@ -29,7 +29,7 @@ public class HomestayAvailabilityService {
 
         int nights = (int) Duration.between(checkinDate.atStartOfDay(), checkoutDate.atStartOfDay()).toDays();
         if (nights > NIGHT_MAX) {
-            throw new BadRequestAlertException(ErrorConstants.NIGHTS_INVALID, "Number of nights cannot exceed 365 days!", "homestayavailability", "nightsvalid");
+            throw new BadRequestAlertException("Number of nights cannot exceed 365 days!", "homestayavailability", "nightsvalid");
         }
 
         final var aDays = availabilityRepository.findByHomestayIdAndStatusAndDateBetween(
@@ -39,7 +39,7 @@ public class HomestayAvailabilityService {
                 checkoutDate.minusDays(1)
         );
         if (aDays.isEmpty() || aDays.size() < nights) {
-            throw new BadRequestAlertException(ErrorConstants.HOMESTAY_BUSY, "Homestay has been rented!", "homestayAvailability", "homestaybusy");
+            throw new BadRequestAlertException("Homestay has been rented!", "homestayAvailability", "homestaybusy");
         }
 
         return aDays;

@@ -101,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (checkinDate.isBefore(currentDate) || checkinDate.isAfter(checkoutDate)) {
-            throw new BadRequestAlertException(ErrorConstants.CHECKIN_DATE_INVALID, "Invalid checkin date!",
+            throw new BadRequestAlertException("Invalid checkin date!",
                     ENTITY_NAME, "checkininvalid");
         }
     }
@@ -112,12 +112,12 @@ public class BookingServiceImpl implements BookingService {
                 ENTITY_NAME, "homestaynotfound"));
 
         if (homestay.getStatus() != HomestayStatus.ACTIVE) {
-            throw new BadRequestAlertException(ErrorConstants.HOMESTAY_NOT_ACTIVE, "Homestay is not operating!",
+            throw new BadRequestAlertException("Homestay is not operating!",
                     ENTITY_NAME, "homestaynotactive");
         }
 
         if (homestay.getGuests() < request.getGuests()) {
-            throw new BadRequestAlertException(ErrorConstants.GUESTS_INVALID, "Invalid number of guests!",
+            throw new BadRequestAlertException("Invalid number of guests!",
                     ENTITY_NAME, "guestsinvalid");
         }
     }
