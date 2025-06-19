@@ -15,17 +15,22 @@ import vn.quangkhongbiet.homestay_booking.service.homestay.AmenityService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class AmenityServiceImpl implements AmenityService {
 
+    private static final Logger log = LoggerFactory.getLogger(AmenityServiceImpl.class);
+    
     private static final String ENTITY_NAME = "Amenity";
 
     private final AmenityRepository amenityRepository;
 
     @Override
     public Amenity createAmenity(Amenity amenity) {
+        log.debug("create Amenity with amenity: {}", amenity);
         if (amenityRepository.existsByName(amenity.getName())) {
             throw new BadRequestAlertException(
                     "Amenity already exists",
@@ -38,6 +43,7 @@ public class AmenityServiceImpl implements AmenityService {
 
     @Override
     public Amenity findAmenityById(Long id) {
+        log.debug("find Amenity by id: {}", id);
         return amenityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Amwnity not found with id!",
                 ENTITY_NAME,
@@ -46,6 +52,7 @@ public class AmenityServiceImpl implements AmenityService {
 
     @Override
     public PagedResponse findAllAmenities(Specification<Amenity> spec, Pageable pageable) {
+        log.debug("find all Amenity with spec: {}, pageable: {}", spec, pageable);
         Page<Amenity> pageAmenities = this.amenityRepository.findAll(spec, pageable);
         PagedResponse result = new PagedResponse();
         PagedResponse.Meta meta = result.new Meta();
@@ -63,6 +70,7 @@ public class AmenityServiceImpl implements AmenityService {
     @Override
     @Transactional
     public void deleteAmenity(Long id) {
+        log.debug("delete Amenity by id: {}", id);
         if (!amenityRepository.existsById(id)) {
             throw new EntityNotFoundException(
                     "Amenity not found with id!",

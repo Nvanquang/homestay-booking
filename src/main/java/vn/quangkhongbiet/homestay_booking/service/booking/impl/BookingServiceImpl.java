@@ -33,19 +33,30 @@ import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
+
+    private static final Logger log = LoggerFactory.getLogger(BookingServiceImpl.class);
+
     private static final String ENTITY_NAME = "booking";
+
     private final BookingRepository bookingRepository;
+
     private final HomestayRepository homestayRepository;
+
     private final HomestayAvailabilityService availabilityService;
+
     private final PriceService priceService;
+    
     private final UserRepository userRepository;
 
     @Override
     public Boolean existsById(Long id) {
+        log.debug("check Booking exists by id: {}", id);
         return this.bookingRepository.existsById(id);
     }
 
@@ -60,7 +71,9 @@ public class BookingServiceImpl implements BookingService {
         final LocalDate checkinDate = request.getCheckinDate();
         final LocalDate checkoutDate = request.getCheckoutDate();
 
+        log.debug("[request_id={}] User user_id={} is acquiring lock homestay_id={} from checkin_date={} to checkout_date={}", request.getRequestId(), request.getUserId(), homestayId, checkinDate, checkoutDate);
         final var aDays = availabilityService.checkAvailabilityForBooking(homestayId, checkinDate, checkoutDate);
+        log.debug("[request_id={}] User user_id={} locked homestay_id={} from checkin_date={} to checkout_date={}", request.getRequestId(), request.getUserId(), request.getHomestayId(), checkinDate, checkoutDate);
 
         Thread.sleep(5000);
 
@@ -78,6 +91,7 @@ public class BookingServiceImpl implements BookingService {
                 .note(request.getNote())
                 .status(BookingStatus.BOOKED) // đă đặt
                 .paymentStatus(PaymentStatus.PENDING) // chưa thanh toán
+                .requestId(request.getRequestId())
                 .build();
 
         aDays.forEach(a -> a.setStatus(AvailabilityStatus.BOOKED));
@@ -124,6 +138,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking findBookingById(Long id) {
+        log.debug("find Booking by id: {}", id);
         return bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException (
                 ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Booking not found with id", ENTITY_NAME,
                 "bookingnotfound"));
@@ -131,6 +146,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public PagedResponse findAllBookings(Specification<Booking> spec, Pageable pageable) {
+        log.debug("find all Booking with spec: {}, pageable: {}", spec, pageable);
         Page<Booking> pageBookings = this.bookingRepository.findAll(spec, pageable);
         PagedResponse result = new PagedResponse();
         PagedResponse.Meta meta = result.new Meta();
@@ -151,6 +167,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking updatePartialBooking(UpdateBookingDTO dto) {
+        log.debug("update Booking partially with dto: {}", dto);
         return bookingRepository.findById(dto.getId()).map(existingBooking -> {
             validateBookingStatus(existingBooking);
             validateNewStatus(existingBooking, dto);
@@ -207,6 +224,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResBookingDTO convertToResBookingDTO(Booking booking) {
+        log.debug("convert to ResBookingDTO with booking: {}", booking);
         var builder = ResBookingDTO.builder()
                 .id(booking.getId())
                 .checkinDate(booking.getCheckinDate())

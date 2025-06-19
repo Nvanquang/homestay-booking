@@ -21,14 +21,14 @@ configurations {
 
 repositories {
 	mavenCentral()
-	maven {
-        name "OSGeo"
-        url "https://repo.osgeo.org/repository/release/"
-    }
-    maven {
-        name "OSGeo Snapshots"
-        url "https://repo.osgeo.org/repository/snapshot/"
-    }
+	// maven {
+    //     name "OSGeo"
+    //     url "https://repo.osgeo.org/repository/release/"
+    // }
+    // maven {
+    //     name "OSGeo Snapshots"
+    //     url "https://repo.osgeo.org/repository/snapshot/"
+    // }
 }
 
 dependencies {
@@ -43,9 +43,9 @@ dependencies {
 	implementation 'com.cloudinary:cloudinary-http44:1.32.0'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
-	implementation 'org.hibernate:hibernate-spatial:6.6.18.Final'
-	implementation 'org.locationtech.jts:jts-core:1.19.0'
-	implementation 'org.geotools:gt-main:29.2'
+	// implementation 'org.hibernate:hibernate-spatial:6.6.18.Final'
+	// implementation 'org.locationtech.jts:jts-core:1.19.0'
+	// implementation 'org.geotools:gt-main:29.2'
 
 	compileOnly 'org.projectlombok:lombok'
 

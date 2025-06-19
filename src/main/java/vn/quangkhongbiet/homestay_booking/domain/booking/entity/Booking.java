@@ -15,7 +15,8 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "bookings")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -58,6 +59,8 @@ public class Booking {
     private PaymentMethod paymentMethod;
 
     private Instant paymentDate;
+
+    private String requestId;
 
     @NotNull(message = "Người dùng là bắt buộc")
     @ManyToOne

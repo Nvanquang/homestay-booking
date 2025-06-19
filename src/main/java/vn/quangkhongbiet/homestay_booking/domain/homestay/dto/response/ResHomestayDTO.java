@@ -2,13 +2,15 @@ package vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatus;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.address.Location;
 
-@Data
+@Getter
+@Setter
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor

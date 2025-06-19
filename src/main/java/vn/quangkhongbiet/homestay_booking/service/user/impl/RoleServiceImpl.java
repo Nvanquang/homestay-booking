@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
@@ -23,6 +25,8 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
+    private static final Logger log = LoggerFactory.getLogger(RoleServiceImpl.class);
+
     private static final String ENTITY_NAME = "Role";
 
     private final RoleRepository roleRepository;
@@ -31,17 +35,20 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public boolean isExistById(Long id) {
+        log.debug("check Role exists by id: {}", id);
         return roleRepository.existsById(id);
     }
 
     @Override
     public boolean isExistByName(String name) {
+        log.debug("check Role exists by name: {}", name);
         return roleRepository.existsByName(name);
     }
 
     @Override
     @Transactional
     public Role createRole(Role role) {
+        log.debug("create Role with role: {}", role);
         if(this.roleRepository.existsByName(role.getName())) {
             throw new BadRequestAlertException("Role with name " + role.getName() + " already exists", ENTITY_NAME, "nameexists");
         }
@@ -52,6 +59,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role getById(Long id) {
+        log.debug("find Role by id: {}", id);
         return roleRepository.findById(id)
                 .orElseThrow(() -> new BadRequestAlertException("Role with ID " + id + " not found", ENTITY_NAME,
                         "notfound"));
@@ -59,6 +67,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public PagedResponse getAll(Specification<Role> spec, Pageable pageable) {
+        log.debug("find all Role with spec: {}, pageable: {}", spec, pageable);
         Page<Role> pageRoles = this.roleRepository.findAll(spec, pageable);
         PagedResponse result = new PagedResponse();
         PagedResponse.Meta meta = result.new Meta();
@@ -80,6 +89,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional
     public Role updatePartialRole(Role role) {
+        log.debug("update Role partially with role: {}", role);
         return this.roleRepository.findById(role.getId()).map(existingRole -> {
             if (role.getName() != null) {
                 existingRole.setName(role.getName());
@@ -102,6 +112,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional
     public void deleteById(Long id) {
+        log.debug("delete Role by id: {}", id);
         if (!roleRepository.existsById(id)) {
             throw new BadRequestAlertException("Role with ID " + id + " not found", ENTITY_NAME, "notfound");
         }
@@ -110,6 +121,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public ResRoleDTO convertToResRoleDTO(Role role) {
+        log.debug("format to ResRoleDTO with role: {}", role);
         List<ResRolePermission> permissions = role.getPermissions().stream()
                 .map(permission -> ResRolePermission.builder()
                         .apiPath(permission.getApiPath())

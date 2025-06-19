@@ -9,17 +9,22 @@ import vn.quangkhongbiet.homestay_booking.service.homestay.LocationService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class LocationController {
 
+    private static final Logger log = LoggerFactory.getLogger(LocationController.class);
+    
     private final LocationService locationService;
 
     @GetMapping("/locations/{id}")
     @ApiMessage("Lấy thông tin địa điểm theo ID thành công")
     public ResponseEntity<Location> findLocationById(@PathVariable("id") Long id) {
+        log.info("REST request to get Location by id: {}", id);
         return ResponseEntity.ok(locationService.findLocationById(id));
     }
 }

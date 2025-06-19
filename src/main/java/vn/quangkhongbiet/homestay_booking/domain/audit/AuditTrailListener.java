@@ -12,7 +12,7 @@ public class AuditTrailListener {
     public void prePersist(Object entity) {
         if (entity instanceof Auditable auditable) {
             auditable.setCreatedAt(Instant.now());
-            auditable.setCreatedBy(SecurityUtil.getCurrentUserLogin().orElse(""));
+            auditable.setCreatedBy(SecurityUtil.getCurrentUserLogin().orElse("SYSTEM"));
         }
     }
 
@@ -20,7 +20,7 @@ public class AuditTrailListener {
     public void preUpdate(Object entity) {
         if (entity instanceof Auditable auditable) {
             auditable.setUpdatedAt(Instant.now());
-            auditable.setUpdatedBy(SecurityUtil.getCurrentUserLogin().orElse(""));
+            auditable.setUpdatedBy(SecurityUtil.getCurrentUserLogin().orElse("SYSTEM"));
         }
     }
 }

@@ -5,14 +5,16 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentMethod;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentStatus;
 
-@Data
+@Getter
+@Setter
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor

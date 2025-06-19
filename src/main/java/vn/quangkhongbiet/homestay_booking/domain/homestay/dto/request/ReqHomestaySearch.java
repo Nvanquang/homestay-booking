@@ -10,11 +10,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -47,6 +49,5 @@ public class ReqHomestaySearch {
     @Max(value = 20, message = "Số lượng khách không được vượt quá 20")
     private Integer guests;
 
-    @NotNull(message = "Trạng thái không được để trống")
     private AvailabilityStatus status;
 }

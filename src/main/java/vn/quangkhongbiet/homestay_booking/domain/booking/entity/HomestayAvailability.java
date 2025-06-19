@@ -10,7 +10,8 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "homestay_availability")
 @IdClass(HomestayAvailabilityId.class)
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

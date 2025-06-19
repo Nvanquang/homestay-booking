@@ -8,7 +8,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "homestay_images")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

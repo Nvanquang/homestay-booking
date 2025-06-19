@@ -1,5 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.web.rest.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 @RequestMapping("/api/v1")
 public class RoleController {
 
+    private static final Logger log = LoggerFactory.getLogger(RoleController.class);
+    
     private static final String ENTITY_NAME = "Role";
 
     private final RoleService roleService;
@@ -29,6 +33,7 @@ public class RoleController {
     @PostMapping("/roles")
     @ApiMessage("Tạo mới vai trò thành công")
     public ResponseEntity<Role> createRole(@Valid @RequestBody Role role) {
+        log.info("REST request to create Role: {}", role);
         Role createdRole = roleService.createRole(role);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(createdRole);
@@ -37,6 +42,7 @@ public class RoleController {
     @GetMapping("/roles/{id}")
     @ApiMessage("Lấy thông tin vai trò thành công")
     public ResponseEntity<ResRoleDTO> getRoleById(@PathVariable("id") Long id) {
+        log.info("REST request to get Role by id: {}", id);
         if (id == null || id <= 0) {
             throw new BadRequestAlertException("Role ID cannot be null or invalid", ENTITY_NAME, "invalidid");
         }
@@ -48,7 +54,7 @@ public class RoleController {
     public ResponseEntity<PagedResponse> getAllRoles(
             @Filter Specification<Role> spec,
             Pageable pageable) {
-
+        log.info("REST request to get all Roles, pageable: {}", pageable);
         PagedResponse result = roleService.getAll(spec, pageable);
         return ResponseEntity.ok().body(result);
     }
@@ -56,6 +62,7 @@ public class RoleController {
     @PatchMapping("/roles/{id}")
     @ApiMessage("Cập nhật vai trò thành công")
     public ResponseEntity<ResRoleDTO> updatePartialRole(@PathVariable("id") Long id, @Valid @RequestBody Role role) {
+        log.info("REST request to update Role partially, id: {}, body: {}", id, role);
         if (role.getId() <= 0) {
             throw new BadRequestAlertException("Role invalid", ENTITY_NAME, "invalidrole");
         }
@@ -69,6 +76,7 @@ public class RoleController {
     @DeleteMapping("/roles/{id}")
     @ApiMessage("Xóa vai trò thành công")
     public ResponseEntity<Void> deleteRoleById(@PathVariable("id") Long id) {
+        log.info("REST request to delete Role by id: {}", id);
         if (id == null || id <= 0) {
             throw new BadRequestAlertException("Role ID cannot be null or invalid", ENTITY_NAME, "invalidid");
         }

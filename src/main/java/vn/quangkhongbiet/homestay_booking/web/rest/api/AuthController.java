@@ -1,5 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.web.rest.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,8 +36,13 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.UnauthorizedException;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
     private final SecurityUtil securityUtil;
+    
     private final UserService userService;
 
     @Value("${security.authentication.jwt.access-token-validity-in-seconds}")
@@ -43,6 +50,7 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<Object> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
+        log.info("REST request to login Auth: {}", loginDTO);
         // xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticateUser(loginDTO);
 
@@ -72,6 +80,7 @@ public class AuthController {
     @GetMapping("/auth/account")
     @ApiMessage("Lấy thông tin tài khoản")
     public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount() {
+        log.info("REST request to get Auth account");
         // get information of user from SecurityContext
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
         if (email == null) {
@@ -93,6 +102,7 @@ public class AuthController {
     @GetMapping("/auth/refresh")
     @ApiMessage("Lấy lại access token")
     public ResponseEntity<Object> handleRefreshToken(@CookieValue(name = "refresh_token") String refresh_token) {
+        log.info("REST request to refresh Auth token, refresh_token: {}", refresh_token);
         // check refresh token
         Jwt decodedJwt = this.securityUtil.checkValidPrefreshToken(refresh_token);
         String email = decodedJwt.getSubject();
@@ -156,6 +166,7 @@ public class AuthController {
     @PostMapping("/auth/logout")
     @ApiMessage("Đăng xuất thành công")
     public ResponseEntity<Void> handleLogout() {
+        log.info("REST request to logout Auth");
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
 
         // remove refresh token
@@ -179,6 +190,7 @@ public class AuthController {
 
     @PostMapping("/auth/register")
     public ResponseEntity<ResUserCreateDTO> register(@Valid @RequestBody RegisterUserDTO register) {
+        log.info("REST request to register Auth: {}", register);
         User user = User.builder()
                         .userName(register.getUserName())
                         .email(register.getEmail())

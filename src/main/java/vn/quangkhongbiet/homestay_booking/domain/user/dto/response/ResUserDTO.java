@@ -2,12 +2,14 @@ package vn.quangkhongbiet.homestay_booking.domain.user.dto.response;
 
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import vn.quangkhongbiet.homestay_booking.domain.user.constant.Gender;
 
-@Data
+@Getter
+@Setter
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor

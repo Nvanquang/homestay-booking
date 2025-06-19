@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,19 +28,28 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundExceptio
 @RequiredArgsConstructor
 public class HomestayImageServiceImpl implements HomestayImageService{
     
+    private static final Logger log = LoggerFactory.getLogger(HomestayImageServiceImpl.class);
+
     private static final String ENTITY_NAME = "HomestayImage";
+
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
+
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
     private static final int MAX_FILES = 6;
+
     private static final Pattern FOLDER_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]+$");
 
     private final HomestayImageRepository homestayImageRepository;
+
     private final HomestayRepository homestayRepository;
+    
     private final Cloudinary cloudinary;
 
     @Override
     @Transactional
     public List<HomestayImage> createHomestayImages(MultipartFile[] files, Long homestayId, String folder) {
+        log.debug("create HomestayImage with files: {}, homestayId: {}, folder: {}", files != null ? files.length : 0, homestayId, folder);
         validateFile(files);
         validateHomestayIdAndFolder(homestayId, folder);
 
@@ -140,6 +151,7 @@ public class HomestayImageServiceImpl implements HomestayImageService{
 
     @Override
     public List<HomestayImage> findHomestayImageByHomestayId(long id) {
+        log.debug("find HomestayImage by homestayId: {}", id);
         if(!homestayRepository.existsById(id)) {
             throw new EntityNotFoundException(
                     "Homestay with ID: " + id + " does not exist",
@@ -153,6 +165,7 @@ public class HomestayImageServiceImpl implements HomestayImageService{
     @Override
     @Transactional
     public void deleteImage(long id) {
+        log.debug("delete HomestayImage by id: {}", id);
         // Find the image in the database
         HomestayImage homestayImage = homestayImageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(

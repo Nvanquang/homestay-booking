@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,13 +21,17 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 @Service
 @RequiredArgsConstructor
 public class HomestayAvailabilityService {
+
     private static final Integer NIGHT_MAX = 365;
+    
+    private static final Logger log = LoggerFactory.getLogger(HomestayAvailabilityService.class);
 
     private final HomestayAvailabilityRepository availabilityRepository;
 
     public List<HomestayAvailability> checkAvailabilityForBooking(final Long homestayId,
                                                                   final LocalDate checkinDate,
                                                                   final LocalDate checkoutDate) {
+        log.debug("check HomestayAvailability for booking, homestayId: {}, checkinDate: {}, checkoutDate: {}", homestayId, checkinDate, checkoutDate);
 
         int nights = (int) Duration.between(checkinDate.atStartOfDay(), checkoutDate.atStartOfDay()).toDays();
         if (nights > NIGHT_MAX) {
@@ -48,10 +54,12 @@ public class HomestayAvailabilityService {
 
     @Transactional
     public void saveAll(List<HomestayAvailability> aDays) {
+        log.debug("save all HomestayAvailability: {}", aDays != null ? aDays.size() : 0);
         availabilityRepository.saveAll(aDays);
     }
 
     public HomestayAvailability findById(HomestayAvailabilityId id) {
+        log.debug("find HomestayAvailability by id: {}", id);
         return this.availabilityRepository.findById(id).orElseThrow(() -> 
             new EntityNotFoundException (ErrorConstants.ENTITY_NOT_FOUND_TYPE, "HomestayAvailability not found with id", "HomestayAvailability", "homestayavailabilitynotfound"));
     }

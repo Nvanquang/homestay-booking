@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
@@ -28,25 +30,33 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundExceptio
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private static final String ENTITY_NAME = "User";
+
     private final UserRepository userRepository;
+
     private final RoleRepository roleRepository;
+    
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public Boolean existsById(Long id) {
+        log.debug("check User exists by id: {}", id);
         return this.userRepository.existsById(id);
     }
 
     @Override
     public Boolean existsByEmail(String email) {
+        log.debug("check User exists by email: {}", email);
         return this.userRepository.existsByEmail(email);
     }
 
     @Override
     @Transactional
     public User createUser(User user) {
-
+        log.debug("create User with user: {}", user);
         if (user.getEmail() != null && userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyUsedException();
         }
@@ -61,18 +71,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserById(Long id) {
+        log.debug("find User by id: {}", id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id", ENTITY_NAME, "usernotfound"));
     }
 
     @Override
     public User getUserByEmail(String email) {
+        log.debug("find User by email: {}", email);
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Email not found", ENTITY_NAME, "emailnotfound"));
     }
 
     @Override
     public PagedResponse findAllUsers(Specification<User> spec, Pageable pageable) {
+        log.debug("find all User with spec: {}, pageable: {}", spec, pageable);
         Page<User> pageUsers = this.userRepository.findAll(spec, pageable);
         PagedResponse result = new PagedResponse();
         PagedResponse.Meta meta = result.new Meta();
@@ -91,6 +104,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updatePartialUser(UpdateUserDTO dto) {
+        log.debug("update User partially with dto: {}", dto);
         return this.userRepository.findById(dto.getId()).map(existingUser -> {
             if (dto.getUserName() != null) {
                 existingUser.setUserName(dto.getUserName());
@@ -112,6 +126,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Long id) {
+        log.debug("delete User by id: {}", id);
         if (!this.userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found with id", ENTITY_NAME, "usernotfound");
         }
@@ -120,6 +135,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResUserCreateDTO convertToResCreateUserDTO(User user) {
+        log.debug("convert to ResUserCreateDTO with user: {}", user);
         var builder = ResUserCreateDTO.builder();
         mapCommonFields(user, builder);
         return builder
@@ -130,6 +146,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResUserUpdatedDTO convertToResUpdatedUserDTO(User user) {
+        log.debug("convert to ResUserUpdatedDTO with user: {}", user);
         var builder = ResUserUpdatedDTO.builder();
         mapCommonFields(user, builder);
         return builder
@@ -140,6 +157,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResUserDTO convertToResUserDTO(User user) {
+        log.debug("convert to ResUserDTO with user: {}", user);
         var builder = ResUserDTO.builder();
         mapCommonFields(user, builder);
         return builder.build();
@@ -161,6 +179,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserToken(String email, String token) {
+        log.debug("update User token with email: {}, token: {}", email, token);
         User user = this.userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found", ENTITY_NAME, "usernotfound"));
        
@@ -170,6 +189,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByRefreshTokenAndEmail(String token, String email) {
+        log.debug("find User by refresh token and email: {}, {}", token, email);
         return this.userRepository.findByRefreshTokenAndEmail(token, email);
     }
 

@@ -26,6 +26,10 @@ logging:
             springframework:
                 web:
                     client: DEBUG
+        vn:
+            quangkhongbiet:
+                homestay_booking: DEBUG
+        
 # cloudinary
 cloudinary:
     cloud_name: ${YOUR_CLOUD_NAME}

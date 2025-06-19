@@ -1,5 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.web.rest.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,8 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 @RequestMapping("/api/v1")
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    
     private static final String ENTITY_NAME = "user";
 
     private final UserService userService;
@@ -40,7 +44,7 @@ public class UserController {
     @PostMapping("/users")
     @ApiMessage("Tạo người dùng thành công")
     public ResponseEntity<ResUserCreateDTO> createUser(@Valid @RequestBody User user) {
-
+        log.info("REST request to create User: {}", user);
         User createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(createdUser));
     }
@@ -48,7 +52,7 @@ public class UserController {
     @GetMapping("/users/{id}")
     @ApiMessage("Lấy thông tin người dùng thành công")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-
+        log.info("REST request to get User by id: {}", id);
         if (id <= 0 ){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idnull");
         }
@@ -58,13 +62,14 @@ public class UserController {
     @GetMapping("/users")
     @ApiMessage("Lấy tất cả người dùng thành công")
     public ResponseEntity<PagedResponse> getAllUsers(Pageable pageable, @Filter Specification<User> spec) {
+        log.info("REST request to get all Users, pageable: {}", pageable);
         return ResponseEntity.ok(userService.findAllUsers(spec, pageable));
     }
 
     @PatchMapping("/users/{id}")
     @ApiMessage("Cập nhật người dùng thành công")
     public ResponseEntity<ResUserUpdatedDTO> updatePartialUser(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserDTO dto) {
-
+        log.info("REST request to update User partially, id: {}, body: {}", id, dto);
         if (id <= 0 ){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idnull");
         }
@@ -78,7 +83,7 @@ public class UserController {
     @DeleteMapping("/users/{id}")
     @ApiMessage("Xóa người dùng thành công")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
-
+        log.info("REST request to delete User by id: {}", id);
         if (id <= 0) {
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "invalidid");
         }

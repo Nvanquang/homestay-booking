@@ -1,5 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.web.rest.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,8 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 @RequestMapping("/api/v1")
 public class BookingController {
 
+    private static final Logger log = LoggerFactory.getLogger(BookingController.class);
+    
     private static final String ENTITY_NAME = "booking";
 
     private final BookingService bookingService;
@@ -37,7 +41,7 @@ public class BookingController {
     @PostMapping("/bookings")
     @ApiMessage("Đặt phòng thành công")
     public ResponseEntity<ResBookingDTO> createBooking(@Valid @RequestBody ReqBooking request) {
-
+        log.info("REST request to create Booking: {}", request);
         Booking createdBooking = bookingService.createBooking(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(this.bookingService.convertToResBookingDTO(createdBooking));
@@ -46,7 +50,7 @@ public class BookingController {
     @GetMapping("/bookings/{id}")
     @ApiMessage("Lấy thông tin đặt phòng thành công")
     public ResponseEntity<ResBookingDTO> getBookingById(@PathVariable("id") Long id) {
-
+        log.info("REST request to get Booking by id: {}", id);
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
@@ -56,13 +60,14 @@ public class BookingController {
     @GetMapping("/bookings")
     @ApiMessage("Lấy danh sách đặt phòng thành công")
     public ResponseEntity<PagedResponse> getAllBookings(@Filter Specification<Booking> spec, Pageable pageable) {
+        log.info("REST request to get all Bookings, pageable: {}", pageable);
         return ResponseEntity.ok(bookingService.findAllBookings(spec, pageable));
     }
 
     @PatchMapping("/bookings/{id}")
     @ApiMessage("Cập nhật thông tin đặt phòng thành công")
     public ResponseEntity<?> updatePartialBooking(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookingDTO dto) {
-
+        log.info("REST request to update Booking partially, id: {}, body: {}", id, dto);
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }

@@ -3,6 +3,8 @@ package vn.quangkhongbiet.homestay_booking.web.rest.api;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,8 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 @RequestMapping("/api/v1")
 public class HomestayController {
 
+    private static final Logger log = LoggerFactory.getLogger(HomestayController.class);
+
     private static final String ENTITY_NAME = "homestay";
 
     private final HomestayService homestayService;
@@ -48,6 +52,8 @@ public class HomestayController {
             @Valid @RequestPart("homestay") Homestay homestay,
             @RequestPart("files") MultipartFile[] files,
             @RequestPart("folder") String folder) {
+                
+        log.info("REST request to create Homestay: {}, folder: {}, files count: {}", homestay, folder, files != null ? files.length : 0);
 
         if (files == null || files.length == 0) {
             throw new BadRequestAlertException("No files uploaded", ENTITY_NAME, "nofiles");
@@ -63,6 +69,7 @@ public class HomestayController {
     @GetMapping("/homestays/{id}")
     @ApiMessage("Lấy thông tin homestay thành công")
     public ResponseEntity<Homestay> getHomestayById(@PathVariable("id") Long id) {
+        log.info("REST request to get Homestay by id: {}", id);
 
         if (id <= 0) {
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
@@ -72,7 +79,8 @@ public class HomestayController {
 
     @GetMapping("/homestays/search")
     @ApiMessage("Search homestay thành công")
-    public ResponseEntity<List<ResSearchHomestayDTO>> getAllHomestays(ReqHomestaySearch request) {
+    public ResponseEntity<List<ResSearchHomestayDTO>> getAllHomestays(@Valid ReqHomestaySearch request) {
+        log.info("REST request to search Homestay: {}", request);
         return ResponseEntity.ok(this.homestayService.searchHomestays(request));
     }
 
@@ -80,6 +88,7 @@ public class HomestayController {
     @ApiMessage("Lấy tất cả homestay thành công")
     public ResponseEntity<PagedResponse> getAllHomestays(@Filter Specification<Homestay> spec,
             Pageable pageable) {
+        log.info("REST request to get all Homestays, pageable: {}", pageable);
         return ResponseEntity.ok(this.homestayService.findAllHomestays(spec, pageable));
     }
 
@@ -88,6 +97,7 @@ public class HomestayController {
     public ResponseEntity<?> addAmenitiesToHomestay(
             @PathVariable("homestayId") Long homestayId,
             @RequestBody Map<String, List<Long>> request) {
+        log.info("REST request to add amenities to Homestay, homestayId: {}, amenities: {}", homestayId, request.get("amenities"));
 
         List<Long> amenityIds = request.get("amenities");
         if (amenityIds == null || amenityIds.isEmpty()) {
@@ -102,6 +112,7 @@ public class HomestayController {
     @ApiMessage("Cập nhật homestay thành công")
     public ResponseEntity<ResHomestayUpdatedDTO> updatePartialHomestay(@PathVariable("id") Long id,
             @Valid @RequestBody UpdateHomestayDTO dto) {
+        log.info("REST request to update Homestay partially, id: {}, body: {}", id, dto);
 
         if (id <= 0) {
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
@@ -116,6 +127,7 @@ public class HomestayController {
     @DeleteMapping("/homestays/{id}")
     @ApiMessage("Xóa homestay thành công")
     public ResponseEntity<Void> deleteHomestay(@PathVariable("id") Long id) {
+        log.info("REST request to delete Homestay by id: {}", id);
 
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");

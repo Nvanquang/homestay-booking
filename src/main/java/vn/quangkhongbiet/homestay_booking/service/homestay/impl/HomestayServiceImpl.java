@@ -31,25 +31,35 @@ import vn.quangkhongbiet.homestay_booking.utils.DateUtil;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class HomestayServiceImpl implements HomestayService {
 
+    private static final Logger log = LoggerFactory.getLogger(HomestayServiceImpl.class);
+
     private static final String ENTITY_NAME = "homestay";
+
     private final HomestayRepository homestayRepository;
+
     private final HomestayImageService homestayImageService;
+
     private final AmenityRepository amenityRepository;
+    
     private final LocationRepository locationRepository;
 
     @Override
     public Boolean existsById(Long id) {
+        log.debug("check Homestay exists by id: {}", id);
         return this.homestayRepository.existsById(id);
     }
 
     @Override
     @Transactional
     public Homestay createHomestay(Homestay homestay, MultipartFile[] files, String folder) {
+        log.debug("create Homestay with homestay: {}, folder: {}, files: {}", homestay, folder, files != null ? files.length : 0);
 
         homestay.setAmenities(this.amenityRepository
                 .findByIdIn(homestay.getAmenities().stream().map(Amenity::getId).toList()));
@@ -68,6 +78,7 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public Homestay addAmenitiesToHomestay(long homestayId, List<Long> amenityIds) {
+        log.debug("add amenities to Homestay, homestayId: {}, amenityIds: {}", homestayId, amenityIds);
         // Kiểm tra homestay tồn tại
         Homestay homestay = homestayRepository.findById(homestayId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -88,12 +99,14 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public Homestay findHomestayById(Long id) {
+        log.debug("find Homestay by id: {}", id);
         return homestayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
     }
 
     @Override
     public List<ResSearchHomestayDTO> searchHomestays(ReqHomestaySearch request) {
+        log.debug("search Homestay with request: {}", request);
         request.setStatus(AvailabilityStatus.AVAILABLE);
 
         LocalDate checkinDate = request.getCheckinDate();
@@ -121,6 +134,7 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public PagedResponse findAllHomestays(Specification<Homestay> spec, Pageable pageable) {
+        log.debug("find all Homestay with spec: {}, pageable: {}", spec, pageable);
         Page<Homestay> pageHomestays = this.homestayRepository.findAll(spec, pageable);
         PagedResponse result = new PagedResponse();
         PagedResponse.Meta meta = result.new Meta();
@@ -140,6 +154,7 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public Homestay updatePartialHomestay(UpdateHomestayDTO updatedHomestay) {
+        log.debug("update Homestay partially with dto: {}", updatedHomestay);
         return this.homestayRepository.findById(updatedHomestay.getId()).map(existingHomestay -> {
             if (updatedHomestay.getName() != null) {
                 existingHomestay.setName(updatedHomestay.getName());
@@ -161,7 +176,7 @@ public class HomestayServiceImpl implements HomestayService {
     @Override
     @Transactional
     public void deleteHomestay(Long id) {
-
+        log.debug("delete Homestay by id: {}", id);
         Homestay homestay = this.homestayRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
@@ -175,6 +190,7 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public ResHomestayCreateDTO convertToResCreateHomestayDTO(Homestay homestay) {
+        log.debug("convert to ResHomestayCreateDTO with homestay: {}", homestay);
         var builder = ResHomestayCreateDTO.builder();
         mapCommonFields(homestay, builder);
         return builder
@@ -185,6 +201,7 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public ResHomestayUpdatedDTO convertToResUpdatedHomestayDTO(Homestay homestay) {
+        log.debug("convert to ResHomestayUpdatedDTO with homestay: {}", homestay);
         var builder = ResHomestayUpdatedDTO.builder();
         mapCommonFields(homestay, builder);
         return builder
@@ -195,6 +212,7 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public ResHomestayDTO convertToResHomestayDTO(Homestay homestay) {
+        log.debug("convert to ResHomestayDTO with homestay: {}", homestay);
         var builder = ResHomestayDTO.builder();
         mapCommonFields(homestay, builder);
         return builder.build();
