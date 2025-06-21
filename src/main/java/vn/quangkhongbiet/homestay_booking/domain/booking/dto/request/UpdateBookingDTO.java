@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
-import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentStatus;
 
 @Getter
 @Setter
@@ -19,8 +18,6 @@ public class UpdateBookingDTO {
     private Long id;
 
     private BookingStatus status;
-
-    private PaymentStatus paymentStatus;
 
     private Instant paymentDate;
 }

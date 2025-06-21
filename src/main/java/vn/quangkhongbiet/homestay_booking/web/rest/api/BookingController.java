@@ -16,13 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingStatusDTO;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResVnpBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.service.booking.BookingService;
+import vn.quangkhongbiet.homestay_booking.utils.VnpayUtil;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
@@ -40,11 +44,16 @@ public class BookingController {
 
     @PostMapping("/bookings")
     @ApiMessage("Đặt phòng thành công")
-    public ResponseEntity<ResBookingDTO> createBooking(@Valid @RequestBody ReqBooking request) {
+    public ResponseEntity<ResVnpBookingDTO> createBooking(
+        @Valid @RequestBody ReqBooking request, 
+        HttpServletRequest httpServletRequest) {
+
+        String ipAddress = VnpayUtil.getIpAddress(httpServletRequest);
+        request.setIpAddress(ipAddress);
+
         log.info("REST request to create Booking: {}", request);
-        Booking createdBooking = bookingService.createBooking(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.bookingService.convertToResBookingDTO(createdBooking));
+        ResVnpBookingDTO createdBooking = bookingService.createBooking(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBooking);
     }
 
     @GetMapping("/bookings/{id}")
@@ -55,6 +64,16 @@ public class BookingController {
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
         return ResponseEntity.ok(this.bookingService.convertToResBookingDTO(bookingService.findBookingById(id)));
+    }
+
+    @GetMapping("/bookings/{id}/status")
+    @ApiMessage("Lấy trạng thái đặt phòng thành công")
+    public ResponseEntity<ResBookingStatusDTO> getBookingStatus(@PathVariable("id") Long id) {
+        log.info("REST request to get Booking status by id: {}", id);
+        if(id <= 0){
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
+        }
+        return ResponseEntity.ok(this.bookingService.getBookingStatus(id));
     }
 
     @GetMapping("/bookings")

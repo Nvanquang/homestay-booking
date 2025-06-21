@@ -41,6 +41,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             // Booking
             permissions.add(new Permission("Create booking", "/api/v1/bookings", "POST", "BOOKING"));
             permissions.add(new Permission("Get booking by ID", "/api/v1/bookings/{id}", "GET", "BOOKING"));
+            permissions.add(new Permission("Get booking sattus by ID", "/api/v1/bookings/{id}/status", "GET", "BOOKING"));
             permissions.add(new Permission("Get all bookings", "/api/v1/bookings", "GET", "BOOKING"));
             permissions.add(new Permission("Update booking", "/api/v1/bookings/{id}", "PATCH", "BOOKING"));
 
@@ -84,6 +85,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             permissions.add(new Permission("Get all users", "/api/v1/users", "GET", "USER"));
             permissions.add(new Permission("Update user", "/api/v1/users/{id}", "PATCH", "USER"));
             permissions.add(new Permission("Delete user", "/api/v1/users/{id}", "DELETE", "USER"));
+
+            // PaymentTransaction
+            permissions.add(new Permission("Get payment by ID", "/api/v1/payments/{id}", "GET", "PAYMENT"));
+            permissions.add(new Permission("Get all payments", "/api/v1/payments", "GET", "PAYMENT"));
 
             permissionRepository.saveAll(permissions);
         }

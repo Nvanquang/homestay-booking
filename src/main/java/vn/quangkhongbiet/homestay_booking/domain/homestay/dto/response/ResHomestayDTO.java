@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatus;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.address.Location;
 
 @Getter
 @Setter
@@ -21,7 +20,6 @@ public class ResHomestayDTO {
     private HomestayStatus status;
     private String address;
     private Integer guests;
-    private Location location;
     private Double longitude;
     private Double latitude;
     private List<String> images;

@@ -20,6 +20,7 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
@@ -51,12 +52,12 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     @ApiMessage("Lấy thông tin người dùng thành công")
-    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<ResUserDTO> getUserById(@PathVariable("id") Long id) {
         log.info("REST request to get User by id: {}", id);
         if (id <= 0 ){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idnull");
         }
-        return ResponseEntity.ok(userService.findUserById(id));
+        return ResponseEntity.ok(this.userService.convertToResUserDTO(userService.findUserById(id)));
     }
 
     @GetMapping("/users")

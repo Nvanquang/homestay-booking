@@ -1,7 +1,6 @@
 package vn.quangkhongbiet.homestay_booking.domain.booking.dto.response;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
@@ -10,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
-import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentMethod;
-import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentStatus;
 
 @Getter
 @Setter
@@ -30,9 +27,28 @@ public class ResBookingDTO {
     private BigDecimal discount;
     private BigDecimal totalAmount;
     private String note;
-    private PaymentStatus paymentStatus;
-    private PaymentMethod paymentMethod;
-    private Instant paymentDate;
     private ResUser user;
     private ResHomestay homestay;
+
+    @Getter
+    @Setter
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ResUser {
+        private Long id;
+        private String fullName;
+    }
+
+    @Getter
+    @Setter
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ResHomestay {
+        private Long id;
+        private String name;
+        private String address;
+    }
+
 }

@@ -4,14 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
-import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentMethod;
-import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentStatus;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
+import vn.quangkhongbiet.homestay_booking.domain.payment.entity.PaymentTransaction;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "bookings")
@@ -51,15 +51,6 @@ public class Booking {
     @Column(columnDefinition = "TEXT")
     private String note;
 
-    @NotNull(message = "Trạng thái thanh toán là bắt buộc")
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
-
-    private Instant paymentDate;
-
     private String requestId;
 
     @NotNull(message = "Người dùng là bắt buộc")
@@ -71,4 +62,8 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "homestay_id")
     private Homestay homestay;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private PaymentTransaction paymentTransaction;
 }

@@ -1,6 +1,5 @@
 package vn.quangkhongbiet.homestay_booking.domain.user.dto.response;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,5 +19,15 @@ public class ResUserDTO {
     private String phoneNumber;
     private String fullName;
     private Gender gender;
-    private ResUserRole role;
+    private ResRole role;
+
+    @Getter
+    @Setter
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ResRole {
+        private Long id;
+        private String name;
+    }
 }

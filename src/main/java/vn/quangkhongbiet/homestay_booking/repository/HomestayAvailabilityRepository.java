@@ -20,4 +20,6 @@ public interface HomestayAvailabilityRepository extends JpaRepository<HomestayAv
     List<HomestayAvailability> findByHomestayIdAndStatusAndDateBetween(Long homestayId, AvailabilityStatus status, LocalDate checkinDate, LocalDate checkoutDate);
 
     List<HomestayAvailability> findByDate(Instant date);
+
+    List<HomestayAvailability> findByHomestayIdAndDateBetween(Long homestayId, LocalDate checkinDate, LocalDate checkoutDate);
 }

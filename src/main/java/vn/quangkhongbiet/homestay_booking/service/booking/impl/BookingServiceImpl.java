@@ -13,22 +13,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
-import vn.quangkhongbiet.homestay_booking.domain.booking.constant.PaymentStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.BookingPrice;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResHomestay;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResUser;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingStatusDTO;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResVnpBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
+import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailability;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatus;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
+import vn.quangkhongbiet.homestay_booking.domain.payment.dto.request.InitPaymentRequest;
+import vn.quangkhongbiet.homestay_booking.domain.payment.dto.response.InitPaymentResponse;
 import vn.quangkhongbiet.homestay_booking.repository.BookingRepository;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayRepository;
 import vn.quangkhongbiet.homestay_booking.repository.UserRepository;
 import vn.quangkhongbiet.homestay_booking.service.booking.BookingService;
 import vn.quangkhongbiet.homestay_booking.service.booking.HomestayAvailabilityService;
 import vn.quangkhongbiet.homestay_booking.service.booking.PriceService;
+import vn.quangkhongbiet.homestay_booking.service.payment.VnpayPaymentService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
@@ -51,8 +54,10 @@ public class BookingServiceImpl implements BookingService {
     private final HomestayAvailabilityService availabilityService;
 
     private final PriceService priceService;
-    
+
     private final UserRepository userRepository;
+
+    private final VnpayPaymentService vnpayPaymentService;
 
     @Override
     public Boolean existsById(Long id) {
@@ -63,7 +68,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @SneakyThrows
     @Transactional
-    public Booking createBooking(ReqBooking request) {
+    public ResVnpBookingDTO createBooking(ReqBooking request) {
         validateRequest(request);
         validateHomestay(request);
 
@@ -79,7 +84,6 @@ public class BookingServiceImpl implements BookingService {
 
         final BookingPrice price = priceService.calculate(aDays);
         final Booking booking = Booking.builder()
-                .id(homestayId)
                 .user(this.userRepository.findById(request.getUserId()).get())
                 .homestay(this.homestayRepository.findById(request.getHomestayId()).get())
                 .checkinDate(checkinDate)
@@ -89,16 +93,53 @@ public class BookingServiceImpl implements BookingService {
                 .discount(price.getDiscount())
                 .totalAmount(price.getTotalAmount())
                 .note(request.getNote())
-                .status(BookingStatus.BOOKED) // đă đặt
-                .paymentStatus(PaymentStatus.PENDING) // chưa thanh toán
+                .status(BookingStatus.PAYMENT_PROCESSING) // đang trong tien trinh thanh toan
                 .requestId(request.getRequestId())
                 .build();
 
-        aDays.forEach(a -> a.setStatus(AvailabilityStatus.BOOKED));
+        aDays.forEach(a -> a.setStatus(AvailabilityStatus.HELD));
 
         availabilityService.saveAll(aDays);
-        bookingRepository.save(booking);
-        return booking;
+        Booking bookingDB = bookingRepository.save(booking);
+
+        InitPaymentRequest initPaymentRequest = InitPaymentRequest.builder()
+                .userId(booking.getUser().getId())
+                .amount(booking.getTotalAmount().longValue())
+                .txnRef(String.valueOf(bookingDB.getId()))
+                .requestId(booking.getRequestId())
+                .ipAddress(request.getIpAddress())
+                .build();
+
+        InitPaymentResponse initPaymentResponse = vnpayPaymentService.init(initPaymentRequest);
+
+        log.info("[request_id={}] User user_id={} created booking_id={} successfully", request.getRequestId(), request.getUserId(), booking.getId());
+        return ResVnpBookingDTO.builder()
+                .booking(this.convertToResBookingDTO(booking))
+                .payment(initPaymentResponse)
+                .build();
+    }
+
+    @Override
+    public Booking markBooked(Long bookingId){
+        Booking booking = this.bookingRepository.findById(bookingId).orElseThrow(() -> new EntityNotFoundException("Booking not found", ENTITY_NAME, "bookingnotfound"));
+
+        List<HomestayAvailability> aDays = this.availabilityService.getRange(booking.getHomestay().getId(), booking.getCheckinDate(), booking.getCheckoutDate());
+        booking.setStatus(BookingStatus.BOOKED);
+        aDays.forEach(day -> day.setStatus(AvailabilityStatus.BOOKED));
+
+        availabilityService.saveAll(aDays);
+        return bookingRepository.save(booking);
+    }
+
+    @Override
+    public ResBookingStatusDTO getBookingStatus(Long id) {
+        Booking booking = this.bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Booking not found", ENTITY_NAME, "bookingnotfound"));
+        return ResBookingStatusDTO.builder()
+        .bookingId(booking.getId())
+        .userId(booking.getUser().getId())
+        .homestayId(booking.getHomestay().getId())
+        .status(booking.getStatus())
+        .build();
     }
 
     public void validateRequest(ReqBooking request) {
@@ -121,9 +162,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public void validateHomestay(ReqBooking request) {
-        Homestay homestay = homestayRepository.findById(request.getHomestayId()).orElseThrow(() -> new EntityNotFoundException(
-                ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Homestay not found with id",
-                ENTITY_NAME, "homestaynotfound"));
+        Homestay homestay = homestayRepository.findById(request.getHomestayId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Homestay not found with id",
+                        ENTITY_NAME, "homestaynotfound"));
 
         if (homestay.getStatus() != HomestayStatus.ACTIVE) {
             throw new BadRequestAlertException("Homestay is not operating!",
@@ -139,7 +181,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking findBookingById(Long id) {
         log.debug("find Booking by id: {}", id);
-        return bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException (
+        return bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Booking not found with id", ENTITY_NAME,
                 "bookingnotfound"));
     }
@@ -171,7 +213,6 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findById(dto.getId()).map(existingBooking -> {
             validateBookingStatus(existingBooking);
             validateNewStatus(existingBooking, dto);
-            validatePaymentStatus(existingBooking, dto);
             updateBookingFields(existingBooking, dto);
             return bookingRepository.save(existingBooking);
         }).orElseThrow(() -> new EntityNotFoundException(ErrorConstants.ENTITY_NOT_FOUND_TYPE,
@@ -200,25 +241,9 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void validatePaymentStatus(Booking existingBooking, UpdateBookingDTO dto) {
-        if (dto.getPaymentStatus() == null)
-            return;
-        if (existingBooking.getPaymentStatus() == PaymentStatus.COMPLETED
-                && dto.getPaymentStatus() == PaymentStatus.FAILED) {
-            throw new BadRequestAlertException("Cannot change from COMPLETED to FAILED", ENTITY_NAME,
-                    "paymentstatusinvalid");
-        }
-    }
-
     private void updateBookingFields(Booking existingBooking, UpdateBookingDTO dto) {
         if (dto.getStatus() != null) {
             existingBooking.setStatus(dto.getStatus());
-        }
-        if (dto.getPaymentStatus() != null) {
-            existingBooking.setPaymentStatus(dto.getPaymentStatus());
-        }
-        if (dto.getPaymentDate() != null && dto.getStatus() == BookingStatus.COMPLETED) {
-            existingBooking.setPaymentDate(dto.getPaymentDate());
         }
     }
 
@@ -234,23 +259,23 @@ public class BookingServiceImpl implements BookingService {
                 .subtotal(booking.getSubtotal())
                 .discount(booking.getDiscount())
                 .totalAmount(booking.getTotalAmount())
-                .note(booking.getNote())
-                .paymentStatus(booking.getPaymentStatus())
-                .paymentMethod(booking.getPaymentMethod())
-                .paymentDate(booking.getPaymentDate());
+                .note(booking.getNote());
 
         // convert User to ResUser
-        ResUser resUser = booking.getUser() != null
-                ? new ResUser(booking.getUser().getId(), booking.getUser().getFullName())
-                : new ResUser(null, null);
+        ResBookingDTO.ResUser resUser = booking.getUser() != null
+                ? new ResBookingDTO.ResUser(booking.getUser().getId(), booking.getUser().getFullName())
+                : new ResBookingDTO.ResUser(null, null);
         builder.user(resUser);
 
         // convert Homestay to ResHomestay
-        ResHomestay resHomestay = booking.getHomestay() != null ? new ResHomestay(booking.getHomestay().getId(),
-                booking.getHomestay().getName(), booking.getHomestay().getAddress())
-                : new ResHomestay(null, null, null);
+        ResBookingDTO.ResHomestay resHomestay = booking.getHomestay() != null
+                ? new ResBookingDTO.ResHomestay(booking.getHomestay().getId(),
+                        booking.getHomestay().getName(), booking.getHomestay().getAddress())
+                : new ResBookingDTO.ResHomestay(null, null, null);
         builder.homestay(resHomestay);
         return builder.build();
     }
+
+    
 
 }

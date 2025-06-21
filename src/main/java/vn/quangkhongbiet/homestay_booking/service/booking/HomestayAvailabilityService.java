@@ -64,4 +64,10 @@ public class HomestayAvailabilityService {
             new EntityNotFoundException (ErrorConstants.ENTITY_NOT_FOUND_TYPE, "HomestayAvailability not found with id", "HomestayAvailability", "homestayavailabilitynotfound"));
     }
 
+    public List<HomestayAvailability> getRange(final Long homestayId,
+                                               final LocalDate checkinDate,
+                                               final LocalDate checkoutDate) {
+        return availabilityRepository.findByHomestayIdAndDateBetween(homestayId, checkinDate, checkoutDate.minusDays(1));
+    }
+
 }

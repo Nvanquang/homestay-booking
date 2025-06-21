@@ -65,7 +65,7 @@ public class PermissionController {
     public ResponseEntity<Permission> updatePartialPermission(@PathVariable("id") Long id, @Valid @RequestBody Permission permission) {
         log.info("REST request to update Permission partially, id: {}, body: {}", id, permission);
         if (permission.getId() <= 0) {
-            throw new BadRequestAlertException("Permission cannot be invalid", ENTITY_NAME, "invalidpermission");
+            throw new BadRequestAlertException("Permission ID cannot be invalid", ENTITY_NAME, "invalidpermission");
         }
         if(!id.equals(permission.getId())) {
             throw new BadRequestAlertException("Permission ID in path and body must match", ENTITY_NAME, "idnotmatch");

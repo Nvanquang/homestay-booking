@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
@@ -18,5 +19,16 @@ public class ResRoleDTO {
     private String name;
     private Boolean active;
     private String description;
-    private List<ResRolePermission> permissions;
+    private List<ResPermission> permissions;
+
+    @Getter
+    @Setter
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ResPermission {
+        private String apiPath;
+        private String method;
+        private String module;
+    }
 }

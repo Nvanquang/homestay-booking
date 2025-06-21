@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserRole;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
@@ -172,8 +171,8 @@ public class UserServiceImpl implements UserService {
                 .gender(user.getGender());
 
         // Map Role to ResRole
-        ResUserRole resRole = user.getRole() != null ? new ResUserRole(user.getRole().getId(), user.getRole().getName())
-                : new ResUserRole(null, null);
+        ResUserDTO.ResRole resRole = user.getRole() != null ? new ResUserDTO.ResRole(user.getRole().getId(), user.getRole().getName())
+                : new ResUserDTO.ResRole(null, null);
         builder.role(resRole);
     }
 

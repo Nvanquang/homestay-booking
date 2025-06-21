@@ -6,13 +6,19 @@ import org.springframework.data.jpa.domain.Specification;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingStatusDTO;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResVnpBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
 public interface BookingService {
     Boolean existsById(Long id);
 
-    Booking createBooking(ReqBooking request);
+    ResVnpBookingDTO createBooking(ReqBooking request);
+
+    Booking markBooked(Long bookingId);
+
+    ResBookingStatusDTO getBookingStatus(Long id);
 
     Booking findBookingById(Long id);
 

@@ -24,7 +24,6 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
 import vn.quangkhongbiet.homestay_booking.repository.AmenityRepository;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayRepository;
-import vn.quangkhongbiet.homestay_booking.repository.LocationRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
 import vn.quangkhongbiet.homestay_booking.utils.DateUtil;
@@ -48,8 +47,6 @@ public class HomestayServiceImpl implements HomestayService {
 
     private final AmenityRepository amenityRepository;
     
-    private final LocationRepository locationRepository;
-
     @Override
     public Boolean existsById(Long id) {
         log.debug("check Homestay exists by id: {}", id);
@@ -63,8 +60,6 @@ public class HomestayServiceImpl implements HomestayService {
 
         homestay.setAmenities(this.amenityRepository
                 .findByIdIn(homestay.getAmenities().stream().map(Amenity::getId).toList()));
-
-        homestay.setLocation(this.locationRepository.save(homestay.getLocation()));
 
         Homestay createdHomestay = homestayRepository.save(homestay);
 
@@ -226,8 +221,7 @@ public class HomestayServiceImpl implements HomestayService {
                 .address(homestay.getAddress())
                 .guests(homestay.getGuests())
                 .longitude(homestay.getLongitude())
-                .latitude(homestay.getLatitude())
-                .location(homestay.getLocation());
+                .latitude(homestay.getLatitude());
 
         // Map List<HomestayImage> to List<String>
         List<String> resImages = homestay.getImages() != null

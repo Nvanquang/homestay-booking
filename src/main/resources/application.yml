@@ -20,6 +20,14 @@ spring:
                 one-indexed-parameters: true
     # config pagination end
 
+payment:
+    vnpay:
+        tmn-code: ${TMN-CODE}   
+        secret-key: ${VNPAY_SECRET_KEY}
+        vnp_PayUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+        vnp_ReturnUrl: http://localhost:8080/vnpay
+        timeout: 15 # in minutes
+
 logging:
     level:
         org:

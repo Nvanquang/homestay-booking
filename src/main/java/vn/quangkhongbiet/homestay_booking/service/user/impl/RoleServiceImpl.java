@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRolePermission;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
 import vn.quangkhongbiet.homestay_booking.repository.PermissionRepository;
@@ -122,13 +121,13 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public ResRoleDTO convertToResRoleDTO(Role role) {
         log.debug("format to ResRoleDTO with role: {}", role);
-        List<ResRolePermission> permissions = role.getPermissions().stream()
-                .map(permission -> ResRolePermission.builder()
+        List<ResRoleDTO.ResPermission> permissions = role.getPermissions().stream()
+                .map(permission -> ResRoleDTO.ResPermission.builder()
                         .apiPath(permission.getApiPath())
                         .method(permission.getMethod())
                         .module(permission.getModule())
                         .build())
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
 
         ResRoleDTO resRoleDTO = ResRoleDTO.builder()
                 .id(role.getId())

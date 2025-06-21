@@ -6,7 +6,6 @@ import lombok.*;
 import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
 import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatus;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.address.Location;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -54,12 +53,6 @@ public class Homestay implements Auditable {
 
     @NotNull
     private Double latitude;
-
-    @NotNull(message = "Vị trí là bắt buộc")
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
-
 
     @OneToMany(mappedBy = "homestay", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "homestay" })
