@@ -12,6 +12,7 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,9 +31,12 @@ public class PaymentController {
     private final VnpayPaymentService paymentService;
 
     @GetMapping("/payments/vnpay_ipn")
-    public IpnResponse processIpn(HttpServletRequest request) {
+    public ResponseEntity<String> processIpn(HttpServletRequest request) {
         log.info("[VNPay Ipn] request: {}", request);
-        return ipnHandler.process(request);
+        IpnResponse response = ipnHandler.process(request);
+        return ResponseEntity.ok()
+        .contentType(MediaType.TEXT_PLAIN)
+        .body(response.getResponseCode() + "|" + response.getMessage());
     }
 
     @GetMapping("/payments/{id}")

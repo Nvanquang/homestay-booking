@@ -12,6 +12,7 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
 import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
@@ -39,6 +40,19 @@ public class RoleController {
                 .body(createdRole);
     }
 
+    @PostMapping("/roles/{id}/permissions")
+    @ApiMessage("Thêm permissison vào vai trò thành công")
+    public ResponseEntity<Role> addPermissionForRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
+        log.info("REST request to add permission for Role: id: {}, permissions: {}", id, role.getPermissions());
+        if (role.getId() <= 0) {
+            throw new BadRequestAlertException("Role id cannot be invalid", ENTITY_NAME, "invalidid");
+        }
+        if(!id.equals(role.getId())) {
+            throw new BadRequestAlertException("Role ID in path and body must match", ENTITY_NAME, "idnotmatch");
+        }
+        return ResponseEntity.ok(roleService.addPermissionForRole(role));
+    }
+
     @GetMapping("/roles/{id}")
     @ApiMessage("Lấy thông tin vai trò thành công")
     public ResponseEntity<ResRoleDTO> getRoleById(@PathVariable("id") Long id) {
@@ -61,7 +75,7 @@ public class RoleController {
 
     @PatchMapping("/roles/{id}")
     @ApiMessage("Cập nhật vai trò thành công")
-    public ResponseEntity<ResRoleDTO> updatePartialRole(@PathVariable("id") Long id, @Valid @RequestBody Role role) {
+    public ResponseEntity<ResRoleDTO> updatePartialRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
         log.info("REST request to update Role partially, id: {}, body: {}", id, role);
         if (role.getId() <= 0) {
             throw new BadRequestAlertException("Role invalid", ENTITY_NAME, "invalidrole");
@@ -81,6 +95,20 @@ public class RoleController {
             throw new BadRequestAlertException("Role ID cannot be null or invalid", ENTITY_NAME, "invalidid");
         }
         roleService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/roles/{id}/permissions")
+    @ApiMessage("Xóa permission khỏi vai trò thành công")
+    public ResponseEntity<Void> deletePermissionFromRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
+        log.info("REST request to delete permission from Role by id: {}, permissions: {}", id, role.getPermissions());
+        if (id == null || id <= 0) {
+            throw new BadRequestAlertException("Role ID cannot be null or invalid", ENTITY_NAME, "invalidid");
+        }
+        if(!id.equals(role.getId())) {
+            throw new BadRequestAlertException("Role ID in path and body must match", ENTITY_NAME, "idnotmatch");
+        }
+        roleService.deletePermissionFromRole(role);
         return ResponseEntity.noContent().build();
     }
 }

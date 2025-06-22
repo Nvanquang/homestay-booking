@@ -101,9 +101,9 @@ public class VnpayIpnServiceImpl implements VnpayIpnService {
             booking.setStatus(BookingStatus.PAYMENT_FAILED);
         }
 
-        bookingService.markBooked(booking.getId());
-        log.debug("[VNPay Ipn] saving PaymentTransaction for bookingId: {}", booking.getId());
+        bookingService.markBooked(booking.getId());       
         buildPaymentTransaction(fields, booking);
+        log.debug("[VNPay Ipn] successfull");
         return VnpIpnResponseConst.SUCCESS;
     }
 

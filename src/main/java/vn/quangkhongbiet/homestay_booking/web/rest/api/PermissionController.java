@@ -12,6 +12,7 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.service.user.PermissionService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
@@ -62,7 +63,7 @@ public class PermissionController {
 
     @PatchMapping("/permissions/{id}")
     @ApiMessage("Cập nhật permission thành công")
-    public ResponseEntity<Permission> updatePartialPermission(@PathVariable("id") Long id, @Valid @RequestBody Permission permission) {
+    public ResponseEntity<Permission> updatePartialPermission(@PathVariable("id") Long id, @Valid @RequestBody UpdatePermissionDTO permission) {
         log.info("REST request to update Permission partially, id: {}, body: {}", id, permission);
         if (permission.getId() <= 0) {
             throw new BadRequestAlertException("Permission ID cannot be invalid", ENTITY_NAME, "invalidpermission");

@@ -27,6 +27,22 @@ payment:
         vnp_PayUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
         vnp_ReturnUrl: http://localhost:8080/vnpay
         timeout: 15 # in minutes
+        
+# cloudinary
+cloudinary:
+    cloud_name: ${YOUR_CLOUD_NAME}
+    api_key: ${YOUR_API_KEY}
+    api_secret: ${YOUR_API_SECRET}
+
+
+security:
+    authentication:
+        jwt:
+            # This token must be encoded using Base64 and be at least 256 bits long 
+            # (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+            base64-secret: ${BASE64-SECRET}
+            access-token-validity-in-seconds: ${ACCESS-TOKEN-VALIDITY-IN-SECONDS}
+            refresh-token-validity-in-seconds: ${REFRESH-TOKEN-VALIDITY-IN-SECONDS}
 
 logging:
     level:
@@ -37,18 +53,3 @@ logging:
         vn:
             quangkhongbiet:
                 homestay_booking: DEBUG
-        
-# cloudinary
-cloudinary:
-    cloud_name: ${YOUR_CLOUD_NAME}
-    api_key: ${YOUR_API_KEY}
-    api_secret: ${YOUR_API_SECRET}
-
-security:
-    authentication:
-        jwt:
-            # This token must be encoded using Base64 and be at least 256 bits long 
-            # (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
-            base64-secret: ${BASE64-SECRET}
-            access-token-validity-in-seconds: ${ACCESS-TOKEN-VALIDITY-IN-SECONDS}
-            refresh-token-validity-in-seconds: ${REFRESH-TOKEN-VALIDITY-IN-SECONDS}

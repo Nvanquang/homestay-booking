@@ -177,7 +177,7 @@ public class HomestayServiceImpl implements HomestayService {
                         "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
         // Check if the homestay has images and remove them
         homestay.getImages().forEach(image -> {
-            this.homestayImageService.deleteImage(id);
+            this.homestayImageService.deleteImage(image.getId());
         });
 
         homestayRepository.deleteById(id);

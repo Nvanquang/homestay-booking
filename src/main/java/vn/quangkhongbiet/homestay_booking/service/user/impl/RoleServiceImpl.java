@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
@@ -87,7 +88,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public Role updatePartialRole(Role role) {
+    public Role updatePartialRole(UpdateRoleDTO role) {
         log.debug("update Role partially with role: {}", role);
         return this.roleRepository.findById(role.getId()).map(existingRole -> {
             if (role.getName() != null) {
@@ -96,16 +97,33 @@ public class RoleServiceImpl implements RoleService {
             if (role.getDescription() != null) {
                 existingRole.setDescription(role.getDescription());
             }
-
-            existingRole.setActive(role.getActive());
-
+            if(role.getActive() != null){
+                existingRole.setActive(role.getActive());
+            }
             if (role.getPermissions() != null && !role.getPermissions().isEmpty()) {
                 existingRole.setPermissions(this.permissionRepository
-                        .findByIdIn(role.getPermissions().stream().map(Permission::getId).toList()));
+                        .findByIdIn(role.getPermissions()));
             }
+            
             return this.roleRepository.save(existingRole);
         }).orElseThrow(() -> new BadRequestAlertException("Role with ID " + role.getId() + " not found", ENTITY_NAME,
                 "notfound"));
+    }
+
+    @Override
+    public Role addPermissionForRole(UpdateRoleDTO role) {
+        log.debug("add permission for Role with id = ", role.getId());
+        List<Long> permissions = role.getPermissions();
+        Role roleDB = this.roleRepository.findById(role.getId()).orElseThrow(() -> new BadRequestAlertException("Role not found", ENTITY_NAME, "rolenotfound"));
+        if (permissions != null && !permissions.isEmpty()) {
+            for (Long permissionId : permissions) {
+                Permission request = this.permissionRepository.findById(permissionId).orElseThrow(() -> new BadRequestAlertException("PermissionId not found", ENTITY_NAME, "permissionidnotfound"));
+                if (!roleDB.getPermissions().contains(request)) {
+                    roleDB.getPermissions().add(request);
+                }
+            }
+        }
+        return this.roleRepository.save(roleDB);
     }
 
     @Override
@@ -116,6 +134,22 @@ public class RoleServiceImpl implements RoleService {
             throw new BadRequestAlertException("Role with ID " + id + " not found", ENTITY_NAME, "notfound");
         }
         roleRepository.deleteById(id);
+    }
+
+    @Override
+    public void deletePermissionFromRole(UpdateRoleDTO role) {
+        log.debug("delete Permission from Role by id: {}", role.getId());
+        List<Long> permissions = role.getPermissions();
+        Role roleDB = this.roleRepository.findById(role.getId()).orElseThrow(() -> new BadRequestAlertException("Role not found", ENTITY_NAME, "rolenotfound"));
+        if (permissions != null && !permissions.isEmpty()) {
+            for (Long permissionId : permissions) {
+                Permission request = this.permissionRepository.findById(permissionId).orElseThrow(() -> new BadRequestAlertException("PermissionId not found", ENTITY_NAME, "permissionidnotfound"));
+                if (roleDB.getPermissions().contains(request)) {
+                    roleDB.getPermissions().remove(request);
+                }
+            }
+        }
+        this.roleRepository.save(roleDB);
     }
 
     @Override
