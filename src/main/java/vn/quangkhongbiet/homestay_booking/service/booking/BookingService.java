@@ -1,5 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.service.booking;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -21,6 +23,8 @@ public interface BookingService {
     ResBookingStatusDTO getBookingStatus(Long id);
 
     Booking findBookingById(Long id);
+
+    List<ResBookingDTO> findBookingByUser(Long userId);
 
     PagedResponse findAllBookings(Specification<Booking> spec, Pageable pageable);
 

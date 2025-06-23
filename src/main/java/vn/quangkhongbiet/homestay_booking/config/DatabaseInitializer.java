@@ -41,6 +41,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             // Booking
             permissions.add(new Permission("Create booking", "/api/v1/bookings", "POST", "BOOKING"));
             permissions.add(new Permission("Get booking by ID", "/api/v1/bookings/{id}", "GET", "BOOKING"));
+            permissions.add(new Permission("Get booking history by userId", "/api/v1/bookings/history/{userId}", "GET", "BOOKING"));
             permissions.add(new Permission("Get booking sattus by ID", "/api/v1/bookings/{id}/status", "GET", "BOOKING"));
             permissions.add(new Permission("Get all bookings", "/api/v1/bookings", "GET", "BOOKING"));
             permissions.add(new Permission("Update booking", "/api/v1/bookings/{id}", "PATCH", "BOOKING"));
@@ -61,9 +62,6 @@ public class DatabaseInitializer implements CommandLineRunner {
 
             // Availability
             permissions.add(new Permission("Create homestay availability", "/api/v1/availabilities", "POST", "AVAILABILITY"));
-
-            // Location
-            permissions.add(new Permission("Get location by ID", "/api/v1/locations/{id}", "GET", "LOCATION"));
 
             // Permission
             permissions.add(new Permission("Create permission", "/api/v1/permissions", "POST", "PERMISSION"));

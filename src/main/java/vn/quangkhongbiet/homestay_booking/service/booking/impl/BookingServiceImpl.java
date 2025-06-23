@@ -187,6 +187,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public List<ResBookingDTO> findBookingByUser(Long userId) {
+        List<Booking> bookingHistory = this.bookingRepository.findByUser(this.userRepository.findById(userId).get());
+        return bookingHistory.stream().map(item -> this.convertToResBookingDTO(item)).toList();
+    }
+
+    @Override
     public PagedResponse findAllBookings(Specification<Booking> spec, Pageable pageable) {
         log.debug("find all Booking with spec: {}, pageable: {}", spec, pageable);
         Page<Booking> pageBookings = this.bookingRepository.findAll(spec, pageable);
@@ -275,7 +281,5 @@ public class BookingServiceImpl implements BookingService {
         builder.homestay(resHomestay);
         return builder.build();
     }
-
-    
 
 }

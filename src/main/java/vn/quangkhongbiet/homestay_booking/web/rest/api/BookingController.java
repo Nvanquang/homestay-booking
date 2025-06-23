@@ -1,5 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.web.rest.api;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBooking
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResVnpBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.service.booking.BookingService;
+import vn.quangkhongbiet.homestay_booking.service.user.UserService;
 import vn.quangkhongbiet.homestay_booking.utils.VnpayUtil;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
@@ -41,6 +44,8 @@ public class BookingController {
     private static final String ENTITY_NAME = "booking";
 
     private final BookingService bookingService;
+
+    private final UserService userService;
 
     @PostMapping("/bookings")
     @ApiMessage("Đặt phòng thành công")
@@ -64,6 +69,19 @@ public class BookingController {
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
         return ResponseEntity.ok(this.bookingService.convertToResBookingDTO(bookingService.findBookingById(id)));
+    }
+
+    @GetMapping("/bookings/history/{userId}")
+    @ApiMessage("Lấy lịch sử đặt phòng thành công")
+    public ResponseEntity<List<ResBookingDTO>> getBookingHistory(@PathVariable("userId") Long userId) {
+        log.info("REST request to get Booking History by userId: {}", userId);
+        if(userId <= 0){
+            throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
+        }
+        if(!this.userService.existsById(userId)){
+            throw new BadRequestAlertException("User not found", ENTITY_NAME, "usernotfound");
+        }
+        return ResponseEntity.ok(this.bookingService.findBookingByUser(userId));
     }
 
     @GetMapping("/bookings/{id}/status")
