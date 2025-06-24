@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Review;
 import vn.quangkhongbiet.homestay_booking.domain.payment.entity.PaymentTransaction;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 
@@ -66,4 +67,8 @@ public class Booking {
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonIgnore
     private PaymentTransaction paymentTransaction;
+
+    @OneToOne(mappedBy = "booking")
+    @JsonIgnore
+    private Review review;
 }

@@ -7,6 +7,7 @@ import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
 import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatus;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.Instant;
@@ -68,6 +69,10 @@ public class Homestay implements Auditable {
     )
     @JsonIgnoreProperties(value = { "homestays" })
     private List<Amenity> amenities;
+
+    @OneToMany(mappedBy = "homestay")
+    @JsonIgnore
+    private List<Review> reviews;
 
     private Instant createdAt;
     private String createdBy;

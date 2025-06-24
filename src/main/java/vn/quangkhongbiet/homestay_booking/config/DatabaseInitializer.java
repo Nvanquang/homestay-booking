@@ -90,6 +90,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             permissions.add(new Permission("Get payment by ID", "/api/v1/payments/{id}", "GET", "PAYMENT"));
             permissions.add(new Permission("Get all payments", "/api/v1/payments", "GET", "PAYMENT"));
 
+            // Review 
+            permissions.add(new Permission("Create a new Review", "/api/v1/reviews", "POST", "REVIEW"));
+            permissions.add(new Permission("Get all reviews of homestay", "/api/v1/reviews/homestay/{homestayId}", "GET", "REVIEW"));
+
             permissionRepository.saveAll(permissions);
         }
 
