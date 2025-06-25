@@ -1,7 +1,5 @@
 package vn.quangkhongbiet.homestay_booking.web.rest.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -12,6 +10,7 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.service.user.PermissionService;
@@ -21,12 +20,11 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class PermissionController {
-
-    private static final Logger log = LoggerFactory.getLogger(PermissionController.class);
     
     private static final String ENTITY_NAME = "Permission";
 

@@ -2,19 +2,17 @@ package vn.quangkhongbiet.homestay_booking.service.booking;
 
 import java.math.BigDecimal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class DiscountService {
-
-    private static final Logger log = LoggerFactory.getLogger(DiscountService.class);
 
     private static final Integer LONG_STAY = 3;
     
     private static final BigDecimal LONG_STAY_DISCOUNT_RATE = BigDecimal.valueOf(-0.05);
-
 
     // Return a negative amount
     public BigDecimal getDiscountAmount(BigDecimal subtotal, Integer nights) {

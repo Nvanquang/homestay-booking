@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.BookingPrice;
@@ -36,14 +37,11 @@ import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
-
-    private static final Logger log = LoggerFactory.getLogger(BookingServiceImpl.class);
 
     private static final String ENTITY_NAME = "booking";
 
@@ -255,7 +253,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResBookingDTO convertToResBookingDTO(Booking booking) {
-        log.debug("convert to ResBookingDTO with booking: {}", booking);
         var builder = ResBookingDTO.builder()
                 .id(booking.getId())
                 .checkinDate(booking.getCheckinDate())

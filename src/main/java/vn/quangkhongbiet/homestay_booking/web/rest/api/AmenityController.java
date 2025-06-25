@@ -2,6 +2,7 @@ package vn.quangkhongbiet.homestay_booking.web.rest.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,15 +17,12 @@ import vn.quangkhongbiet.homestay_booking.service.homestay.AmenityService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class AmenityController {
-
-    private static final Logger log = LoggerFactory.getLogger(AmenityController.class);
     
     private static final String ENTITY_NAME = "Amenity";
 

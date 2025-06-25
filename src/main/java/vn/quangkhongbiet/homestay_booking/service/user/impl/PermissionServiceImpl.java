@@ -1,7 +1,5 @@
 package vn.quangkhongbiet.homestay_booking.service.user.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -9,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.repository.PermissionRepository;
@@ -17,11 +16,10 @@ import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PermissionServiceImpl implements PermissionService {
-
-    private static final Logger log = LoggerFactory.getLogger(PermissionServiceImpl.class);
 
     private static final String ENTITY_NAME = "Permission";
 

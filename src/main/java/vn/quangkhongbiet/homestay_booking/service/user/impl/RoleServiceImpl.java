@@ -7,10 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
@@ -21,11 +20,10 @@ import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
-
-    private static final Logger log = LoggerFactory.getLogger(RoleServiceImpl.class);
 
     private static final String ENTITY_NAME = "Role";
 
@@ -154,7 +152,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public ResRoleDTO convertToResRoleDTO(Role role) {
-        log.debug("format to ResRoleDTO with role: {}", role);
         List<ResRoleDTO.ResPermission> permissions = role.getPermissions().stream()
                 .map(permission -> ResRoleDTO.ResPermission.builder()
                         .apiPath(permission.getApiPath())

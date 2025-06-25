@@ -9,10 +9,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
@@ -26,11 +25,10 @@ import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EmailAlreadyUsedException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
-    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private static final String ENTITY_NAME = "User";
 
@@ -156,7 +154,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResUserDTO convertToResUserDTO(User user) {
-        log.debug("convert to ResUserDTO with user: {}", user);
         var builder = ResUserDTO.builder();
         mapCommonFields(user, builder);
         return builder.build();

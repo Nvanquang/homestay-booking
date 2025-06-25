@@ -2,8 +2,6 @@ package vn.quangkhongbiet.homestay_booking.web.rest.api;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -21,6 +19,7 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
@@ -34,12 +33,11 @@ import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class BookingController {
-
-    private static final Logger log = LoggerFactory.getLogger(BookingController.class);
     
     private static final String ENTITY_NAME = "booking";
 

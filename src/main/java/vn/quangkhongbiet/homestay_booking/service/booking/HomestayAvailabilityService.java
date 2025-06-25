@@ -4,12 +4,11 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailability;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailabilityId;
@@ -18,14 +17,13 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class HomestayAvailabilityService {
 
     private static final Integer NIGHT_MAX = 365;
     
-    private static final Logger log = LoggerFactory.getLogger(HomestayAvailabilityService.class);
-
     private final HomestayAvailabilityRepository availabilityRepository;
 
     public List<HomestayAvailability> checkAvailabilityForBooking(final Long homestayId,

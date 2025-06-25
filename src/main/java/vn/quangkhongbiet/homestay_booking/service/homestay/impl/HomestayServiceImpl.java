@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.ReqHomestaySearch;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayDTO;
@@ -30,14 +31,11 @@ import vn.quangkhongbiet.homestay_booking.utils.DateUtil;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class HomestayServiceImpl implements HomestayService {
-
-    private static final Logger log = LoggerFactory.getLogger(HomestayServiceImpl.class);
 
     private static final String ENTITY_NAME = "homestay";
 
@@ -185,7 +183,6 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public ResHomestayCreateDTO convertToResCreateHomestayDTO(Homestay homestay) {
-        log.debug("convert to ResHomestayCreateDTO with homestay: {}", homestay);
         var builder = ResHomestayCreateDTO.builder();
         mapCommonFields(homestay, builder);
         return builder
@@ -196,7 +193,6 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public ResHomestayUpdatedDTO convertToResUpdatedHomestayDTO(Homestay homestay) {
-        log.debug("convert to ResHomestayUpdatedDTO with homestay: {}", homestay);
         var builder = ResHomestayUpdatedDTO.builder();
         mapCommonFields(homestay, builder);
         return builder
@@ -207,7 +203,6 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     public ResHomestayDTO convertToResHomestayDTO(Homestay homestay) {
-        log.debug("convert to ResHomestayDTO with homestay: {}", homestay);
         var builder = ResHomestayDTO.builder();
         mapCommonFields(homestay, builder);
         return builder.build();

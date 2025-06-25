@@ -7,20 +7,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.repository.AmenityRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.AmenityService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AmenityServiceImpl implements AmenityService {
-
-    private static final Logger log = LoggerFactory.getLogger(AmenityServiceImpl.class);
     
     private static final String ENTITY_NAME = "Amenity";
 
