@@ -29,4 +29,10 @@ public class HomestayImage {
     private String imageUrl;
 
     private String publicId;
+
+    @PreRemove
+    private void removeFromHomestay(){
+        this.homestay.getImages().remove(this);
+        this.homestay = null;
+    }
 }

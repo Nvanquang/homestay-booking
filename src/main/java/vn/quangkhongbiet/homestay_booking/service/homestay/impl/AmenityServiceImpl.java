@@ -1,7 +1,5 @@
 package vn.quangkhongbiet.homestay_booking.service.homestay.impl;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -77,12 +75,6 @@ public class AmenityServiceImpl implements AmenityService {
                     ENTITY_NAME,
                     "idnotfound");
         }
-        // Check if the amenity is used in any homestay and remove it from those
-        // homestays
-        Optional<Amenity> amenity = amenityRepository.findById(id);
-        Amenity currentAmenity = amenity.get();
-        currentAmenity.getHomestays().forEach(homestay -> homestay.getAmenities().remove(currentAmenity));
-
         amenityRepository.deleteById(id);
     }
 }

@@ -78,4 +78,16 @@ public class Homestay implements Auditable {
     private String createdBy;
     private Instant updatedAt;
     private String updatedBy;
+
+    @PreRemove
+    private void preRemoveCleanup() {
+        for (Amenity a : amenities) {
+            a.getHomestays().remove(this);
+        }
+        amenities.clear();
+
+        for (Review r : reviews) {
+            r.setHomestay(null);
+        }
+    }
 }

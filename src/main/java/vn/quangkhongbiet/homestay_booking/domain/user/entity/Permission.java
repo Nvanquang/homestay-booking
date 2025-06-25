@@ -48,6 +48,13 @@ public class Permission implements Auditable {
     private Instant updatedAt;
     private String updatedBy;
 
+    @PreRemove
+    private void removeFromRoles(){
+        for (Role role : this.roles) {
+            role.getPermissions().remove(this);
+        }
+    }
+
     public Permission(String name, String apiPath, String method, String module) {
         this.name = name;
         this.apiPath = apiPath;

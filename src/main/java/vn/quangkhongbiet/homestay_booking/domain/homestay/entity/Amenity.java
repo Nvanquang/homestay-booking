@@ -28,4 +28,11 @@ public class Amenity {
     @ManyToMany(mappedBy = "amenities", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Homestay> homestays;
+
+    @PreRemove
+    private void removeFromHomestays(){
+        for(Homestay h : this.homestays){
+            h.getAmenities().remove(this);
+        }
+    }
 }

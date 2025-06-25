@@ -103,10 +103,6 @@ public class PermissionServiceImpl implements PermissionService {
         if (!permissionRepository.existsById(id)) {
             throw new BadRequestAlertException("Permission with ID " + id + " not found", ENTITY_NAME, "notfound");
         }
-        // delete permission in role
-        Permission currentPermission = this.permissionRepository.findById(id).get();
-        currentPermission.getRoles().forEach(role -> role.getPermissions().remove(currentPermission));
-
         permissionRepository.deleteById(id);
     }
 }

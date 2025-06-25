@@ -52,4 +52,14 @@ public class Role implements Auditable {
     private Instant updatedAt;
     private String updatedBy;
 
+    @PreRemove
+    private void removeFromPermissions(){
+        for (Permission permission : this.permissions) {
+            permission.getRoles().remove(this);
+        }
+        for (User user : this.users){
+            user.setRole(null);
+        }
+    }
+
 }

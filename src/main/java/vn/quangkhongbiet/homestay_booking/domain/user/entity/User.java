@@ -68,4 +68,16 @@ public class User implements Auditable {
     private Instant updatedAt;
     private String updatedBy;
 
+    @PreRemove
+    private void preRemoveCleanup(){
+        if (this.role != null) {
+            this.role.getUsers().remove(this);
+            this.role = null;
+        }
+
+        for (Booking booking : bookings) {
+            booking.setUser(null);
+        }
+    }
+
 }
