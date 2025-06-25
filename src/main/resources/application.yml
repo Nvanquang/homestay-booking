@@ -11,6 +11,23 @@ spring:
         username: ${DB_USERNAME}
         password: ${DB_PASSWORD}
         driver-class-name: ${DRIVER_CLASS_NAME}
+
+        # config connection pooling
+        type: com.zaxxer.hikari.HikariDataSource
+        hikari:
+            poolName: Hikari
+            auto-commit: false
+            maximum-pool-size: 10         
+            minimum-idle: 2                
+            idle-timeout: 30000             # Thời gian (ms) tối đa một kết nối nhàn rỗi được giữ trước khi bị loại bỏ (30 giây)
+            connection-timeout: 10000       # Thời gian chờ tối đa (ms) để lấy được connection từ pool (30 giây)
+            max-lifetime: 1800000           # Thời gian tối đa (ms) mà một connection có thể tồn tại trong pool (30 phút)
+            data-source-properties:
+                cachePrepStmts: true        # Cho phép tái sử dụng câu lệnh SQL (lưu trong cache)
+                prepStmtCacheSize: 250      # Số lượng SQL tối đa được lưu trữ
+                prepStmtCacheSqlLimit: 2048 # Giới hạn dộ dài SQL
+                
+        # config connection pooling end
     application:
         name: homestay
     # config pagination start 1, not 0
@@ -50,6 +67,10 @@ logging:
             springframework:
                 web:
                     client: DEBUG
+        com:
+            zaxxer:
+                hikari: DEBUG
+
         vn:
             quangkhongbiet:
                 homestay_booking: DEBUG
