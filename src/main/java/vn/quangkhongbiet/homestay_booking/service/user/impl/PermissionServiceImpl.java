@@ -53,7 +53,7 @@ public class PermissionServiceImpl implements PermissionService {
     public Permission getById(Long id) {
         log.debug("find Permission by id: {}", id);
         return permissionRepository.findById(id)
-                .orElseThrow(() -> new BadRequestAlertException("Permission with ID " + id + " not found", ENTITY_NAME, "notfound"));
+                .orElseThrow(() -> new EntityNotFoundException("Permission with ID " + id + " not found", ENTITY_NAME, "notfound"));
     }
 
     @Override
@@ -91,7 +91,7 @@ public class PermissionServiceImpl implements PermissionService {
             existingPermission.setModule(permission.getModule());
         }
         return this.permissionRepository.save(existingPermission);
-    }).orElseThrow(() -> new BadRequestAlertException("Permission with ID " + permission.getId() + " not found", ENTITY_NAME, "notfound"));
+    }).orElseThrow(() -> new EntityNotFoundException("Permission with ID " + permission.getId() + " not found", ENTITY_NAME, "notfound"));
     }
 
     @Override
@@ -99,7 +99,7 @@ public class PermissionServiceImpl implements PermissionService {
     public void deleteById(Long id) {
         log.debug("delete Permission by id: {}", id);
         if (!permissionRepository.existsById(id)) {
-            throw new BadRequestAlertException("Permission with ID " + id + " not found", ENTITY_NAME, "notfound");
+            throw new EntityNotFoundException("Permission with ID " + id + " not found", ENTITY_NAME, "notfound");
         }
         permissionRepository.deleteById(id);
     }

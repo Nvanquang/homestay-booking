@@ -19,6 +19,7 @@ import vn.quangkhongbiet.homestay_booking.repository.RoleRepository;
 import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Slf4j
 @Service
@@ -44,6 +45,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Role findByName(String name) {
+        return this.roleRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException("Role not found", ENTITY_NAME, "rolenotfound"));
+    }
+
+    @Override
     @Transactional
     public Role createRole(Role role) {
         log.debug("create Role with role: {}", role);
@@ -59,7 +65,7 @@ public class RoleServiceImpl implements RoleService {
     public Role getById(Long id) {
         log.debug("find Role by id: {}", id);
         return roleRepository.findById(id)
-                .orElseThrow(() -> new BadRequestAlertException("Role with ID " + id + " not found", ENTITY_NAME,
+                .orElseThrow(() -> new EntityNotFoundException("Role with ID " + id + " not found", ENTITY_NAME,
                         "notfound"));
     }
 
@@ -112,10 +118,10 @@ public class RoleServiceImpl implements RoleService {
     public Role addPermissionForRole(UpdateRoleDTO role) {
         log.debug("add permission for Role with id = ", role.getId());
         List<Long> permissions = role.getPermissions();
-        Role roleDB = this.roleRepository.findById(role.getId()).orElseThrow(() -> new BadRequestAlertException("Role not found", ENTITY_NAME, "rolenotfound"));
+        Role roleDB = this.roleRepository.findById(role.getId()).orElseThrow(() -> new EntityNotFoundException("Role not found", ENTITY_NAME, "rolenotfound"));
         if (permissions != null && !permissions.isEmpty()) {
             for (Long permissionId : permissions) {
-                Permission request = this.permissionRepository.findById(permissionId).orElseThrow(() -> new BadRequestAlertException("PermissionId not found", ENTITY_NAME, "permissionidnotfound"));
+                Permission request = this.permissionRepository.findById(permissionId).orElseThrow(() -> new EntityNotFoundException("PermissionId not found", ENTITY_NAME, "permissionidnotfound"));
                 if (!roleDB.getPermissions().contains(request)) {
                     roleDB.getPermissions().add(request);
                 }
@@ -129,7 +135,7 @@ public class RoleServiceImpl implements RoleService {
     public void deleteById(Long id) {
         log.debug("delete Role by id: {}", id);
         if (!roleRepository.existsById(id)) {
-            throw new BadRequestAlertException("Role with ID " + id + " not found", ENTITY_NAME, "notfound");
+            throw new EntityNotFoundException("Role with ID " + id + " not found", ENTITY_NAME, "notfound");
         }
         roleRepository.deleteById(id);
     }
@@ -138,10 +144,10 @@ public class RoleServiceImpl implements RoleService {
     public void deletePermissionFromRole(UpdateRoleDTO role) {
         log.debug("delete Permission from Role by id: {}", role.getId());
         List<Long> permissions = role.getPermissions();
-        Role roleDB = this.roleRepository.findById(role.getId()).orElseThrow(() -> new BadRequestAlertException("Role not found", ENTITY_NAME, "rolenotfound"));
+        Role roleDB = this.roleRepository.findById(role.getId()).orElseThrow(() -> new EntityNotFoundException("Role not found", ENTITY_NAME, "rolenotfound"));
         if (permissions != null && !permissions.isEmpty()) {
             for (Long permissionId : permissions) {
-                Permission request = this.permissionRepository.findById(permissionId).orElseThrow(() -> new BadRequestAlertException("PermissionId not found", ENTITY_NAME, "permissionidnotfound"));
+                Permission request = this.permissionRepository.findById(permissionId).orElseThrow(() -> new EntityNotFoundException("PermissionId not found", ENTITY_NAME, "permissionidnotfound"));
                 if (roleDB.getPermissions().contains(request)) {
                     roleDB.getPermissions().remove(request);
                 }
@@ -169,4 +175,6 @@ public class RoleServiceImpl implements RoleService {
                 .build();
         return resRoleDTO;
     }
+
+    
 }

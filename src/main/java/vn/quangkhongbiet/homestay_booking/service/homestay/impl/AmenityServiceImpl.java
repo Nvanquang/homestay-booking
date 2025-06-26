@@ -41,7 +41,7 @@ public class AmenityServiceImpl implements AmenityService {
     public Amenity findAmenityById(Long id) {
         log.debug("find Amenity by id: {}", id);
         return amenityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
-                "Amwnity not found with id!",
+                "Amenity not found with id!",
                 ENTITY_NAME,
                 "idnotfound"));
     }

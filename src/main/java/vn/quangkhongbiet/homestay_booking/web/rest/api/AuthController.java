@@ -25,6 +25,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.ReqLoginDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResLoginDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
+import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
 import vn.quangkhongbiet.homestay_booking.utils.SecurityUtil;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
@@ -42,6 +43,8 @@ public class AuthController {
     private final SecurityUtil securityUtil;
     
     private final UserService userService;
+
+    private final RoleService roleService;
 
     @Value("${security.authentication.jwt.access-token-validity-in-seconds}")
     private long accessTokenExpiration;
@@ -195,7 +198,9 @@ public class AuthController {
                         .password(register.getPassword())
                         .phoneNumber(register.getPhoneNumber())
                         .fullName(register.getFullName())
-                        .gender(register.getGender()).build();
+                        .gender(register.getGender())
+                        .role(this.roleService.findByName("User"))
+                        .build();
 
         User created = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(created));

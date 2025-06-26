@@ -13,6 +13,8 @@ public interface RoleService {
 
     public boolean isExistByName(String name);
 
+    public Role findByName(String name);
+
     public Role createRole(Role role);
 
     public Role addPermissionForRole(UpdateRoleDTO role);
