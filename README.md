@@ -70,6 +70,7 @@ Dự án xây dựng hệ thống backend cho nền tảng đặt phòng homesta
 | Dev Tools | Postman, DBeaver, Git, GitHub, VSCode |
 | Payment | VNPay IPN |
 | Build Tool | Gradle - Groovy |
+| Tài liệu API | Swagger UI, Springdoc OpenAPI |
 
 ## 📁 Cấu trúc thư mục
 ```
