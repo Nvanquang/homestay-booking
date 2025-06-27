@@ -14,6 +14,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailabi
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailabilityId;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayAvailabilityRepository;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ErrorConstants;
 
@@ -43,7 +44,7 @@ public class HomestayAvailabilityService {
                 checkoutDate.minusDays(1)
         );
         if (aDays.isEmpty() || aDays.size() < nights) {
-            throw new BadRequestAlertException("Homestay has been rented!", "homestayAvailability", "homestaybusy");
+            throw new ConflictException("Homestay has been rented!", "homestayAvailability", "homestaybusy");
         }
 
         return aDays;

@@ -12,7 +12,7 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.repository.AmenityRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.AmenityService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Slf4j
@@ -28,7 +28,7 @@ public class AmenityServiceImpl implements AmenityService {
     public Amenity createAmenity(Amenity amenity) {
         log.debug("create Amenity with amenity: {}", amenity);
         if (amenityRepository.existsByName(amenity.getName())) {
-            throw new BadRequestAlertException(
+            throw new ConflictException(
                     "Amenity already exists",
                     ENTITY_NAME,
                     "amenityexists");

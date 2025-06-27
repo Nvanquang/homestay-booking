@@ -25,6 +25,7 @@ import vn.quangkhongbiet.homestay_booking.service.homestay.ReviewService;
 import vn.quangkhongbiet.homestay_booking.utils.SecurityUtil;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Slf4j
@@ -85,7 +86,7 @@ public class ReviewServiceImpl implements ReviewService {
         Booking booking = bookingOpt.get();
 
         if (reviewRepository.existsByBookingId(booking.getId())) {
-            throw new BadRequestAlertException("You have already rated this homestay", ENTITY_NAME, "haverated");
+            throw new ConflictException("You have already rated this homestay", ENTITY_NAME, "haverated");
         }
 
         return booking;

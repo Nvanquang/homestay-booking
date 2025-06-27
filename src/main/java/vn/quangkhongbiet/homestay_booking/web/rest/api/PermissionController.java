@@ -20,10 +20,16 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Tag(name = "Permission", description = "Quản lý quyền người dùng")
 public class PermissionController {
     
     private static final String ENTITY_NAME = "Permission";
@@ -32,6 +38,11 @@ public class PermissionController {
 
     @PostMapping("/permissions")
     @ApiMessage("Tạo permission thành công")
+    @Operation(summary = "Tạo permission", description = "Tạo mới một permission trong hệ thống")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Tạo thành công"),
+        @ApiResponse(responseCode = "409", description = "Dữ liệu đã tồn tại")
+    })
     public ResponseEntity<Permission> createPermission(@Valid @RequestBody Permission permission) {
         log.info("REST request to create Permission: {}", permission);
         Permission createdPermission = permissionService.createPermission(permission);
@@ -41,6 +52,12 @@ public class PermissionController {
 
     @GetMapping("/permissions/{id}")
     @ApiMessage("Lấy permission thành công")
+    @Operation(summary = "Lấy permission theo ID", description = "Trả về permission theo ID cụ thể")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Tìm thấy permission"),
+        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
+        @ApiResponse(responseCode = "404", description = "Không tìm thấy permission")
+    })
     public ResponseEntity<Permission> getPermissionById(@PathVariable("id") Long id) {
         log.info("REST request to get Permission by id: {}", id);
         if (id == null || id <= 0) {
@@ -51,6 +68,10 @@ public class PermissionController {
 
     @GetMapping("/permissions")
     @ApiMessage("Lấy danh sách permission thành công")
+    @Operation(summary = "Lấy danh sách permission", description = "Trả về danh sách permission có phân trang, lọc")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Thành công")
+    })
     public ResponseEntity<PagedResponse> getAllPermissions(
             @Filter Specification<Permission> spec,
             Pageable pageable) {
@@ -61,6 +82,13 @@ public class PermissionController {
 
     @PatchMapping("/permissions/{id}")
     @ApiMessage("Cập nhật permission thành công")
+    @Operation(summary = "Cập nhật permission", description = "Cập nhật thông tin permission theo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cập nhật thành công"),
+        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
+        @ApiResponse(responseCode = "404", description = "Không tìm thấy permission"),
+         @ApiResponse(responseCode = "500", description = "Không thể cập nhật permission")
+    })
     public ResponseEntity<Permission> updatePartialPermission(@PathVariable("id") Long id, @Valid @RequestBody UpdatePermissionDTO permission) {
         log.info("REST request to update Permission partially, id: {}, body: {}", id, permission);
         if (permission.getId() <= 0) {
@@ -75,6 +103,12 @@ public class PermissionController {
 
     @DeleteMapping("/permissions/{id}")
     @ApiMessage("Xóa permission thành công")
+    @Operation(summary = "Xóa permission", description = "Xóa permission theo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Xóa thành công"),
+        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
+        @ApiResponse(responseCode = "404", description = "Không tìm thấy permission")
+    })
     public ResponseEntity<Map<String, String>> deletePermissionById(@PathVariable("id") Long id) {
         log.info("REST request to delete Permission by id: {}", id);
         if (id == null || id <= 0) {

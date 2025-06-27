@@ -31,11 +31,16 @@ import vn.quangkhongbiet.homestay_booking.utils.SecurityUtil;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.UnauthorizedException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Tag(name = "Auth", description = "Xác thực và quản lý tài khoản người dùng")
 public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -50,6 +55,11 @@ public class AuthController {
     private long accessTokenExpiration;
 
     @PostMapping("/auth/login")
+    @Operation(summary = "Đăng nhập", description = "Đăng nhập vào hệ thống và nhận access token, refresh token")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Đăng nhập thành công"),
+        @ApiResponse(responseCode = "401", description = "Sai thông tin đăng nhập")
+    })
     public ResponseEntity<Object> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
         log.info("REST request to login Auth: {}", loginDTO);
         // xác thực người dùng => cần viết hàm loadUserByUsername
@@ -80,6 +90,11 @@ public class AuthController {
 
     @GetMapping("/auth/account")
     @ApiMessage("Lấy thông tin tài khoản")
+    @Operation(summary = "Lấy thông tin tài khoản", description = "Lấy thông tin tài khoản hiện tại")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Thành công"),
+        @ApiResponse(responseCode = "404", description = "Không tìm thấy user")
+    })
     public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount() {
         log.info("REST request to get Auth account");
         // get information of user from SecurityContext
@@ -102,6 +117,11 @@ public class AuthController {
 
     @GetMapping("/auth/refresh")
     @ApiMessage("Lấy lại access token")
+    @Operation(summary = "Làm mới access token", description = "Lấy lại access token bằng refresh token")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Làm mới thành công"),
+        @ApiResponse(responseCode = "401", description = "Refresh token không hợp lệ hoặc hết hạn")
+    })
     public ResponseEntity<Object> handleRefreshToken(@CookieValue(name = "refresh_token") String refresh_token) {
         log.info("REST request to refresh Auth token, refresh_token: {}", refresh_token);
         // check refresh token
@@ -166,6 +186,10 @@ public class AuthController {
 
     @PostMapping("/auth/logout")
     @ApiMessage("Đăng xuất thành công")
+    @Operation(summary = "Đăng xuất", description = "Đăng xuất khỏi hệ thống và xóa refresh token")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Đăng xuất thành công")
+    })
     public ResponseEntity<Void> handleLogout() {
         log.info("REST request to logout Auth");
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
@@ -190,6 +214,11 @@ public class AuthController {
     }
 
     @PostMapping("/auth/register")
+    @Operation(summary = "Đăng ký tài khoản", description = "Đăng ký tài khoản mới cho người dùng")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Đăng ký thành công"),
+        @ApiResponse(responseCode = "409", description = "Email đã tồn tại")
+    })
     public ResponseEntity<ResUserCreateDTO> register(@Valid @RequestBody RegisterUserDTO register) {
         log.info("REST request to register Auth: {}", register);
         User user = User.builder()

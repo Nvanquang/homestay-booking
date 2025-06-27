@@ -8,6 +8,8 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +21,19 @@ public class CustomResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return true;
+        try {
+            String path = ((ServletWebRequest) RequestContextHolder.getRequestAttributes())
+                    .getRequest()
+                    .getRequestURI();
+
+            return !(path.startsWith("/v3/api-docs") ||
+                     path.startsWith("/swagger") ||
+                     path.startsWith("/swagger-ui") ||
+                     path.startsWith("/actuator") ||
+                     path.contains("api-docs"));
+        } catch (Exception e) {
+            return true; // fallback an toàn
+        }
     }
 
     @Override
@@ -33,20 +47,32 @@ public class CustomResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         HttpServletResponse httpResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int status = httpResponse.getStatus();
 
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatus(status);
-
-        if (body instanceof String || body instanceof Resource) {
+        if (body instanceof byte[] || body instanceof String || body instanceof Resource) {
             return body;
         }
-        // case error
+
+        if (body instanceof vn.quangkhongbiet.homestay_booking.web.dto.response.ApiResponse) {
+            return body;
+        }
+
+        // Tránh can thiệp vào các response không phải JSON như Swagger
+        if (selectedContentType != null && !selectedContentType.includes(MediaType.APPLICATION_JSON)) {
+            return body;
+        }
+
         if (status >= 400) {
-        	return body;
-        } else {// case success
-            ApiMessage apiMessage = returnType.getMethodAnnotation(ApiMessage.class);
-            apiResponse.setData(body);
-            apiResponse.setMessage(apiMessage != null ? apiMessage.value() : "CALL API SUCCESS");
-            apiResponse.setTimestamp(java.time.Instant.now());
+            return body;
+        }
+
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatus(status);
+        apiResponse.setData(body);
+        apiResponse.setMessage("CALL API SUCCESS");
+        apiResponse.setTimestamp(java.time.Instant.now());
+
+        ApiMessage apiMessage = returnType.getMethodAnnotation(ApiMessage.class);
+        if (apiMessage != null) {
+            apiResponse.setMessage(apiMessage.value());
         }
 
         return apiResponse;

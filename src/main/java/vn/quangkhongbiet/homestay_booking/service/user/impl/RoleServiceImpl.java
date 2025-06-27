@@ -19,6 +19,7 @@ import vn.quangkhongbiet.homestay_booking.repository.RoleRepository;
 import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Slf4j
@@ -54,7 +55,7 @@ public class RoleServiceImpl implements RoleService {
     public Role createRole(Role role) {
         log.debug("create Role with role: {}", role);
         if(this.roleRepository.existsByName(role.getName())) {
-            throw new BadRequestAlertException("Role with name " + role.getName() + " already exists", ENTITY_NAME, "nameexists");
+            throw new ConflictException("Role with name " + role.getName() + " already exists", ENTITY_NAME, "nameexists");
         }
         role.setPermissions(
                 this.permissionRepository.findByIdIn(role.getPermissions().stream().map(Permission::getId).toList()));

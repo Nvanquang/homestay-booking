@@ -18,11 +18,16 @@ import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Tag(name = "Role", description = "Quản lý vai trò người dùng")
 public class RoleController {
     
     private static final String ENTITY_NAME = "Role";
@@ -31,6 +36,11 @@ public class RoleController {
 
     @PostMapping("/roles")
     @ApiMessage("Tạo mới vai trò thành công")
+    @Operation(summary = "Tạo role", description = "Tạo mới một vai trò trong hệ thống")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Tạo thành công"),
+        @ApiResponse(responseCode = "409", description = "Dữ liệu đã tồn tại")
+    })
     public ResponseEntity<Role> createRole(@Valid @RequestBody Role role) {
         log.info("REST request to create Role: {}", role);
         Role createdRole = roleService.createRole(role);
@@ -40,6 +50,11 @@ public class RoleController {
 
     @PostMapping("/roles/{id}/permissions")
     @ApiMessage("Thêm permissison vào vai trò thành công")
+    @Operation(summary = "Thêm permission cho role", description = "Thêm permission vào role theo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Thành công"),
+        @ApiResponse(responseCode = "400", description = "ID không hợp lệ")
+    })
     public ResponseEntity<Role> addPermissionForRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
         log.info("REST request to add permission for Role: id: {}, permissions: {}", id, role.getPermissions());
         if (role.getId() <= 0) {
@@ -53,6 +68,12 @@ public class RoleController {
 
     @GetMapping("/roles/{id}")
     @ApiMessage("Lấy thông tin vai trò thành công")
+    @Operation(summary = "Lấy role theo ID", description = "Trả về role theo ID cụ thể")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Tìm thấy role"),
+        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
+        @ApiResponse(responseCode = "404", description = "Không tìm thấy role")
+    })
     public ResponseEntity<ResRoleDTO> getRoleById(@PathVariable("id") Long id) {
         log.info("REST request to get Role by id: {}", id);
         if (id == null || id <= 0) {
@@ -63,6 +84,10 @@ public class RoleController {
 
     @GetMapping("/roles")
     @ApiMessage("Lấy danh sách vai trò thành công")
+    @Operation(summary = "Lấy danh sách role", description = "Trả về danh sách role có phân trang, lọc")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Thành công")
+    })
     public ResponseEntity<PagedResponse> getAllRoles(
             @Filter Specification<Role> spec,
             Pageable pageable) {
@@ -73,6 +98,13 @@ public class RoleController {
 
     @PatchMapping("/roles/{id}")
     @ApiMessage("Cập nhật vai trò thành công")
+    @Operation(summary = "Cập nhật role", description = "Cập nhật thông tin role theo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cập nhật thành công"),
+        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
+        @ApiResponse(responseCode = "404", description = "Không tìm thấy role"),
+        @ApiResponse(responseCode = "500", description = "Không thể cập nhật role")
+    })
     public ResponseEntity<ResRoleDTO> updatePartialRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
         log.info("REST request to update Role partially, id: {}, body: {}", id, role);
         if (role.getId() <= 0) {
@@ -87,6 +119,12 @@ public class RoleController {
 
     @DeleteMapping("/roles/{id}")
     @ApiMessage("Xóa vai trò thành công")
+    @Operation(summary = "Xóa role", description = "Xóa role theo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Xóa thành công"),
+        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
+        @ApiResponse(responseCode = "404", description = "Không tìm thấy role")
+    })
     public ResponseEntity<Void> deleteRoleById(@PathVariable("id") Long id) {
         log.info("REST request to delete Role by id: {}", id);
         if (id == null || id <= 0) {
@@ -98,6 +136,12 @@ public class RoleController {
 
     @DeleteMapping("/roles/{id}/permissions")
     @ApiMessage("Xóa permission khỏi vai trò thành công")
+    @Operation(summary = "Xóa permission khỏi role", description = "Xóa permission khỏi role theo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Xóa thành công"),
+        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
+        @ApiResponse(responseCode = "404", description = "Không tìm thấy role")
+    })
     public ResponseEntity<Void> deletePermissionFromRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
         log.info("REST request to delete permission from Role by id: {}, permissions: {}", id, role.getPermissions());
         if (id == null || id <= 0) {

@@ -27,7 +27,7 @@ spring:
                 prepStmtCacheSize: 250      # Số lượng SQL tối đa được lưu trữ
                 prepStmtCacheSqlLimit: 2048 # Giới hạn dộ dài SQL
                 
-        # config connection pooling end
+        # end config connection pooling end
     application:
         name: homestay
     # config pagination start 1, not 0
@@ -74,3 +74,10 @@ logging:
         vn:
             quangkhongbiet:
                 homestay_booking: DEBUG
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /v3/api-docs   #BẮT BUỘC: yêu cầu Swagger UI load đúng file JSON thật
+  api-docs:
+    enabled: true

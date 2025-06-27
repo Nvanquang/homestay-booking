@@ -13,7 +13,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.repository.PermissionRepository;
 import vn.quangkhongbiet.homestay_booking.service.user.PermissionService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Slf4j
@@ -40,11 +40,8 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public Permission createPermission(Permission permission) {
         log.debug("create Permission with permission: {}", permission);
-        if (permission == null) {
-            throw new BadRequestAlertException("Permission cannot be null", ENTITY_NAME, "nullpermission");
-        }
         if(permissionRepository.existsByApiPathAndMethodAndModule(permission.getApiPath() , permission.getMethod(), permission.getModule())) {
-            throw new EntityNotFoundException("Permission with the same API path, method, and module already exists", ENTITY_NAME, "duplicatepermission");
+            throw new ConflictException("Permission with the same API path, method, and module already exists", ENTITY_NAME, "duplicatepermission");
         }
         return permissionRepository.save(permission);
     }

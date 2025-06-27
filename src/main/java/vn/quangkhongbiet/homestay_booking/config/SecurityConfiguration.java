@@ -26,7 +26,7 @@ public class SecurityConfiguration {
                 http
                         .csrf(c -> c.disable())
                         .authorizeHttpRequests(authz -> authz
-                                .requestMatchers("/api/v1/auth/**", "/vnpay").permitAll()
+                                .requestMatchers("/api/v1/auth/**", "/vnpay", "/swagger-ui/**","/v3/api-docs/**", "/swagger-ui.html").permitAll()
                                 .requestMatchers(HttpMethod.GET,
                                         "/api/v1/payments/vnpay_ipn",
                                         "/api/v1/amenities/{id}",
