@@ -47,6 +47,12 @@ Dự án xây dựng hệ thống backend cho nền tảng đặt phòng homesta
 - Tạo, phân quyền, gán vai trò động cho user
 - Truy vấn lịch sử đặt phòng theo người dùng
 
+### 📘 Tài liệu API (Swagger)
+- Hệ thống sử dụng Swagger UI để cung cấp giao diện tài liệu API REST.
+- Tự động hiển thị toàn bộ endpoint, hỗ trợ nhập liệu và test trực tiếp trên giao diện web.
+- Hỗ trợ xác thực bằng Bearer Token để thử các API bảo mật.
+- Truy cập: http://localhost:8080/swagger-ui/index.html
+
 ## 🧱 Kiến trúc hệ thống
 
 - Kiến trúc phân tầng: `Controller → Service → Repository → Database`
