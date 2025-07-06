@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RequestMapping("/api/v1")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Payment", description = "Quản lý thanh toán homestay")
+@Tag(name = "Payment", description = "Payment management")
 public class PaymentController {
 
     private final VnpayIpnService ipnHandler;
@@ -39,15 +39,15 @@ public class PaymentController {
     private final VnpayPaymentService paymentService;
 
     @GetMapping("/payments/vnpay_ipn")
-    @Operation(summary = "Xử lý IPN từ VNPay", description = "Nhận và xử lý kết quả thanh toán từ VNPay gửi về theo chuẩn IPN")
+    @Operation(summary = "Process IPN from VNPay", description = "Receive and process payment result from VNPay via IPN standard")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Giao dịch được xử lý", content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class), examples = {
-                    @ExampleObject(name = "Thành công", value = "00|Giao dịch thành công"),
-                    @ExampleObject(name = "Dữ liệu không hợp lệ", value = "01|Mã giao dịch không hợp lệ"),
-                    @ExampleObject(name = "Lỗi giao dịch", value = "02|Giao dịch bị lỗi"),
-                    @ExampleObject(name = "Lỗi số tiền", value = "04|Số tiền không hợp lệ"),
-                    @ExampleObject(name = "Thiếu tham số", value = "97|Thiếu tham số trong yêu cầu"),
-                    @ExampleObject(name = "Lỗi hệ thống", value = "99|Lỗi không xác định")
+            @ApiResponse(responseCode = "200", description = "Transaction processed", content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class), examples = {
+                    @ExampleObject(name = "Success", value = "00|Transaction successful"),
+                    @ExampleObject(name = "Invalid data", value = "01|Invalid transaction code"),
+                    @ExampleObject(name = "Transaction error", value = "02|Transaction error"),
+                    @ExampleObject(name = "Invalid amount", value = "04|Invalid amount"),
+                    @ExampleObject(name = "Missing parameter", value = "97|Missing parameter in request"),
+                    @ExampleObject(name = "System error", value = "99|Unknown error")
             }))
     })
     public ResponseEntity<String> processIpn(HttpServletRequest request) {
@@ -59,12 +59,12 @@ public class PaymentController {
     }
 
     @GetMapping("/payments/{id}")
-    @ApiMessage("Lấy PaymentTransaction thành công")
-    @Operation(summary = "Lấy PaymentTransaction theo ID", description = "Trả về PaymentTransaction theo ID cụ thể")
+    @ApiMessage("Get PaymentTransaction successfully")
+    @Operation(summary = "Get PaymentTransaction by ID", description = "Return PaymentTransaction by specific ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tìm thấy PaymentTransaction"),
-            @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-            @ApiResponse(responseCode = "404", description = "Không tìm thấy PaymentTransaction")
+            @ApiResponse(responseCode = "200", description = "PaymentTransaction found"),
+            @ApiResponse(responseCode = "400", description = "Invalid ID"),
+            @ApiResponse(responseCode = "404", description = "PaymentTransaction not found")
     })
     public ResponseEntity<PaymentTransaction> getPaymentTransactionById(@PathVariable("id") Long id) {
         log.info("REST request to get PaymentTransaction by id: {}", id);
@@ -75,10 +75,10 @@ public class PaymentController {
     }
 
     @GetMapping("/payments")
-    @ApiMessage("Lấy danh sách PaymentTransaction thành công")
-    @Operation(summary = "Lấy danh sách PaymentTransaction", description = "Trả về danh sách PaymentTransaction có phân trang, lọc")
+    @ApiMessage("Get PaymentTransaction list successfully")
+    @Operation(summary = "Get PaymentTransaction list", description = "Return paginated and filtered PaymentTransaction list")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Thành công")
+            @ApiResponse(responseCode = "200", description = "Success")
     })
     public ResponseEntity<PagedResponse> getAllPaymentTransaction(
             @Filter Specification<PaymentTransaction> spec,

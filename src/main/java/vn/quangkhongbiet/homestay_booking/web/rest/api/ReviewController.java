@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-@Tag(name = "Review", description = "Quản lý đánh giá homestay")
+@Tag(name = "Review", description = "Review management")
 public class ReviewController {
 
     private static final String ENTITY_NAME = "Review";
@@ -46,12 +46,12 @@ public class ReviewController {
     private final FilterSpecificationConverter fsc;
 
     @PostMapping("/reviews")
-    @ApiMessage("Tạo review thành công")
-    @Operation(summary = "Tạo review", description = "Tạo mới một review cho homestay")
+    @ApiMessage("Review created successfully")
+    @Operation(summary = "Create review", description = "Create a new review for homestay")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Tạo thành công"),
-        @ApiResponse(responseCode = "404", description = "Người dùng không tồn tại"),
-        @ApiResponse(responseCode = "409", description = "Dữ liệu đã tồn tại")
+        @ApiResponse(responseCode = "201", description = "Created successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "409", description = "Data already exists")
     })
     public ResponseEntity<ResReviewDTO> createReview(@RequestBody @Valid ReqReviewDTO dto) {
         log.info("REST request to create Review by request: {}", dto);
@@ -59,12 +59,12 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/homestay/{homestayId}")
-    @ApiMessage("Lấy danh sách review theo homestay thành công")
-    @Operation(summary = "Lấy danh sách review theo homestay", description = "Trả về danh sách review của một homestay")
+    @ApiMessage("Get review list by homestay successfully")
+    @Operation(summary = "Get review list by homestay", description = "Return review list of a homestay")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Thành công"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy homestay")
+        @ApiResponse(responseCode = "200", description = "Success"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "Homestay not found")
     })
     public ResponseEntity<PagedResponse> getReviews(
             @PathVariable("homestayId") Long homestayId,

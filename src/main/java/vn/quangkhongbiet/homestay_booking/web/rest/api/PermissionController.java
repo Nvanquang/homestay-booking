@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "Permission", description = "Quản lý quyền người dùng")
+@Tag(name = "Permission", description = "Permission management")
 public class PermissionController {
     
     private static final String ENTITY_NAME = "Permission";
@@ -37,11 +37,11 @@ public class PermissionController {
     private final PermissionService permissionService;
 
     @PostMapping("/permissions")
-    @ApiMessage("Tạo permission thành công")
-    @Operation(summary = "Tạo permission", description = "Tạo mới một permission trong hệ thống")
+    @ApiMessage("Permission created successfully")
+    @Operation(summary = "Create permission", description = "Create a new permission in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Tạo thành công"),
-        @ApiResponse(responseCode = "409", description = "Dữ liệu đã tồn tại")
+        @ApiResponse(responseCode = "201", description = "Created successfully"),
+        @ApiResponse(responseCode = "409", description = "Data already exists")
     })
     public ResponseEntity<Permission> createPermission(@Valid @RequestBody Permission permission) {
         log.info("REST request to create Permission: {}", permission);
@@ -51,12 +51,12 @@ public class PermissionController {
     }
 
     @GetMapping("/permissions/{id}")
-    @ApiMessage("Lấy permission thành công")
-    @Operation(summary = "Lấy permission theo ID", description = "Trả về permission theo ID cụ thể")
+    @ApiMessage("Get permission successfully")
+    @Operation(summary = "Get permission by ID", description = "Return permission by specific ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Tìm thấy permission"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy permission")
+        @ApiResponse(responseCode = "200", description = "Permission found"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "Permission not found")
     })
     public ResponseEntity<Permission> getPermissionById(@PathVariable("id") Long id) {
         log.info("REST request to get Permission by id: {}", id);
@@ -67,10 +67,10 @@ public class PermissionController {
     }
 
     @GetMapping("/permissions")
-    @ApiMessage("Lấy danh sách permission thành công")
-    @Operation(summary = "Lấy danh sách permission", description = "Trả về danh sách permission có phân trang, lọc")
+    @ApiMessage("Get all permissions successfully")
+    @Operation(summary = "Get permission list", description = "Return paginated and filtered permission list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Thành công")
+        @ApiResponse(responseCode = "200", description = "Success")
     })
     public ResponseEntity<PagedResponse> getAllPermissions(
             @Filter Specification<Permission> spec,
@@ -81,13 +81,12 @@ public class PermissionController {
     }
 
     @PatchMapping("/permissions/{id}")
-    @ApiMessage("Cập nhật permission thành công")
-    @Operation(summary = "Cập nhật permission", description = "Cập nhật thông tin permission theo ID")
+    @ApiMessage("Permission updated successfully")
+    @Operation(summary = "Update permission", description = "Update permission information by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Cập nhật thành công"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy permission"),
-         @ApiResponse(responseCode = "500", description = "Không thể cập nhật permission")
+        @ApiResponse(responseCode = "200", description = "Updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "Permission not found")
     })
     public ResponseEntity<Permission> updatePartialPermission(@PathVariable("id") Long id, @Valid @RequestBody UpdatePermissionDTO permission) {
         log.info("REST request to update Permission partially, id: {}, body: {}", id, permission);

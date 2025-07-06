@@ -38,11 +38,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Tag(name = "Auth", description = "Authentication and user account management")
 public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -57,10 +59,10 @@ public class AuthController {
     private long accessTokenExpiration;
 
     @PostMapping("/auth/login")
-    @Operation(summary = "Đăng nhập", description = "Đăng nhập vào hệ thống và nhận access token, refresh token")
+    @Operation(summary = "Login", description = "Login to the system and receive access token, refresh token")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Đăng nhập thành công"),
-        @ApiResponse(responseCode = "401", description = "Sai thông tin đăng nhập")
+        @ApiResponse(responseCode = "200", description = "Login successful"),
+        @ApiResponse(responseCode = "401", description = "Invalid login information")
     })
     public ResponseEntity<Object> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
         log.info("REST request to login Auth: {}", loginDTO);
@@ -98,11 +100,11 @@ public class AuthController {
     }
 
     @GetMapping("/auth/account")
-    @ApiMessage("Lấy thông tin tài khoản")
-    @Operation(summary = "Lấy thông tin tài khoản", description = "Lấy thông tin tài khoản hiện tại")
+    @ApiMessage("Get account information")
+    @Operation(summary = "Get account information", description = "Get current account information")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Thành công"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy user")
+        @ApiResponse(responseCode = "200", description = "Success"),
+        @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount() {
         log.info("REST request to get Auth account");
@@ -125,11 +127,11 @@ public class AuthController {
     }
 
     @GetMapping("/auth/refresh")
-    @ApiMessage("Lấy lại access token")
-    @Operation(summary = "Làm mới access token", description = "Lấy lại access token bằng refresh token")
+    @ApiMessage("Get new access token")
+    @Operation(summary = "Refresh access token", description = "Get new access token using refresh token")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Làm mới thành công"),
-        @ApiResponse(responseCode = "401", description = "Refresh token không hợp lệ hoặc hết hạn")
+        @ApiResponse(responseCode = "200", description = "Refresh successful"),
+        @ApiResponse(responseCode = "401", description = "Invalid or expired refresh token")
     })
     public ResponseEntity<Object> handleRefreshToken(@CookieValue(name = "refresh_token") String refresh_token) {
         log.info("REST request to refresh Auth token, refresh_token: {}", refresh_token);
@@ -140,7 +142,7 @@ public class AuthController {
         // check user by email and token
         User currentUser = this.userService.findUserByRefreshTokenAndEmail(refresh_token, email);
         if (currentUser == null) {
-            throw new UnauthorizedException("Refresh token không hợp lệ hoặc đã hết hạn!", "Authentication",
+            throw new UnauthorizedException("Refresh token is invalid or expired!", "Authentication",
                     "invalid_refresh_token");
         }
 
@@ -194,10 +196,10 @@ public class AuthController {
     }
 
     @PostMapping("/auth/logout")
-    @ApiMessage("Đăng xuất thành công")
-    @Operation(summary = "Đăng xuất", description = "Đăng xuất khỏi hệ thống và xóa refresh token")
+    @ApiMessage("Logout successful")
+    @Operation(summary = "Logout", description = "Logout from the system and remove refresh token")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Đăng xuất thành công")
+        @ApiResponse(responseCode = "200", description = "Logout successful")
     })
     public ResponseEntity<Void> handleLogout() {
         log.info("REST request to logout Auth");
@@ -224,11 +226,11 @@ public class AuthController {
 
     @Transactional
     @PostMapping("/auth/register")
-    @Operation(summary = "Đăng ký tài khoản", description = "Đăng ký tài khoản mới cho người dùng")
+    @Operation(summary = "Register account", description = "Register a new user account")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Đăng ký thành công"),
-        @ApiResponse(responseCode = "409", description = "Email đã tồn tại"),
-        @ApiResponse(responseCode = "429", description = "Quá nhiều yêu cầu OTP")
+        @ApiResponse(responseCode = "201", description = "Registration successful"),
+        @ApiResponse(responseCode = "409", description = "Email already exists"),
+        @ApiResponse(responseCode = "429", description = "Too many OTP requests")
     })
     public ResponseEntity<ResUserCreateDTO> register(@Valid @RequestBody RegisterUserDTO register) {
         log.info("REST request to register Auth: {}", register);
@@ -250,11 +252,11 @@ public class AuthController {
     }
 
     @PostMapping("/auth/verify-otp")
-    @Operation(summary = "Xác thực OTP", description = "Xác thực OTP cho tài khoản người dùng. Nếu thành công, tài khoản sẽ được đánh dấu đã xác thực.")
+    @Operation(summary = "Verify OTP", description = "Verify OTP for user account. If successful, the account will be marked as verified.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Xác thực thành công, trả về thông tin user"),
-        @ApiResponse(responseCode = "401", description = "Email không tồn tại hoặc null"),
-        @ApiResponse(responseCode = "404", description = "OTP không tồn tại hoặc đã hết hạn")
+        @ApiResponse(responseCode = "201", description = "Verification successful, return user information"),
+        @ApiResponse(responseCode = "401", description = "Email does not exist or is null"),
+        @ApiResponse(responseCode = "404", description = "OTP does not exist or has expired")
     })
     public ResponseEntity<ResUserUpdatedDTO> verifyOtp(@RequestBody VerifyOtpRequest req) {
         boolean isOtpValid = otpService.validateOTP(req.getEmail(), req.getOtp());

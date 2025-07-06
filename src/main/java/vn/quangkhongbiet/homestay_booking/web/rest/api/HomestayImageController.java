@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "HomestayImage", description = "Quản lý hình ảnh homestay")
+@Tag(name = "HomestayImage", description = "Homestay image management")
 public class HomestayImageController {
     
     private static final String ENTITY_NAME = "HomestayImage";
@@ -29,11 +29,11 @@ public class HomestayImageController {
     private final HomestayImageService homestayImageService;
 
     @PostMapping("/homestay/{homestayId}/images")
-    @ApiMessage("Upload homestay images thành công")
-    @Operation(summary = "Upload hình ảnh homestay", description = "Upload nhiều hình ảnh cho một homestay")
+    @ApiMessage("Upload homestay images successfully")
+    @Operation(summary = "Upload homestay images", description = "Upload multiple images for a homestay")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Upload thành công"),
-        @ApiResponse(responseCode = "400", description = "Dữ liệu không hợp lệ")
+        @ApiResponse(responseCode = "200", description = "Upload successful"),
+        @ApiResponse(responseCode = "400", description = "Invalid data")
     })
     public ResponseEntity<List<HomestayImage>> uploadHomestayImages(
             @PathVariable("homestayId") Long homestayId,
@@ -52,11 +52,11 @@ public class HomestayImageController {
     }
 
     @GetMapping("/homestay/{homestayId}/images")
-    @ApiMessage("Lấy hình ảnh theo homestayID thành công")
-    @Operation(summary = "Lấy hình ảnh theo homestay", description = "Lấy danh sách hình ảnh của một homestay")
+    @ApiMessage("Get images by homestay ID successfully")
+    @Operation(summary = "Get images by homestay", description = "Get image list of a homestay")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Thành công"),
-        @ApiResponse(responseCode = "404", description = "Homestay không tồn tại")
+        @ApiResponse(responseCode = "200", description = "Success"),
+        @ApiResponse(responseCode = "404", description = "Homestay not found")
     })
     public ResponseEntity<List<HomestayImage>> findHomestayImageByHomestayId(
             @PathVariable("homestayId") Long homestayId) {
@@ -66,12 +66,12 @@ public class HomestayImageController {
     }
 
     @DeleteMapping("/homestay-images/{id}")
-    @ApiMessage("Xoá hình ảnh theo ID thành công")
-    @Operation(summary = "Xoá hình ảnh", description = "Xoá hình ảnh theo ID")
+    @ApiMessage("Delete image by ID successfully")
+    @Operation(summary = "Delete image", description = "Delete image by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Xoá thành công"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy hình ảnh")
+        @ApiResponse(responseCode = "204", description = "Deleted successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "Image not found")
     })
     public ResponseEntity<Void> deleteImage(@PathVariable("id") Long id) {
         log.info("REST request to delete HomestayImage by id: {}", id);

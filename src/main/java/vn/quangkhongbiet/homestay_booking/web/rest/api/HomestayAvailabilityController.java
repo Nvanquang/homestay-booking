@@ -24,17 +24,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RestController
 @RequestMapping("api/v1")
 @RequiredArgsConstructor
-@Tag(name = "HomestayAvailability", description = "Quản lý phòng trống homestay")
+@Tag(name = "HomestayAvailability", description = "Homestay availability management")
 public class HomestayAvailabilityController {
     
     private final HomestayAvailabilityService availabilityService;
 
     @PostMapping("/availabilities")
-    @ApiMessage("Tạo phòng trống thành công")
-    @Operation(summary = "Tạo phòng trống", description = "Tạo mới danh sách phòng trống cho homestay")
+    @ApiMessage("Homestay availability created successfully")
+    @Operation(summary = "Create homestay availability", description = "Create a new list of homestay availabilities")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Tạo thành công"),
-        @ApiResponse(responseCode = "400", description = "Dữ liệu không hợp lệ")
+        @ApiResponse(responseCode = "201", description = "Created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid data")
     })
     public ResponseEntity<HomestayAvailability> createHomestayAvailability(@Valid @RequestBody List<HomestayAvailability> availabilities) {
         log.info("REST request to create HomestayAvailability: {}", availabilities);

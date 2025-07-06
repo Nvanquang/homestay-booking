@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1")
-@Tag(name = "User", description = "Quản lý người dùng")
+@Tag(name = "User", description = "User management")
 public class UserController {
     
     private static final String ENTITY_NAME = "user";
@@ -46,11 +46,11 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    @ApiMessage("Tạo người dùng thành công")
-    @Operation(summary = "Tạo user", description = "Tạo mới một user trong hệ thống")
+    @ApiMessage("User created successfully")
+    @Operation(summary = "Create user", description = "Create a new user in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Tạo thành công"),
-        @ApiResponse(responseCode = "409", description = "Dữ liệu đã tồn tại")
+        @ApiResponse(responseCode = "201", description = "Created successfully"),
+        @ApiResponse(responseCode = "409", description = "Data already exists")
     })
     public ResponseEntity<ResUserCreateDTO> createUser(@Valid @RequestBody User user) {
         log.info("REST request to create User: {}", user);
@@ -59,12 +59,12 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    @ApiMessage("Lấy thông tin người dùng thành công")
-    @Operation(summary = "Lấy user theo ID", description = "Trả về user theo ID cụ thể")
+    @ApiMessage("Get user information successfully")
+    @Operation(summary = "Get user by ID", description = "Return user by specific ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Tìm thấy user"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy user")
+        @ApiResponse(responseCode = "200", description = "User found"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<ResUserDTO> getUserById(@PathVariable("id") Long id) {
         log.info("REST request to get User by id: {}", id);
@@ -75,10 +75,10 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    @ApiMessage("Lấy tất cả người dùng thành công")
-    @Operation(summary = "Lấy danh sách user", description = "Trả về danh sách user có phân trang, lọc")
+    @ApiMessage("Get all users successfully")
+    @Operation(summary = "Get user list", description = "Return paginated and filtered user list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Thành công")
+        @ApiResponse(responseCode = "200", description = "Success")
     })
     public ResponseEntity<PagedResponse> getAllUsers(Pageable pageable, @Filter Specification<User> spec) {
         log.info("REST request to get all Users, pageable: {}", pageable);
@@ -86,13 +86,13 @@ public class UserController {
     }
 
     @PatchMapping("/users/{id}")
-    @ApiMessage("Cập nhật người dùng thành công")
-    @Operation(summary = "Cập nhật user", description = "Cập nhật thông tin user theo ID")
+    @ApiMessage("User updated successfully")
+    @Operation(summary = "Update user", description = "Update user information by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Cập nhật thành công"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy user"),
-        @ApiResponse(responseCode = "500", description = "Không thể cập nhật user")
+        @ApiResponse(responseCode = "200", description = "Updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "500", description = "Cannot update user")
     })
     public ResponseEntity<ResUserUpdatedDTO> updatePartialUser(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserDTO dto) {
         log.info("REST request to update User partially, id: {}, body: {}", id, dto);
@@ -107,12 +107,12 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    @ApiMessage("Xóa người dùng thành công")
-    @Operation(summary = "Xóa user", description = "Xóa user theo ID")
+    @ApiMessage("User deleted successfully")
+    @Operation(summary = "Delete user", description = "Delete user by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Xóa thành công"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy user")
+        @ApiResponse(responseCode = "204", description = "Deleted successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         log.info("REST request to delete User by id: {}", id);

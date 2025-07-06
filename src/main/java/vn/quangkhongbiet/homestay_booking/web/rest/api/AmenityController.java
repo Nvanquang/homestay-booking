@@ -27,7 +27,7 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "Amenity", description = "Quản lý tiện nghi homestay")
+@Tag(name = "Amenity", description = "Amenity management")
 public class AmenityController {
 
     private static final String ENTITY_NAME = "Amenity";
@@ -35,11 +35,11 @@ public class AmenityController {
     private final AmenityService amenityService;
 
     @PostMapping("/amenities")
-    @ApiMessage("Tạo tiện nghi thành công")
-    @Operation(summary = "Tạo tiện nghi", description = "Tạo mới một tiện nghi trong hệ thống")
+    @ApiMessage("Amenity created successfully")
+    @Operation(summary = "Create amenity", description = "Create a new amenity in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Tạo thành công"),
-        @ApiResponse(responseCode = "409", description = "Dữ liệu đã tồn tại")
+        @ApiResponse(responseCode = "201", description = "Created successfully"),
+        @ApiResponse(responseCode = "409", description = "Data already exists")
     })
     public ResponseEntity<Amenity> createAmenity(@Valid @RequestBody Amenity amenity) {
         log.info("REST request to create Amenity: {}", amenity);
@@ -48,12 +48,12 @@ public class AmenityController {
     }
 
     @GetMapping("/amenities/{id}")
-    @ApiMessage("Lấy tiện nghi theo ID thành công")
-    @Operation(summary = "Lấy tiện nghi theo ID", description = "Trả về tiện nghi theo ID cụ thể")
+    @ApiMessage("Get amenity by ID successfully")
+    @Operation(summary = "Get amenity by ID", description = "Return amenity by specific ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Tìm thấy tiện nghi"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy tiện nghi")
+        @ApiResponse(responseCode = "200", description = "Amenity found"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "Amenity not found")
     })
     public ResponseEntity<Amenity> findAmenityById(@PathVariable("id") Long id) {
         log.info("REST request to get Amenity by id: {}", id);
@@ -64,10 +64,10 @@ public class AmenityController {
     }
 
     @GetMapping("/amenities")
-    @ApiMessage("Lấy tất cả tiện nghi thành công")
-    @Operation(summary = "Lấy danh sách tiện nghi", description = "Trả về danh sách tiện nghi có phân trang, lọc")
+    @ApiMessage("Get all amenities successfully")
+    @Operation(summary = "Get amenity list", description = "Return paginated and filtered amenity list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Thành công")
+        @ApiResponse(responseCode = "200", description = "Success")
     })
     public ResponseEntity<PagedResponse> findAllAmenities(
             @Filter Specification<Amenity> spec, Pageable pageable) {
@@ -77,12 +77,12 @@ public class AmenityController {
     }
 
     @DeleteMapping("/amenities/{id}")
-    @ApiMessage("Xoá tiện nghi theo ID thành công")
-    @Operation(summary = "Xoá tiện nghi", description = "Xoá tiện nghi theo ID")
+    @ApiMessage("Amenity deleted successfully")
+    @Operation(summary = "Delete amenity", description = "Delete amenity by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Xoá thành công"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy tiện nghi")
+        @ApiResponse(responseCode = "204", description = "Deleted successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "Amenity not found")
     })
     public ResponseEntity<Void> deleteAmenity(@PathVariable("id") Long id) {
         log.info("REST request to delete Amenity by id: {}", id);

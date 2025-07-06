@@ -42,7 +42,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "Homestay", description = "Quản lý homestay")
+@Tag(name = "Homestay", description = "Homestay management")
 public class HomestayController {
 
     private static final String ENTITY_NAME = "homestay";
@@ -50,12 +50,12 @@ public class HomestayController {
     private final HomestayService homestayService;
 
     @PostMapping("/homestays")
-    @ApiMessage("Tạo homestay thành công")
-    @Operation(summary = "Tạo homestay", description = "Tạo mới một homestay trong hệ thống")
+    @ApiMessage("Homestay created successfully")
+    @Operation(summary = "Create homestay", description = "Create a new homestay in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Tạo thành công"),
-        @ApiResponse(responseCode = "400", description = "Thông tin không hợp lệ"),
-        @ApiResponse(responseCode = "409", description = "Dữ liệu đã tồn tại")
+        @ApiResponse(responseCode = "201", description = "Created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid information"),
+        @ApiResponse(responseCode = "409", description = "Data already exists")
     })
     public ResponseEntity<ResHomestayCreateDTO> createHomestay(
             @Valid @RequestPart("homestay") Homestay homestay,
@@ -75,12 +75,12 @@ public class HomestayController {
     }
 
     @GetMapping("/homestays/{id}")
-    @ApiMessage("Lấy thông tin homestay thành công")
-    @Operation(summary = "Lấy homestay theo ID", description = "Trả về homestay theo ID cụ thể")
+    @ApiMessage("Get homestay information successfully")
+    @Operation(summary = "Get homestay by ID", description = "Return homestay by specific ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Tìm thấy homestay"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy homestay")
+        @ApiResponse(responseCode = "200", description = "Homestay found"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "Homestay not found")
     })
     public ResponseEntity<Homestay> getHomestayById(@PathVariable("id") Long id) {
         log.info("REST request to get Homestay by id: {}", id);
@@ -92,11 +92,11 @@ public class HomestayController {
     }
 
     @GetMapping("/homestays/search")
-    @ApiMessage("Search homestay thành công")
-    @Operation(summary = "Tìm kiếm homestay", description = "Tìm kiếm homestay theo điều kiện")
+    @ApiMessage("Search homestay successfully")
+    @Operation(summary = "Search homestay", description = "Search homestay by conditions")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Thành công"),
-        @ApiResponse(responseCode = "400", description = "Thông tin tìm kiếm không hợp lệ")
+        @ApiResponse(responseCode = "200", description = "Success"),
+        @ApiResponse(responseCode = "400", description = "Invalid search information")
     })
     public ResponseEntity<List<ResSearchHomestayDTO>> getAllHomestays(@Valid ReqHomestaySearch request) {
         log.info("REST request to search Homestay: {}", request);
@@ -104,10 +104,10 @@ public class HomestayController {
     }
 
     @GetMapping("/homestays")
-    @ApiMessage("Lấy tất cả homestay thành công")
-    @Operation(summary = "Lấy danh sách homestay", description = "Trả về danh sách homestay có phân trang, lọc")
+    @ApiMessage("Get all homestays successfully")
+    @Operation(summary = "Get homestay list", description = "Return paginated and filtered homestay list")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Thành công")
+        @ApiResponse(responseCode = "200", description = "Success")
     })
     public ResponseEntity<PagedResponse> getAllHomestays(@Filter Specification<Homestay> spec,
             Pageable pageable) {
@@ -116,11 +116,11 @@ public class HomestayController {
     }
 
     @PostMapping("/homestays/{homestayId}/amenities")
-    @ApiMessage("Thêm tiện nghi cho homestay thành công")
-    @Operation(summary = "Thêm tiện nghi cho homestay", description = "Thêm tiện nghi vào homestay theo ID")
+    @ApiMessage("Add amenities to homestay successfully")
+    @Operation(summary = "Add amenities to homestay", description = "Add amenities to homestay by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Thành công"),
-        @ApiResponse(responseCode = "400", description = "Dữ liệu không hợp lệ")
+        @ApiResponse(responseCode = "200", description = "Success"),
+        @ApiResponse(responseCode = "400", description = "Invalid data")
     })
     public ResponseEntity<ResHomestayUpdatedDTO> addAmenitiesToHomestay(
             @PathVariable("homestayId") Long homestayId,
@@ -137,13 +137,13 @@ public class HomestayController {
     }
 
     @PatchMapping("/homestays/{id}")
-    @ApiMessage("Cập nhật homestay thành công")
-    @Operation(summary = "Cập nhật homestay", description = "Cập nhật thông tin homestay theo ID")
+    @ApiMessage("Homestay updated successfully")
+    @Operation(summary = "Update homestay", description = "Update homestay information by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Cập nhật thành công"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy homestay"),
-        @ApiResponse(responseCode = "500", description = "Không thể cập nhật homestay")
+        @ApiResponse(responseCode = "200", description = "Updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "Homestay not found"),
+        @ApiResponse(responseCode = "500", description = "Cannot update homestay")
     })
     public ResponseEntity<ResHomestayUpdatedDTO> updatePartialHomestay(@PathVariable("id") Long id,
             @Valid @RequestBody UpdateHomestayDTO dto) {
@@ -160,12 +160,12 @@ public class HomestayController {
     }
 
     @DeleteMapping("/homestays/{id}")
-    @ApiMessage("Xóa homestay thành công")
-    @Operation(summary = "Xóa homestay", description = "Xóa homestay theo ID")
+    @ApiMessage("Homestay deleted successfully")
+    @Operation(summary = "Delete homestay", description = "Delete homestay by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Xóa thành công"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy homestay")
+        @ApiResponse(responseCode = "204", description = "Deleted successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid ID"),
+        @ApiResponse(responseCode = "404", description = "Homestay not found")
     })
     public ResponseEntity<Void> deleteHomestay(@PathVariable("id") Long id) {
         log.info("REST request to delete Homestay by id: {}", id);
