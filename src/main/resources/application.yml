@@ -2,17 +2,15 @@ server:
     port: ${POST}
     
 spring:
-    jpa:
-        hibernate:
-            ddl-auto: update
-        # show-sql: true
+    application:
+            name: homestay
+
     datasource:
         url: ${DB_URL}
         username: ${DB_USERNAME}
         password: ${DB_PASSWORD}
         driver-class-name: ${DRIVER_CLASS_NAME}
 
-        # config connection pooling
         type: com.zaxxer.hikari.HikariDataSource
         hikari:
             poolName: Hikari
@@ -26,16 +24,38 @@ spring:
                 cachePrepStmts: true        # Cho phép tái sử dụng câu lệnh SQL (lưu trong cache)
                 prepStmtCacheSize: 250      # Số lượng SQL tối đa được lưu trữ
                 prepStmtCacheSqlLimit: 2048 # Giới hạn dộ dài SQL
-                
-        # end config connection pooling end
-    application:
-        name: homestay
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+        # show-sql: true
+
+
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: ${MY_EMAIL}
+        password: ${MY_EMAIL_PASSWORD}
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+    
     # config pagination start 1, not 0
     data:
         web:
             pageable:
                 one-indexed-parameters: true
     # config pagination end
+
+springdoc:
+    swagger-ui:
+        path: /swagger-ui.html
+        url: /v3/api-docs   #BẮT BUỘC: yêu cầu Swagger UI load đúng file JSON thật
+    api-docs:
+        enabled: true
 
 payment:
     vnpay:
@@ -45,7 +65,7 @@ payment:
         vnp_ReturnUrl: http://localhost:8080/vnpay
         timeout: 15 # in minutes
         
-# cloudinary
+
 cloudinary:
     cloud_name: ${YOUR_CLOUD_NAME}
     api_key: ${YOUR_API_KEY}
@@ -67,17 +87,11 @@ logging:
             springframework:
                 web:
                     client: DEBUG
-        com:
-            zaxxer:
-                hikari: DEBUG
+        # com:
+        #     zaxxer:
+        #         hikari: DEBUG
 
         vn:
             quangkhongbiet:
-                homestay_booking: DEBUG
+                "[homestay_booking]": DEBUG
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    url: /v3/api-docs   #BẮT BUỘC: yêu cầu Swagger UI load đúng file JSON thật
-  api-docs:
-    enabled: true

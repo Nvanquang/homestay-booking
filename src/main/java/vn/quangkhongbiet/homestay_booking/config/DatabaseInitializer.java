@@ -115,6 +115,8 @@ public class DatabaseInitializer implements CommandLineRunner {
             adminUser.setPhoneNumber("+84123456789");
             adminUser.setCreatedAt(java.time.Instant.now());
             adminUser.setCreatedBy("SYSTEM");
+            adminUser.setVerified(true);
+            adminUser.setFullName("Nguyen Van Super Admin");
 
             Role adminRole = roleRepository.findByName("SUPER_ADMIN").get();
             adminUser.setRole(adminRole);

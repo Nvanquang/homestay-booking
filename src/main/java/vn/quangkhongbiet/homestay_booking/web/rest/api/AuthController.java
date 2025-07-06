@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,25 +23,26 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.RegisterUserDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.ReqLoginDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.VerifyOtpRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResLoginDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
-import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
+import vn.quangkhongbiet.homestay_booking.service.email.OtpService;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
 import vn.quangkhongbiet.homestay_booking.utils.SecurityUtil;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.UnauthorizedException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "Auth", description = "Xác thực và quản lý tài khoản người dùng")
 public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -49,7 +51,7 @@ public class AuthController {
     
     private final UserService userService;
 
-    private final RoleService roleService;
+    private final OtpService otpService;
 
     @Value("${security.authentication.jwt.access-token-validity-in-seconds}")
     private long accessTokenExpiration;
@@ -62,6 +64,13 @@ public class AuthController {
     })
     public ResponseEntity<Object> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
         log.info("REST request to login Auth: {}", loginDTO);
+
+        // check user is verified
+        User user = userService.getUserByEmail(loginDTO.getUserName());
+        if (!user.getVerified()) {
+            throw new UnauthorizedException("Tài khoản chưa được xác thực", "Authentication", "unverified_account");
+        }
+        
         // xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticateUser(loginDTO);
 
@@ -213,14 +222,17 @@ public class AuthController {
 
     }
 
+    @Transactional
     @PostMapping("/auth/register")
     @Operation(summary = "Đăng ký tài khoản", description = "Đăng ký tài khoản mới cho người dùng")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Đăng ký thành công"),
-        @ApiResponse(responseCode = "409", description = "Email đã tồn tại")
+        @ApiResponse(responseCode = "409", description = "Email đã tồn tại"),
+        @ApiResponse(responseCode = "429", description = "Quá nhiều yêu cầu OTP")
     })
     public ResponseEntity<ResUserCreateDTO> register(@Valid @RequestBody RegisterUserDTO register) {
         log.info("REST request to register Auth: {}", register);
+
         User user = User.builder()
                         .userName(register.getUserName())
                         .email(register.getEmail())
@@ -228,10 +240,36 @@ public class AuthController {
                         .phoneNumber(register.getPhoneNumber())
                         .fullName(register.getFullName())
                         .gender(register.getGender())
-                        .role(this.roleService.findByName("User"))
+                        .verified(false)
                         .build();
+        userService.createUser(user);
 
-        User created = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(created));
+        otpService.generateOtp(register);
+        log.info("Registration OTP sent to {}", register.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/auth/verify-otp")
+    @Operation(summary = "Xác thực OTP", description = "Xác thực OTP cho tài khoản người dùng. Nếu thành công, tài khoản sẽ được đánh dấu đã xác thực.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Xác thực thành công, trả về thông tin user"),
+        @ApiResponse(responseCode = "401", description = "Email không tồn tại hoặc null"),
+        @ApiResponse(responseCode = "404", description = "OTP không tồn tại hoặc đã hết hạn")
+    })
+    public ResponseEntity<ResUserDTO> verifyOtp(@RequestBody VerifyOtpRequest req) {
+        boolean isOtpValid = otpService.validateOTP(req.getEmail(), req.getOtp());
+        if (!isOtpValid) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        User realUser = this.userService.getUserByEmail(req.getEmail());
+        UpdateUserDTO updateUser = UpdateUserDTO.builder()
+            .id(realUser.getId())
+            .verified(true)
+            .role("User")
+            .build();
+        User updatedUser = this.userService.updatePartialUser(updateUser);
+        log.info("User account created for {}", req.getEmail());
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResUserDTO(updatedUser));
     }
 }

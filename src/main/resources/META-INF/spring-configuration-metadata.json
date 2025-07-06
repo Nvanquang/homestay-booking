@@ -1,0 +1,50 @@
+{
+  "properties": [
+    {
+      "name": "payment.vnpay.tmn-code",
+      "type": "java.lang.String",
+      "description": "VNPay terminal code"
+    },
+    {
+      "name": "payment.vnpay.secret-key",
+      "type": "java.lang.String",
+      "description": "VNPay secret key"
+    },
+    {
+      "name": "payment.vnpay.vnp_PayUrl",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "payment.vnpay.vnp_ReturnUrl",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "payment.vnpay.timeout",
+      "type": "java.lang.Integer"
+    },
+    {
+      "name": "cloudinary.cloud_name",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "cloudinary.api_key",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "cloudinary.api_secret",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "security.authentication.jwt.base64-secret",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "security.authentication.jwt.access-token-validity-in-seconds",
+      "type": "java.lang.Integer"
+    },
+    {
+      "name": "security.authentication.jwt.refresh-token-validity-in-seconds",
+      "type": "java.lang.Integer"
+    }
+  ]
+} 

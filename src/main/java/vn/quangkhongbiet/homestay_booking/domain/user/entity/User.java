@@ -55,6 +55,8 @@ public class User implements Auditable {
 	@JsonProperty("refresh_token")
 	private String refreshToken;
 
+    private Boolean verified;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;

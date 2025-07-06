@@ -19,6 +19,7 @@ public final class ErrorConstants {
     public static final URI UNAUTHORIZED = URI.create(PROBLEM_BASE_URL + "/unauthorized");
     public static final URI FORBIDDEN = URI.create(PROBLEM_BASE_URL + "/forbidden");
     public static final URI CONFLICT = URI.create(PROBLEM_BASE_URL + "/conflict");
+    public static final URI TOO_MANY_REQUESTS = URI.create(PROBLEM_BASE_URL + "/too-many-requests");
 
     private ErrorConstants() {
     }

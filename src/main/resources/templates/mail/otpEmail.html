@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Your Email</title>
+    <style>
+        body {
+            background-color: #f1f4f9;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        .email-wrapper {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .email-header {
+            background-color: #3f51b5;
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .email-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .email-body {
+            padding: 32px;
+        }
+
+        .email-body h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .otp-box {
+            background-color: #f0f2ff;
+            border-left: 4px solid #3f51b5;
+            padding: 16px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .otp-code {
+            font-size: 32px;
+            letter-spacing: 6px;
+            font-weight: bold;
+            color: #3f51b5;
+        }
+
+        .email-footer {
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+            padding: 16px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-verify {
+            display: inline-block;
+            margin-top: 24px;
+            background-color: #3f51b5;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .btn-verify:hover {
+            background-color: #303f9f;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="email-wrapper">
+    <div class="email-header">
+        <h1>🔐 Xác thực email</h1>
+    </div>
+
+    <div class="email-body">
+        <h2>Xin chào <span th:text="${user.fullName}">User</span>,</h2>
+        <p>Bạn đã yêu cầu xác minh địa chỉ email của mình. Vui lòng sử dụng mã OTP bên dưới:</p>
+
+        <div class="otp-box">
+            <div class="otp-code" th:text="${user.otp}">123456</div>
+        </div>
+
+        <p class="text-center">
+            OTP này có hiệu lực trong 5</strong> phút. <br>
+            Vui lòng không chia sẻ OTP với bất kỳ ai.
+        </p>
+
+        <p>Nếu bạn không yêu cầu mã này, bạn có thể bỏ qua thông báo này.</p>
+    </div>
+
+    <div class="email-footer">
+        &copy; 2025 Homestay-booking. Mọi quyền được bảo lưu.
+    </div>
+</div>
+</body>
+</html>

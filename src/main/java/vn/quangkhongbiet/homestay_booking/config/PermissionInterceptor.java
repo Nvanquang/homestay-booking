@@ -26,7 +26,6 @@ public class PermissionInterceptor implements HandlerInterceptor {
     private final UserRepository userRepository;
 
     private static final Map<String, String> PUBLIC_GET_APIS = Map.ofEntries(
-        Map.entry("/", "GET"),
         Map.entry("/api/v1/amenities/{id}", "GET"),
         Map.entry("/api/v1/amenities", "GET"),
         Map.entry("/api/v1/homestays/{id}", "GET"),

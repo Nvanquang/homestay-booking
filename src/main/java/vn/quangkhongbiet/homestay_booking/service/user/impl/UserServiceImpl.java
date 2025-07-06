@@ -115,7 +115,13 @@ public class UserServiceImpl implements UserService {
             if (dto.getFullName() != null) {
                 existingUser.setFullName(dto.getFullName());
             }
+            if(dto.getVerified() != null){
+                existingUser.setVerified(dto.getVerified());
+            }
             // role
+            if(dto.getRole() != null){
+                existingUser.setRole(this.roleRepository.findByName(dto.getRole()).get());
+            }
             return this.userRepository.save(existingUser);
         }).orElseThrow(() -> new EntityNotFoundException("User not found with id", ENTITY_NAME, "usernotfound"));
     }
