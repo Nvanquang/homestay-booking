@@ -37,7 +37,7 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.UnauthorizedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
 
 @Slf4j
 @RestController
@@ -66,7 +66,7 @@ public class AuthController {
         log.info("REST request to login Auth: {}", loginDTO);
 
         // check user is verified
-        User user = userService.getUserByEmail(loginDTO.getUserName());
+        User user = userService.findUserByEmail(loginDTO.getUserName());
         if (!user.getVerified()) {
             throw new UnauthorizedException("Tài khoản chưa được xác thực", "Authentication", "unverified_account");
         }
@@ -112,7 +112,7 @@ public class AuthController {
             throw new EntityNotFoundException("User not found", email, "usernotfound");
         }
         // Get user from DB
-        User currentUserDB = this.userService.getUserByEmail(email);
+        User currentUserDB = this.userService.findUserByEmail(email);
         ResLoginDTO.InformationUser userLogin = new ResLoginDTO().new InformationUser(
                 currentUserDB.getId(),
                 currentUserDB.getUserName(),
@@ -138,7 +138,7 @@ public class AuthController {
         String email = decodedJwt.getSubject();
 
         // check user by email and token
-        User currentUser = this.userService.getUserByRefreshTokenAndEmail(refresh_token, email);
+        User currentUser = this.userService.findUserByRefreshTokenAndEmail(refresh_token, email);
         if (currentUser == null) {
             throw new UnauthorizedException("Refresh token không hợp lệ hoặc đã hết hạn!", "Authentication",
                     "invalid_refresh_token");
@@ -170,7 +170,7 @@ public class AuthController {
     }
 
     private ResLoginDTO buildUserInfoDTO(String email) {
-        User user = userService.getUserByEmail(email);
+        User user = userService.findUserByEmail(email);
 
         if (user == null) {
             throw new EntityNotFoundException("User not found", "User", "usernotfound");
@@ -256,20 +256,20 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "Email không tồn tại hoặc null"),
         @ApiResponse(responseCode = "404", description = "OTP không tồn tại hoặc đã hết hạn")
     })
-    public ResponseEntity<ResUserDTO> verifyOtp(@RequestBody VerifyOtpRequest req) {
+    public ResponseEntity<ResUserUpdatedDTO> verifyOtp(@RequestBody VerifyOtpRequest req) {
         boolean isOtpValid = otpService.validateOTP(req.getEmail(), req.getOtp());
         if (!isOtpValid) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        User realUser = this.userService.getUserByEmail(req.getEmail());
+        User realUser = this.userService.findUserByEmail(req.getEmail());
         UpdateUserDTO updateUser = UpdateUserDTO.builder()
             .id(realUser.getId())
             .verified(true)
             .role("User")
             .build();
-        User updatedUser = this.userService.updatePartialUser(updateUser);
+        ResUserUpdatedDTO updatedUser = this.userService.updatePartialUser(updateUser);
         log.info("User account created for {}", req.getEmail());
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResUserDTO(updatedUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
     }
 }

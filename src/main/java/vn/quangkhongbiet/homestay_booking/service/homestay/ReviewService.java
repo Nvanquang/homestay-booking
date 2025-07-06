@@ -8,11 +8,33 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResReview
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Review;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
+/**
+ * Service interface for managing reviews.
+ * Provides methods for creating, querying, and converting reviews.
+ */
 public interface ReviewService {
-
+    /**
+     * Create a new review.
+     * @param dto the review request DTO.
+     * @return the created review DTO.
+     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if user or homestay not found.
+     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException if user chưa từng đặt homestay.
+     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException nếu đã đánh giá rồi.
+     */
     ResReviewDTO createReview(ReqReviewDTO dto);
 
-    PagedResponse getReviewsForHomestay(Specification<Review> spec, Pageable pageable);
+    /**
+     * find reviews for a homestay with specification and pagination.
+     * @param spec the specification.
+     * @param pageable the pagination info.
+     * @return paged response of reviews.
+     */
+    PagedResponse findReviewsForHomestay(Specification<Review> spec, Pageable pageable);
 
+    /**
+     * Convert review entity to review DTO.
+     * @param review the review entity.
+     * @return the review DTO.
+     */
     ResReviewDTO convertToResReviewDTO(Review review);
 }

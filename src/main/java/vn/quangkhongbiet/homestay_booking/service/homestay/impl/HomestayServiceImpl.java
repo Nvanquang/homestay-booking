@@ -53,7 +53,7 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     @Transactional
-    public Homestay createHomestay(Homestay homestay, MultipartFile[] files, String folder) {
+    public ResHomestayCreateDTO createHomestay(Homestay homestay, MultipartFile[] files, String folder) {
         log.debug("create Homestay with homestay: {}, folder: {}, files: {}", homestay, folder, files != null ? files.length : 0);
 
         homestay.setAmenities(this.amenityRepository
@@ -66,11 +66,11 @@ public class HomestayServiceImpl implements HomestayService {
         Homestay homestayDB = homestayRepository.save(createdHomestay);
         // Cập nhật geom cho homestay
         homestayRepository.updateGeom(homestayDB.getId(), homestayDB.getLongitude(), homestayDB.getLatitude());
-        return homestayDB;
+        return this.convertToResCreateHomestayDTO(homestayDB);
     }
 
     @Override
-    public Homestay addAmenitiesToHomestay(long homestayId, List<Long> amenityIds) {
+    public ResHomestayUpdatedDTO addAmenitiesToHomestay(long homestayId, List<Long> amenityIds) {
         log.debug("add amenities to Homestay, homestayId: {}, amenityIds: {}", homestayId, amenityIds);
         // Kiểm tra homestay tồn tại
         Homestay homestay = homestayRepository.findById(homestayId)
@@ -87,7 +87,7 @@ public class HomestayServiceImpl implements HomestayService {
             }
         }
         // save homestay with updated amenities
-        return homestayRepository.save(homestay);
+        return this.convertToResUpdatedHomestayDTO(homestayRepository.save(homestay));
     }
 
     @Override
@@ -146,7 +146,7 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
-    public Homestay updatePartialHomestay(UpdateHomestayDTO updatedHomestay) {
+    public ResHomestayUpdatedDTO updatePartialHomestay(UpdateHomestayDTO updatedHomestay) {
         log.debug("update Homestay partially with dto: {}", updatedHomestay);
         return this.homestayRepository.findById(updatedHomestay.getId()).map(existingHomestay -> {
             if (updatedHomestay.getName() != null) {
@@ -161,7 +161,7 @@ public class HomestayServiceImpl implements HomestayService {
             if (updatedHomestay.getGuests() != 0) { // Kiểm tra khác 0 vì guests là kiểu Integer
                 existingHomestay.setGuests(updatedHomestay.getGuests());
             }
-            return this.homestayRepository.save(existingHomestay);
+            return this.convertToResUpdatedHomestayDTO(this.homestayRepository.save(existingHomestay));
         }).orElseThrow(() -> new EntityNotFoundException(
                 "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
     }

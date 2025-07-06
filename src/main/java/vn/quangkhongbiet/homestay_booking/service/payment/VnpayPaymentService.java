@@ -8,12 +8,38 @@ import vn.quangkhongbiet.homestay_booking.domain.payment.dto.response.InitPaymen
 import vn.quangkhongbiet.homestay_booking.domain.payment.entity.PaymentTransaction;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
+/**
+ * Service interface for managing VNPay payment transactions.
+ * Provides methods for initializing payments and querying payment transactions.
+ */
 public interface VnpayPaymentService {
+    /**
+     * Initialize a VNPay payment.
+     * @param request the payment initialization request.
+     * @return the payment initialization response.
+     */
     InitPaymentResponse init(InitPaymentRequest request);
 
+    /**
+     * Check if a payment transaction exists by id.
+     * @param id the transaction id.
+     * @return true if exists, false otherwise.
+     */
     boolean existsById(Long id);
 
+    /**
+     * Find a payment transaction by id.
+     * @param id the transaction id.
+     * @return the payment transaction entity.
+     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if payment transaction not found.
+     */
     PaymentTransaction findById(Long id);
 
-    PagedResponse getAll(Specification<PaymentTransaction> spec, Pageable pageable);
+    /**
+     * Get all payment transactions with specification and pagination.
+     * @param spec the specification.
+     * @param pageable the pagination info.
+     * @return paged response of payment transactions.
+     */
+    PagedResponse findAll(Specification<PaymentTransaction> spec, Pageable pageable);
 }

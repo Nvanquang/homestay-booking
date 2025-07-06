@@ -81,7 +81,7 @@ public class VnpayIpnServiceImpl implements VnpayIpnService {
         log.debug("[VNPay Ipn] booking total amount (x100): {}", vnpAmount);
         log.debug("[VNPay Ipn] response code: {}", responseCode);
 
-        Booking booking = bookingService.findBookingById(Long.parseLong(txnRef));
+        Booking booking = this.bookingService.findBookingById(Long.parseLong(txnRef));
         if (booking == null) return VnpIpnResponseConst.ORDER_NOT_FOUND;
 
         String amountStr = booking.getTotalAmount()

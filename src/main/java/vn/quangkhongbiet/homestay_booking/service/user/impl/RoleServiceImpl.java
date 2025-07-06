@@ -63,15 +63,16 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role getById(Long id) {
+    public ResRoleDTO findById(Long id) {
         log.debug("find Role by id: {}", id);
-        return roleRepository.findById(id)
+        return this.roleRepository.findById(id)
+                .map(this::convertToResRoleDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Role with ID " + id + " not found", ENTITY_NAME,
                         "notfound"));
     }
 
     @Override
-    public PagedResponse getAll(Specification<Role> spec, Pageable pageable) {
+    public PagedResponse findAll(Specification<Role> spec, Pageable pageable) {
         log.debug("find all Role with spec: {}, pageable: {}", spec, pageable);
         Page<Role> pageRoles = this.roleRepository.findAll(spec, pageable);
         PagedResponse result = new PagedResponse();

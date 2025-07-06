@@ -130,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public ResBookingStatusDTO getBookingStatus(Long id) {
+    public ResBookingStatusDTO findBookingStatus(Long id) {
         Booking booking = this.bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Booking not found", ENTITY_NAME, "bookingnotfound"));
         return ResBookingStatusDTO.builder()
         .bookingId(booking.getId())
@@ -179,9 +179,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking findBookingById(Long id) {
         log.debug("find Booking by id: {}", id);
-        return bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
-                ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Booking not found with id", ENTITY_NAME,
-                "bookingnotfound"));
+        return this.bookingRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Booking not found with id", ENTITY_NAME,
+                        "bookingnotfound"));
     }
 
     @Override
@@ -212,13 +213,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking updatePartialBooking(UpdateBookingDTO dto) {
+    public ResBookingDTO updatePartialBooking(UpdateBookingDTO dto) {
         log.debug("update Booking partially with dto: {}", dto);
         return bookingRepository.findById(dto.getId()).map(existingBooking -> {
             validateBookingStatus(existingBooking);
             validateNewStatus(existingBooking, dto);
             updateBookingFields(existingBooking, dto);
-            return bookingRepository.save(existingBooking);
+            return this.convertToResBookingDTO(bookingRepository.save(existingBooking));
         }).orElseThrow(() -> new EntityNotFoundException(ErrorConstants.ENTITY_NOT_FOUND_TYPE,
                 "Booking not found with id" + dto.getId(), ENTITY_NAME, "bookingnotfound"));
     }

@@ -85,7 +85,7 @@ public class PaymentController {
             Pageable pageable) {
 
         log.info("REST request to get all PaymentTransactions, pageable: {}", pageable);
-        PagedResponse result = paymentService.getAll(spec, pageable);
+        PagedResponse result = paymentService.findAll(spec, pageable);
         return ResponseEntity.ok().body(result);
     }
 

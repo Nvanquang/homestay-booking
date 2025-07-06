@@ -145,7 +145,7 @@ public class VnpayPaymentServiceimpl implements VnpayPaymentService {
     }
 
     @Override
-    public PagedResponse getAll(Specification<PaymentTransaction> spec, Pageable pageable){
+    public PagedResponse findAll(Specification<PaymentTransaction> spec, Pageable pageable){
         log.debug("find all PaymentTransaction with spec: {}, pageable: {}", spec, pageable);
         Page<PaymentTransaction> pagePaymentTransactions = this.paymentRepository.findAll(spec, pageable);
         PagedResponse result = new PagedResponse();

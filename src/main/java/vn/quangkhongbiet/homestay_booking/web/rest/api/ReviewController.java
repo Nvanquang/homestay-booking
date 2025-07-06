@@ -77,6 +77,6 @@ public class ReviewController {
         }
         Specification<Review> reviewInHomestay = fsc.convert(fb.field("homestay").equal(fb.input(homestayId)).get());
         Specification<Review> finalSpec = reviewInHomestay.and(spec);
-        return ResponseEntity.ok(this.reviewService.getReviewsForHomestay(finalSpec, pageable));
+        return ResponseEntity.ok(this.reviewService.findReviewsForHomestay(finalSpec, pageable));
     }
 }

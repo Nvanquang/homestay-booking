@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User createUser(User user) {
+    public ResUserCreateDTO createUser(User user) {
         log.debug("create User with user: {}", user);
         if (user.getEmail() != null && userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyUsedException();
@@ -63,18 +63,19 @@ public class UserServiceImpl implements UserService {
             user.setRole(roleOptional.isPresent() ? roleOptional.get() : null);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return this.convertToResCreateUserDTO(userRepository.save(user));
     }
 
     @Override
-    public User findUserById(Long id) {
+    public ResUserDTO findUserById(Long id) {
         log.debug("find User by id: {}", id);
-        return userRepository.findById(id)
+        return this.userRepository.findById(id)
+                .map(this::convertToResUserDTO)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id", ENTITY_NAME, "usernotfound"));
     }
 
     @Override
-    public User getUserByEmail(String email) {
+    public User findUserByEmail(String email) {
         log.debug("find User by email: {}", email);
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found", ENTITY_NAME, "usernotfound"));
@@ -100,7 +101,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updatePartialUser(UpdateUserDTO dto) {
+    public ResUserUpdatedDTO updatePartialUser(UpdateUserDTO dto) {
         log.debug("update User partially with dto: {}", dto);
         return this.userRepository.findById(dto.getId()).map(existingUser -> {
             if (dto.getUserName() != null) {
@@ -122,7 +123,7 @@ public class UserServiceImpl implements UserService {
             if(dto.getRole() != null){
                 existingUser.setRole(this.roleRepository.findByName(dto.getRole()).get());
             }
-            return this.userRepository.save(existingUser);
+            return this.convertToResUpdatedUserDTO(this.userRepository.save(existingUser));
         }).orElseThrow(() -> new EntityNotFoundException("User not found with id", ENTITY_NAME, "usernotfound"));
     }
 
@@ -190,7 +191,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByRefreshTokenAndEmail(String token, String email) {
+    public User findUserByRefreshTokenAndEmail(String token, String email) {
         log.debug("find User by refresh token and email: {}, {}", token, email);
         return this.userRepository.findByRefreshTokenAndEmail(token, email);
     }

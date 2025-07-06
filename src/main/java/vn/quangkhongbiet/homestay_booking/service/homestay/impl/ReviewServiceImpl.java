@@ -93,7 +93,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public PagedResponse getReviewsForHomestay(Specification<Review> spec, Pageable pageable) {
+    public PagedResponse findReviewsForHomestay(Specification<Review> spec, Pageable pageable) {
         log.debug("find all Review with spec: {}, pageable: {}", spec, pageable);
         Page<Review> pageReviews = this.reviewRepository.findAll(spec, pageable);
         PagedResponse result = new PagedResponse();

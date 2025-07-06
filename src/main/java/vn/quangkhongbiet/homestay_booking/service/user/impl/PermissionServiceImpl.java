@@ -47,14 +47,14 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Permission getById(Long id) {
+    public Permission findById(Long id) {
         log.debug("find Permission by id: {}", id);
         return permissionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Permission with ID " + id + " not found", ENTITY_NAME, "notfound"));
     }
 
     @Override
-    public PagedResponse getAll(Specification<Permission> spec, Pageable pageable) {
+    public PagedResponse findAll(Specification<Permission> spec, Pageable pageable) {
         log.debug("find all Permission with spec: {}, pageable: {}", spec, pageable);
         Page<Permission> pagePermissions = this.permissionRepository.findAll(spec, pageable);
         PagedResponse result = new PagedResponse();

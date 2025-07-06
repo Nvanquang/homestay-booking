@@ -70,9 +70,8 @@ public class HomestayController {
         if (folder == null || folder.trim().isEmpty()) {
             throw new BadRequestAlertException("Folder name cannot be empty", ENTITY_NAME, "folderempty");
         }
-        Homestay createHomestay = this.homestayService.createHomestay(homestay, files, folder);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.homestayService.convertToResCreateHomestayDTO(createHomestay));
+        ResHomestayCreateDTO createHomestay = this.homestayService.createHomestay(homestay, files, folder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createHomestay);
     }
 
     @GetMapping("/homestays/{id}")
@@ -123,7 +122,7 @@ public class HomestayController {
         @ApiResponse(responseCode = "200", description = "Thành công"),
         @ApiResponse(responseCode = "400", description = "Dữ liệu không hợp lệ")
     })
-    public ResponseEntity<?> addAmenitiesToHomestay(
+    public ResponseEntity<ResHomestayUpdatedDTO> addAmenitiesToHomestay(
             @PathVariable("homestayId") Long homestayId,
             @RequestBody Map<String, List<Long>> request) {
         log.info("REST request to add amenities to Homestay, homestayId: {}, amenities: {}", homestayId, request.get("amenities"));
@@ -133,8 +132,8 @@ public class HomestayController {
             throw new BadRequestAlertException("Amenities cannot be left blank", ENTITY_NAME,
                     "amenitiesempty");
         }
-        Homestay updatedHomestay = this.homestayService.addAmenitiesToHomestay(homestayId, amenityIds);
-        return ResponseEntity.ok(this.homestayService.convertToResUpdatedHomestayDTO(updatedHomestay));
+        ResHomestayUpdatedDTO updatedHomestay = this.homestayService.addAmenitiesToHomestay(homestayId, amenityIds);
+        return ResponseEntity.ok(updatedHomestay);
     }
 
     @PatchMapping("/homestays/{id}")
@@ -156,8 +155,8 @@ public class HomestayController {
         if (!id.equals(dto.getId())) {
             throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idmismatch");
         }
-        Homestay updatedHomestay = this.homestayService.updatePartialHomestay(dto);
-        return ResponseEntity.ok(this.homestayService.convertToResUpdatedHomestayDTO(updatedHomestay));
+        ResHomestayUpdatedDTO updatedHomestay = this.homestayService.updatePartialHomestay(dto);
+        return ResponseEntity.ok(updatedHomestay);
     }
 
     @DeleteMapping("/homestays/{id}")

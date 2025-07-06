@@ -79,7 +79,7 @@ public class RoleController {
         if (id == null || id <= 0) {
             throw new BadRequestAlertException("Role ID cannot be null or invalid", ENTITY_NAME, "invalidid");
         }
-        return ResponseEntity.ok().body(this.roleService.convertToResRoleDTO(roleService.getById(id)));
+        return ResponseEntity.ok().body(this.roleService.findById(id));
     }
 
     @GetMapping("/roles")
@@ -92,7 +92,7 @@ public class RoleController {
             @Filter Specification<Role> spec,
             Pageable pageable) {
         log.info("REST request to get all Roles, pageable: {}", pageable);
-        PagedResponse result = roleService.getAll(spec, pageable);
+        PagedResponse result = roleService.findAll(spec, pageable);
         return ResponseEntity.ok().body(result);
     }
 

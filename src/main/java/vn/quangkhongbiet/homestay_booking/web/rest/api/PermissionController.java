@@ -63,7 +63,7 @@ public class PermissionController {
         if (id == null || id <= 0) {
             throw new BadRequestAlertException("Permission ID cannot be null or invalid", ENTITY_NAME, "invalidid");
         }
-        return ResponseEntity.ok().body(permissionService.getById(id));
+        return ResponseEntity.ok().body(permissionService.findById(id));
     }
 
     @GetMapping("/permissions")
@@ -76,7 +76,7 @@ public class PermissionController {
             @Filter Specification<Permission> spec,
             Pageable pageable) {
         log.info("REST request to get all Permissions, pageable: {}", pageable);
-        PagedResponse result = permissionService.getAll(spec, pageable);
+        PagedResponse result = permissionService.findAll(spec, pageable);
         return ResponseEntity.ok().body(result);
     }
 

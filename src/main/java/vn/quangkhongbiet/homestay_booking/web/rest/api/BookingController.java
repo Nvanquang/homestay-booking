@@ -82,7 +82,8 @@ public class BookingController {
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
-        return ResponseEntity.ok(this.bookingService.convertToResBookingDTO(bookingService.findBookingById(id)));
+        ResBookingDTO resBookingDTO = this.bookingService.convertToResBookingDTO(this.bookingService.findBookingById(id));
+        return ResponseEntity.ok(resBookingDTO);
     }
 
     @GetMapping("/bookings/history/{userId}")
@@ -117,7 +118,7 @@ public class BookingController {
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
-        return ResponseEntity.ok(this.bookingService.getBookingStatus(id));
+        return ResponseEntity.ok(this.bookingService.findBookingStatus(id));
     }
 
     @GetMapping("/bookings")
@@ -140,7 +141,7 @@ public class BookingController {
         @ApiResponse(responseCode = "404", description = "Không tìm thấy booking"),
         @ApiResponse(responseCode = "500", description = "Không thể cập nhật booking")
     })
-    public ResponseEntity<?> updatePartialBooking(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookingDTO dto) {
+    public ResponseEntity<ResBookingDTO> updatePartialBooking(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookingDTO dto) {
         log.info("REST request to update Booking partially, id: {}, body: {}", id, dto);
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
@@ -148,7 +149,7 @@ public class BookingController {
         if (!id.equals(dto.getId())) {
             throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idmismatch");
         }
-        Booking updatedBooking = bookingService.updatePartialBooking(dto);
-        return ResponseEntity.ok(this.bookingService.convertToResBookingDTO(updatedBooking));
+        ResBookingDTO updatedBooking = bookingService.updatePartialBooking(dto);
+        return ResponseEntity.ok(updatedBooking);
     }
 }

@@ -18,9 +18,9 @@ import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 public interface HomestayService {
     Boolean existsById(Long id);
 
-    Homestay createHomestay(Homestay homestay, MultipartFile[] files, String folder);
+    ResHomestayCreateDTO createHomestay(Homestay homestay, MultipartFile[] files, String folder);
 
-    Homestay addAmenitiesToHomestay(long homestayId, List<Long> amenityIds);
+    ResHomestayUpdatedDTO addAmenitiesToHomestay(long homestayId, List<Long> amenityIds);
 
     Homestay findHomestayById(Long id);
 
@@ -28,7 +28,7 @@ public interface HomestayService {
 
     PagedResponse findAllHomestays(Specification<Homestay> spec, Pageable pageable);
 
-    Homestay updatePartialHomestay(UpdateHomestayDTO homestay);
+    ResHomestayUpdatedDTO updatePartialHomestay(UpdateHomestayDTO homestay);
 
     void deleteHomestay(Long id);
 

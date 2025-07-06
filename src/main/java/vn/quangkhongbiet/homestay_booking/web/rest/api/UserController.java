@@ -54,8 +54,8 @@ public class UserController {
     })
     public ResponseEntity<ResUserCreateDTO> createUser(@Valid @RequestBody User user) {
         log.info("REST request to create User: {}", user);
-        User createdUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(createdUser));
+        ResUserCreateDTO createdUser = this.userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @GetMapping("/users/{id}")
@@ -71,7 +71,7 @@ public class UserController {
         if (id <= 0 ){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idnull");
         }
-        return ResponseEntity.ok(this.userService.convertToResUserDTO(userService.findUserById(id)));
+        return ResponseEntity.ok(this.userService.findUserById(id));
     }
 
     @GetMapping("/users")
@@ -102,8 +102,8 @@ public class UserController {
         if (!id.equals(dto.getId())) {
             throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idnull");
         }
-        User updatedUser = this.userService.updatePartialUser(dto);
-        return ResponseEntity.ok(this.userService.convertToResUpdatedUserDTO(updatedUser));
+        ResUserUpdatedDTO updatedUser = this.userService.updatePartialUser(dto);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/users/{id}")

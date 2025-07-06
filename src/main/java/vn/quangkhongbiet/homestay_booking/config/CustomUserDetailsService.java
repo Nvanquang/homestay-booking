@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        vn.quangkhongbiet.homestay_booking.domain.user.entity.User user = this.userService.getUserByEmail(email);
+        vn.quangkhongbiet.homestay_booking.domain.user.entity.User user = this.userService.findUserByEmail(email);
         
         if (user == null) {
             throw new UsernameNotFoundException("Invalid User");
