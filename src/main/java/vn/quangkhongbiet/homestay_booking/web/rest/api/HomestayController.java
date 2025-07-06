@@ -34,9 +34,10 @@ import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
 @RestController
@@ -53,9 +54,9 @@ public class HomestayController {
     @ApiMessage("Homestay created successfully")
     @Operation(summary = "Create homestay", description = "Create a new homestay in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid information"),
-        @ApiResponse(responseCode = "409", description = "Data already exists")
+        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
+        @ApiResponse(responseCode = "400", description = "Invalid information", content = @Content()),
+        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
     public ResponseEntity<ResHomestayCreateDTO> createHomestay(
             @Valid @RequestPart("homestay") Homestay homestay,
@@ -79,8 +80,8 @@ public class HomestayController {
     @Operation(summary = "Get homestay by ID", description = "Return homestay by specific ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Homestay found"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Homestay not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Homestay not found", content = @Content())
     })
     public ResponseEntity<Homestay> getHomestayById(@PathVariable("id") Long id) {
         log.info("REST request to get Homestay by id: {}", id);
@@ -96,7 +97,7 @@ public class HomestayController {
     @Operation(summary = "Search homestay", description = "Search homestay by conditions")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Invalid search information")
+        @ApiResponse(responseCode = "400", description = "Invalid search information", content = @Content())
     })
     public ResponseEntity<List<ResSearchHomestayDTO>> getAllHomestays(@Valid ReqHomestaySearch request) {
         log.info("REST request to search Homestay: {}", request);
@@ -120,7 +121,7 @@ public class HomestayController {
     @Operation(summary = "Add amenities to homestay", description = "Add amenities to homestay by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Invalid data")
+        @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content())
     })
     public ResponseEntity<ResHomestayUpdatedDTO> addAmenitiesToHomestay(
             @PathVariable("homestayId") Long homestayId,
@@ -141,9 +142,9 @@ public class HomestayController {
     @Operation(summary = "Update homestay", description = "Update homestay information by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Homestay not found"),
-        @ApiResponse(responseCode = "500", description = "Cannot update homestay")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Homestay not found", content = @Content()),
+        @ApiResponse(responseCode = "500", description = "Cannot update homestay", content = @Content())
     })
     public ResponseEntity<ResHomestayUpdatedDTO> updatePartialHomestay(@PathVariable("id") Long id,
             @Valid @RequestBody UpdateHomestayDTO dto) {
@@ -164,8 +165,8 @@ public class HomestayController {
     @Operation(summary = "Delete homestay", description = "Delete homestay by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Homestay not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Homestay not found", content = @Content())
     })
     public ResponseEntity<Void> deleteHomestay(@PathVariable("id") Long id) {
         log.info("REST request to delete Homestay by id: {}", id);

@@ -21,9 +21,10 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 import java.util.Map;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
 @RestController
@@ -40,8 +41,8 @@ public class PermissionController {
     @ApiMessage("Permission created successfully")
     @Operation(summary = "Create permission", description = "Create a new permission in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully"),
-        @ApiResponse(responseCode = "409", description = "Data already exists")
+        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
+        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
     public ResponseEntity<Permission> createPermission(@Valid @RequestBody Permission permission) {
         log.info("REST request to create Permission: {}", permission);
@@ -55,8 +56,8 @@ public class PermissionController {
     @Operation(summary = "Get permission by ID", description = "Return permission by specific ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Permission found"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Permission not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Permission not found", content = @Content())
     })
     public ResponseEntity<Permission> getPermissionById(@PathVariable("id") Long id) {
         log.info("REST request to get Permission by id: {}", id);
@@ -85,8 +86,8 @@ public class PermissionController {
     @Operation(summary = "Update permission", description = "Update permission information by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Permission not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Permission not found", content = @Content())
     })
     public ResponseEntity<Permission> updatePartialPermission(@PathVariable("id") Long id, @Valid @RequestBody UpdatePermissionDTO permission) {
         log.info("REST request to update Permission partially, id: {}, body: {}", id, permission);

@@ -17,6 +17,7 @@ import vn.quangkhongbiet.homestay_booking.service.booking.HomestayAvailabilitySe
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -34,7 +35,7 @@ public class HomestayAvailabilityController {
     @Operation(summary = "Create homestay availability", description = "Create a new list of homestay availabilities")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Created successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid data")
+        @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content())
     })
     public ResponseEntity<HomestayAvailability> createHomestayAvailability(@Valid @RequestBody List<HomestayAvailability> availabilities) {
         log.info("REST request to create HomestayAvailability: {}", availabilities);

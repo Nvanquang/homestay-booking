@@ -27,9 +27,10 @@ import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
 @RestController
@@ -49,8 +50,8 @@ public class UserController {
     @ApiMessage("User created successfully")
     @Operation(summary = "Create user", description = "Create a new user in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully"),
-        @ApiResponse(responseCode = "409", description = "Data already exists")
+        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
+        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
     public ResponseEntity<ResUserCreateDTO> createUser(@Valid @RequestBody User user) {
         log.info("REST request to create User: {}", user);
@@ -63,8 +64,8 @@ public class UserController {
     @Operation(summary = "Get user by ID", description = "Return user by specific ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "User found"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "User not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
     })
     public ResponseEntity<ResUserDTO> getUserById(@PathVariable("id") Long id) {
         log.info("REST request to get User by id: {}", id);
@@ -90,9 +91,9 @@ public class UserController {
     @Operation(summary = "Update user", description = "Update user information by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "User not found"),
-        @ApiResponse(responseCode = "500", description = "Cannot update user")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content()),
+        @ApiResponse(responseCode = "500", description = "Cannot update user", content = @Content())
     })
     public ResponseEntity<ResUserUpdatedDTO> updatePartialUser(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserDTO dto) {
         log.info("REST request to update User partially, id: {}, body: {}", id, dto);
@@ -111,8 +112,8 @@ public class UserController {
     @Operation(summary = "Delete user", description = "Delete user by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "User not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
     })
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         log.info("REST request to delete User by id: {}", id);

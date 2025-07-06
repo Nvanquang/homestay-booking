@@ -19,9 +19,10 @@ import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
 @RestController
@@ -38,8 +39,8 @@ public class RoleController {
     @ApiMessage("Role created successfully")
     @Operation(summary = "Create role", description = "Create a new role in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully"),
-        @ApiResponse(responseCode = "409", description = "Data already exists")
+        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
+        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
     public ResponseEntity<Role> createRole(@Valid @RequestBody Role role) {
         log.info("REST request to create Role: {}", role);
@@ -53,7 +54,7 @@ public class RoleController {
     @Operation(summary = "Add permission to role", description = "Add permission to role by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content())
     })
     public ResponseEntity<Role> addPermissionForRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
         log.info("REST request to add permission for Role: id: {}, permissions: {}", id, role.getPermissions());
@@ -71,8 +72,8 @@ public class RoleController {
     @Operation(summary = "Get role by ID", description = "Return role by specific ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Role found"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Role not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Role not found", content = @Content())
     })
     public ResponseEntity<ResRoleDTO> getRoleById(@PathVariable("id") Long id) {
         log.info("REST request to get Role by id: {}", id);
@@ -101,9 +102,9 @@ public class RoleController {
     @Operation(summary = "Update role", description = "Update role information by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Role not found"),
-        @ApiResponse(responseCode = "500", description = "Cannot update role")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Role not found", content = @Content()),
+        @ApiResponse(responseCode = "500", description = "Cannot update role", content = @Content())
     })
     public ResponseEntity<ResRoleDTO> updatePartialRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
         log.info("REST request to update Role partially, id: {}, body: {}", id, role);
@@ -122,8 +123,8 @@ public class RoleController {
     @Operation(summary = "Delete role", description = "Delete role by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Role not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Role not found", content = @Content())
     })
     public ResponseEntity<Void> deleteRoleById(@PathVariable("id") Long id) {
         log.info("REST request to delete Role by id: {}", id);
@@ -139,8 +140,8 @@ public class RoleController {
     @Operation(summary = "Remove permission from role", description = "Remove permission from role by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Role not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Role not found", content = @Content())
     })
     public ResponseEntity<Void> deletePermissionFromRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
         log.info("REST request to delete permission from Role by id: {}, permissions: {}", id, role.getPermissions());

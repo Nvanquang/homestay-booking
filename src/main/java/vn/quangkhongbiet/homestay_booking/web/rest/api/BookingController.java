@@ -33,9 +33,10 @@ import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
 @RestController
@@ -54,8 +55,8 @@ public class BookingController {
     @ApiMessage("Booking created successfully")
     @Operation(summary = "Create booking", description = "Create a new booking in the system")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully"),
-        @ApiResponse(responseCode = "409", description = "Data already exists")
+        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
+        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
     public ResponseEntity<ResVnpBookingDTO> createBooking(
         @Valid @RequestBody ReqBooking request, 
@@ -74,8 +75,8 @@ public class BookingController {
     @Operation(summary = "Get booking by ID", description = "Return booking by specific ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Booking found"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Booking not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Booking not found", content = @Content())
     })
     public ResponseEntity<ResBookingDTO> getBookingById(@PathVariable("id") Long id) {
         log.info("REST request to get Booking by id: {}", id);
@@ -91,8 +92,8 @@ public class BookingController {
     @Operation(summary = "Get booking history by user", description = "Return booking history of user")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "User not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
     })
     public ResponseEntity<List<ResBookingDTO>> getBookingHistory(@PathVariable("userId") Long userId) {
         log.info("REST request to get Booking History by userId: {}", userId);
@@ -110,8 +111,8 @@ public class BookingController {
     @Operation(summary = "Get booking status", description = "Return booking status by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Booking not found")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Booking not found", content = @Content())
     })
     public ResponseEntity<ResBookingStatusDTO> getBookingStatus(@PathVariable("id") Long id) {
         log.info("REST request to get Booking status by id: {}", id);
@@ -137,9 +138,9 @@ public class BookingController {
     @Operation(summary = "Update booking", description = "Update booking information by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID"),
-        @ApiResponse(responseCode = "404", description = "Booking not found"),
-        @ApiResponse(responseCode = "500", description = "Cannot update booking")
+        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Booking not found", content = @Content()),
+        @ApiResponse(responseCode = "500", description = "Cannot update booking", content = @Content())
     })
     public ResponseEntity<ResBookingDTO> updatePartialBooking(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookingDTO dto) {
         log.info("REST request to update Booking partially, id: {}, body: {}", id, dto);
