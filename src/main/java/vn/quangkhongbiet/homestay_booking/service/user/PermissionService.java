@@ -30,7 +30,7 @@ public interface PermissionService {
      * Create a new permission.
      * @param permission the permission entity to create.
      * @return the created permission entity.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException if permission with same API path, method, and module already exists.
+     * @throws ConflictException if permission with same API path, method, and module already exists.
      */
     Permission createPermission(Permission permission);
 
@@ -38,7 +38,7 @@ public interface PermissionService {
      * find a permission by id.
      * @param id the permission id.
      * @return the permission entity.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if permission not found.
+     * @throws EntityNotFoundException if permission not found.
      */
     Permission findById(Long id);
 
@@ -54,14 +54,14 @@ public interface PermissionService {
      * Update permission partially.
      * @param permission the update permission DTO.
      * @return the updated permission entity.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if permission not found.
+     * @throws EntityNotFoundException if permission not found.
      */
     Permission updatePartialPermission(UpdatePermissionDTO permission);
 
     /**
      * Delete a permission by id.
      * @param id the permission id.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if permission not found.
+     * @throws EntityNotFoundException if permission not found.
      */
     void deleteById(Long id);
 }

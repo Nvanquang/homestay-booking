@@ -17,9 +17,9 @@ public interface ReviewService {
      * Create a new review.
      * @param dto the review request DTO.
      * @return the created review DTO.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if user or homestay not found.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException if user chưa từng đặt homestay.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException nếu đã đánh giá rồi.
+     * @throws EntityNotFoundException if user or homestay not found.
+     * @throws BadRequestAlertException if user chưa từng đặt homestay.
+     * @throws ConflictException nếu đã đánh giá rồi.
      */
     ResReviewDTO createReview(ReqReviewDTO dto);
 

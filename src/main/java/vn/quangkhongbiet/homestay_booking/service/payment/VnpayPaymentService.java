@@ -31,7 +31,7 @@ public interface VnpayPaymentService {
      * Find a payment transaction by id.
      * @param id the transaction id.
      * @return the payment transaction entity.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if payment transaction not found.
+     * @throws EntityNotFoundException if payment transaction not found.
      */
     PaymentTransaction findById(Long id);
 

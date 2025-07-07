@@ -29,8 +29,8 @@ public interface BookingService {
      * Create a new booking.
      * @param request the booking request DTO.
      * @return the response containing booking and payment info.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if user or homestay not found.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException if request data invalid or homestay not active.
+     * @throws EntityNotFoundException if user or homestay not found.
+     * @throws BadRequestAlertException if request data invalid or homestay not active.
      */
     ResVnpBookingDTO createBooking(ReqBooking request);
 
@@ -38,7 +38,7 @@ public interface BookingService {
      * Mark a booking as booked.
      * @param bookingId the booking id.
      * @return the updated booking entity.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if booking not found.
+     * @throws EntityNotFoundException if booking not found.
      */
     Booking markBooked(Long bookingId);
 
@@ -46,7 +46,7 @@ public interface BookingService {
      * find booking status by id.
      * @param id the booking id.
      * @return the booking status DTO.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if booking not found.
+     * @throws EntityNotFoundException if booking not found.
      */
     ResBookingStatusDTO findBookingStatus(Long id);
 
@@ -54,7 +54,7 @@ public interface BookingService {
      * Find a booking by id.
      * @param id the booking id.
      * @return the booking DTO.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if booking not found.
+     * @throws EntityNotFoundException if booking not found.
      */
     Booking findBookingById(Long id);
 
@@ -77,8 +77,8 @@ public interface BookingService {
      * Update booking partially.
      * @param dto the update booking DTO.
      * @return the updated booking DTO.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if booking not found.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException if booking is cancelled, completed, or status change invalid.
+     * @throws EntityNotFoundException if booking not found.
+     * @throws BadRequestAlertException if booking is cancelled, completed, or status change invalid.
      */
     ResBookingDTO updatePartialBooking(UpdateBookingDTO dto);
 

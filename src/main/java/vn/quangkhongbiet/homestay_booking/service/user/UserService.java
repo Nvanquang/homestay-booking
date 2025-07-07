@@ -33,7 +33,7 @@ public interface UserService {
      * Create a new user.
      * @param user the user entity to create.
      * @return the created user DTO.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EmailAlreadyUsedException if email already exists.
+     * @throws EmailAlreadyUsedException if email already exists.
      */
     ResUserCreateDTO createUser(User user);
 
@@ -41,7 +41,7 @@ public interface UserService {
      * find a user by id.
      * @param id the user id.
      * @return the user DTO.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if user not found.
+     * @throws EntityNotFoundException if user not found.
      */
     ResUserDTO findUserById(Long id);
 
@@ -49,7 +49,7 @@ public interface UserService {
      * find a user by email.
      * @param email the user email.
      * @return the user entity.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if user not found.
+     * @throws EntityNotFoundException if user not found.
      */
     User findUserByEmail(String email);
 
@@ -65,14 +65,14 @@ public interface UserService {
      * Update user partially.
      * @param dto the update DTO.
      * @return the updated user DTO.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if user not found.
+     * @throws EntityNotFoundException if user not found.
      */
     ResUserUpdatedDTO updatePartialUser(UpdateUserDTO dto);
 
     /**
      * Delete a user by id.
      * @param id the user id.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if user not found.
+     * @throws EntityNotFoundException if user not found.
      */
     void deleteUser(Long id);
 
@@ -101,7 +101,7 @@ public interface UserService {
      * Update user's refresh token by email.
      * @param email the user email.
      * @param token the new refresh token.
-     * @throws vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException if user not found.
+     * @throws EntityNotFoundException if user not found.
      */
     void updateUserToken(String email, String token);
 
