@@ -3,8 +3,8 @@ package vn.quangkhongbiet.homestay_booking.service.user;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.RoleResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
@@ -49,7 +49,7 @@ public interface RoleService {
      * @return the updated role entity.
      * @throws EntityNotFoundException if role or permission not found.
      */
-    Role addPermissionForRole(UpdateRoleDTO role);
+    Role addPermissionForRole(UpdateRoleRequest role);
 
     /**
      * find role by id.
@@ -57,7 +57,7 @@ public interface RoleService {
      * @return the role DTO.
      * @throws EntityNotFoundException if role not found.
      */
-    ResRoleDTO findById(Long id);
+    RoleResponse findById(Long id);
 
     /**
      * find all roles with specification and pagination.
@@ -73,7 +73,7 @@ public interface RoleService {
      * @return the updated role entity.
      * @throws BadRequestAlertException if role not found.
      */
-    Role updatePartialRole(UpdateRoleDTO role);
+    Role updatePartialRole(UpdateRoleRequest role);
 
     /**
      * Delete a role by id.
@@ -87,12 +87,12 @@ public interface RoleService {
      * @param role the update role DTO.
      * @throws EntityNotFoundException if role or permission not found.
      */
-    void deletePermissionFromRole(UpdateRoleDTO role);
+    void deletePermissionFromRole(UpdateRoleRequest role);
 
     /**
      * Convert role entity to role DTO.
      * @param role the role entity.
      * @return the role DTO.
      */
-    ResRoleDTO convertToResRoleDTO(Role role);
+    RoleResponse convertToResRoleDTO(Role role);
 }

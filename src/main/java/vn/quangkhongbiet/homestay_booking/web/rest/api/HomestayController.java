@@ -23,11 +23,11 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.ReqHomestaySearch;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResSearchHomestayDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.SearchHomestayRequest;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayRequest;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.CreateHomestayResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.UpdateHomestayResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.SearchHomestayResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
@@ -58,7 +58,7 @@ public class HomestayController {
         @ApiResponse(responseCode = "400", description = "Invalid information", content = @Content()),
         @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
-    public ResponseEntity<ResHomestayCreateDTO> createHomestay(
+    public ResponseEntity<CreateHomestayResponse> createHomestay(
             @Valid @RequestPart("homestay") Homestay homestay,
             @RequestPart("files") MultipartFile[] files,
             @RequestPart("folder") String folder) {
@@ -71,7 +71,7 @@ public class HomestayController {
         if (folder == null || folder.trim().isEmpty()) {
             throw new BadRequestAlertException("Folder name cannot be empty", ENTITY_NAME, "folderempty");
         }
-        ResHomestayCreateDTO createHomestay = this.homestayService.createHomestay(homestay, files, folder);
+        CreateHomestayResponse createHomestay = this.homestayService.createHomestay(homestay, files, folder);
         return ResponseEntity.status(HttpStatus.CREATED).body(createHomestay);
     }
 
@@ -99,7 +99,7 @@ public class HomestayController {
         @ApiResponse(responseCode = "200", description = "Success"),
         @ApiResponse(responseCode = "400", description = "Invalid search information", content = @Content())
     })
-    public ResponseEntity<List<ResSearchHomestayDTO>> getAllHomestays(@Valid ReqHomestaySearch request) {
+    public ResponseEntity<List<SearchHomestayResponse>> getAllHomestays(@Valid SearchHomestayRequest request) {
         log.info("REST request to search Homestay: {}", request);
         return ResponseEntity.ok(this.homestayService.searchHomestays(request));
     }
@@ -123,7 +123,7 @@ public class HomestayController {
         @ApiResponse(responseCode = "200", description = "Success"),
         @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content())
     })
-    public ResponseEntity<ResHomestayUpdatedDTO> addAmenitiesToHomestay(
+    public ResponseEntity<UpdateHomestayResponse> addAmenitiesToHomestay(
             @PathVariable("homestayId") Long homestayId,
             @RequestBody Map<String, List<Long>> request) {
         log.info("REST request to add amenities to Homestay, homestayId: {}, amenities: {}", homestayId, request.get("amenities"));
@@ -133,7 +133,7 @@ public class HomestayController {
             throw new BadRequestAlertException("Amenities cannot be left blank", ENTITY_NAME,
                     "amenitiesempty");
         }
-        ResHomestayUpdatedDTO updatedHomestay = this.homestayService.addAmenitiesToHomestay(homestayId, amenityIds);
+        UpdateHomestayResponse updatedHomestay = this.homestayService.addAmenitiesToHomestay(homestayId, amenityIds);
         return ResponseEntity.ok(updatedHomestay);
     }
 
@@ -146,8 +146,8 @@ public class HomestayController {
         @ApiResponse(responseCode = "404", description = "Homestay not found", content = @Content()),
         @ApiResponse(responseCode = "500", description = "Cannot update homestay", content = @Content())
     })
-    public ResponseEntity<ResHomestayUpdatedDTO> updatePartialHomestay(@PathVariable("id") Long id,
-            @Valid @RequestBody UpdateHomestayDTO dto) {
+    public ResponseEntity<UpdateHomestayResponse> updatePartialHomestay(@PathVariable("id") Long id,
+            @Valid @RequestBody UpdateHomestayRequest dto) {
         log.info("REST request to update Homestay partially, id: {}, body: {}", id, dto);
 
         if (id <= 0) {
@@ -156,7 +156,7 @@ public class HomestayController {
         if (!id.equals(dto.getId())) {
             throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idmismatch");
         }
-        ResHomestayUpdatedDTO updatedHomestay = this.homestayService.updatePartialHomestay(dto);
+        UpdateHomestayResponse updatedHomestay = this.homestayService.updatePartialHomestay(dto);
         return ResponseEntity.ok(updatedHomestay);
     }
 

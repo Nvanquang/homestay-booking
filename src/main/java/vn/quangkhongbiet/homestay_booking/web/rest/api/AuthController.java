@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.RegisterUserDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.ReqLoginDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.RegisterUserRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.LoginUserRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.VerifyOtpRequest;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResLoginDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.LoginUserResponse;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.CreateUserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.service.email.OtpService;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
@@ -38,7 +38,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UpdateUserResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
@@ -65,7 +65,7 @@ public class AuthController {
         @ApiResponse(responseCode = "200", description = "Login successful"),
         @ApiResponse(responseCode = "401", description = "Invalid login information", content = @Content())
     })
-    public ResponseEntity<Object> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
+    public ResponseEntity<Object> login(@Valid @RequestBody LoginUserRequest loginDTO) {
         log.info("REST request to login Auth: {}", loginDTO);
 
         // check user is verified
@@ -78,7 +78,7 @@ public class AuthController {
         Authentication authentication = authenticateUser(loginDTO);
 
         // 2. Lấy thông tin người dùng
-        ResLoginDTO resLoginDTO = buildUserInfoDTO(loginDTO.getUserName());
+        LoginUserResponse resLoginDTO = buildUserInfoDTO(loginDTO.getUserName());
 
         // 3. Tạo Access Token
         String accessToken = securityUtil.createAccessToken(authentication.getName(), resLoginDTO);
@@ -107,7 +107,7 @@ public class AuthController {
         @ApiResponse(responseCode = "200", description = "Success"),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
     })
-    public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount() {
+    public ResponseEntity<LoginUserResponse.UserGetAccount> getAccount() {
         log.info("REST request to get Auth account");
         // get information of user from SecurityContext
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
@@ -116,13 +116,13 @@ public class AuthController {
         }
         // Get user from DB
         User currentUserDB = this.userService.findUserByEmail(email);
-        ResLoginDTO.InformationUser userLogin = new ResLoginDTO().new InformationUser(
+        LoginUserResponse.InformationUser userLogin = new LoginUserResponse().new InformationUser(
                 currentUserDB.getId(),
                 currentUserDB.getUserName(),
                 currentUserDB.getEmail(),
                 currentUserDB.getRole());
 
-        ResLoginDTO.UserGetAccount userGetAccount = new ResLoginDTO().new UserGetAccount(userLogin);
+        LoginUserResponse.UserGetAccount userGetAccount = new LoginUserResponse().new UserGetAccount(userLogin);
 
         return ResponseEntity.ok(userGetAccount);
     }
@@ -148,7 +148,7 @@ public class AuthController {
         }
 
         // 2. Lấy thông tin người dùng
-        ResLoginDTO resLoginDTO = buildUserInfoDTO(currentUser.getEmail());
+        LoginUserResponse resLoginDTO = buildUserInfoDTO(currentUser.getEmail());
 
         // create token
         String access_token = this.securityUtil.createAccessToken(email, resLoginDTO);
@@ -166,21 +166,21 @@ public class AuthController {
                 .body(resLoginDTO);
     }
 
-    private Authentication authenticateUser(ReqLoginDTO loginDTO) {
+    private Authentication authenticateUser(LoginUserRequest loginDTO) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDTO.getUserName(),
                 loginDTO.getPassword());
         return authenticationManagerBuilder.getObject().authenticate(authToken);
     }
 
-    private ResLoginDTO buildUserInfoDTO(String email) {
+    private LoginUserResponse buildUserInfoDTO(String email) {
         User user = userService.findUserByEmail(email);
 
         if (user == null) {
             throw new EntityNotFoundException("User not found", "User", "usernotfound");
         }
 
-        ResLoginDTO res = new ResLoginDTO();
-        ResLoginDTO.InformationUser info = res.new InformationUser(
+        LoginUserResponse res = new LoginUserResponse();
+        LoginUserResponse.InformationUser info = res.new InformationUser(
                 user.getId(), user.getUserName(), user.getEmail(), user.getRole());
         res.setUser(info);
 
@@ -233,7 +233,7 @@ public class AuthController {
         @ApiResponse(responseCode = "409", description = "Email already exists", content = @Content()),
         @ApiResponse(responseCode = "429", description = "Too many OTP requests", content = @Content())
     })
-    public ResponseEntity<ResUserCreateDTO> register(@Valid @RequestBody RegisterUserDTO register) {
+    public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody RegisterUserRequest register) {
         log.info("REST request to register Auth: {}", register);
 
         User user = User.builder()
@@ -259,19 +259,19 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "Email does not exist or is null", content = @Content()),
         @ApiResponse(responseCode = "404", description = "OTP does not exist or has expired", content = @Content())
     })
-    public ResponseEntity<ResUserUpdatedDTO> verifyOtp(@RequestBody VerifyOtpRequest req) {
+    public ResponseEntity<UpdateUserResponse> verifyOtp(@RequestBody VerifyOtpRequest req) {
         boolean isOtpValid = otpService.validateOTP(req.getEmail(), req.getOtp());
         if (!isOtpValid) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         User realUser = this.userService.findUserByEmail(req.getEmail());
-        UpdateUserDTO updateUser = UpdateUserDTO.builder()
+        UpdateUserRequest updateUser = UpdateUserRequest.builder()
             .id(realUser.getId())
             .verified(true)
             .role("User")
             .build();
-        ResUserUpdatedDTO updatedUser = this.userService.updatePartialUser(updateUser);
+        UpdateUserResponse updatedUser = this.userService.updatePartialUser(updateUser);
         log.info("User account created for {}", req.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
     }

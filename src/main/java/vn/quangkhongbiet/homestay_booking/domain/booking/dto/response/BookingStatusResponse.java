@@ -12,10 +12,14 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 @Builder
 @Getter
 @Setter
-public class ResBookingStatusDTO {
+public class BookingStatusResponse {
+
     private Long bookingId;
+
     private Long userId;
+
     private Long homestayId;
+    
     private BookingStatus status;
 }
 

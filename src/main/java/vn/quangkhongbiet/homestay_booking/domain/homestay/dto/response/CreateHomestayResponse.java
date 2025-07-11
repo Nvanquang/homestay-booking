@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResHomestayCreateDTO extends ResHomestayDTO{
+public class CreateHomestayResponse extends HomestayResponse{
     private Instant createdAt;
     private String createdBy;
 }

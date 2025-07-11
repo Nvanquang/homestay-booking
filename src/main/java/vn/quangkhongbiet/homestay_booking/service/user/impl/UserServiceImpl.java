@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.CreateUserResponse;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UserResponse;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UpdateUserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.repository.RoleRepository;
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResUserCreateDTO createUser(User user) {
+    public CreateUserResponse createUser(User user) {
         log.debug("create User with user: {}", user);
         if (user.getEmail() != null && userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyUsedException();
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResUserDTO findUserById(Long id) {
+    public UserResponse findUserById(Long id) {
         log.debug("find User by id: {}", id);
         return this.userRepository.findById(id)
                 .map(this::convertToResUserDTO)
@@ -95,13 +95,13 @@ public class UserServiceImpl implements UserService {
         meta.setTotal(pageUsers.getTotalElements());
 
         result.setMeta(meta);
-        List<ResUserDTO> users = pageUsers.getContent().stream().map(item -> this.convertToResUserDTO(item)).toList();
+        List<UserResponse> users = pageUsers.getContent().stream().map(item -> this.convertToResUserDTO(item)).toList();
         result.setResult(users);
         return result;
     }
 
     @Override
-    public ResUserUpdatedDTO updatePartialUser(UpdateUserDTO dto) {
+    public UpdateUserResponse updatePartialUser(UpdateUserRequest dto) {
         log.debug("update User partially with dto: {}", dto);
         return this.userRepository.findById(dto.getId()).map(existingUser -> {
             if (dto.getUserName() != null) {
@@ -138,9 +138,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResUserCreateDTO convertToResCreateUserDTO(User user) {
+    public CreateUserResponse convertToResCreateUserDTO(User user) {
         log.debug("convert to ResUserCreateDTO with user: {}", user);
-        var builder = ResUserCreateDTO.builder();
+        var builder = CreateUserResponse.builder();
         mapCommonFields(user, builder);
         return builder
                 .createdAt(user.getCreatedAt())
@@ -149,9 +149,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResUserUpdatedDTO convertToResUpdatedUserDTO(User user) {
+    public UpdateUserResponse convertToResUpdatedUserDTO(User user) {
         log.debug("convert to ResUserUpdatedDTO with user: {}", user);
-        var builder = ResUserUpdatedDTO.builder();
+        var builder = UpdateUserResponse.builder();
         mapCommonFields(user, builder);
         return builder
                 .updatedAt(user.getUpdatedAt())
@@ -160,13 +160,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResUserDTO convertToResUserDTO(User user) {
-        var builder = ResUserDTO.builder();
+    public UserResponse convertToResUserDTO(User user) {
+        var builder = UserResponse.builder();
         mapCommonFields(user, builder);
         return builder.build();
     }
 
-    private void mapCommonFields(User user, ResUserDTO.ResUserDTOBuilder<?, ?> builder) {
+    private void mapCommonFields(User user, UserResponse.UserResponseBuilder<?, ?> builder) {
         builder.id(user.getId())
                 .userName(user.getUserName())
                 .email(user.getEmail())
@@ -175,8 +175,8 @@ public class UserServiceImpl implements UserService {
                 .gender(user.getGender());
 
         // Map Role to ResRole
-        ResUserDTO.ResRole resRole = user.getRole() != null ? new ResUserDTO.ResRole(user.getRole().getId(), user.getRole().getName())
-                : new ResUserDTO.ResRole(null, null);
+        UserResponse.ResRole resRole = user.getRole() != null ? new UserResponse.ResRole(user.getRole().getId(), user.getRole().getName())
+                : new UserResponse.ResRole(null, null);
         builder.role(resRole);
     }
 

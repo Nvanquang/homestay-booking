@@ -2,8 +2,8 @@ package vn.quangkhongbiet.homestay_booking.service.email;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.RegisterUserDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.OtpPayload;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.RegisterUserRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.OtpEmailPayload;
 
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class OtpService {
      *
      * @param key - provided key (username in this case)
      */
-    public void generateOtp(RegisterUserDTO register)
+    public void generateOtp(RegisterUserRequest register)
     {
         // generate otp
         Integer otpValue = otpGenerator.generateOTP(register.getEmail());
@@ -34,7 +34,7 @@ public class OtpService {
 
         log.debug("Generated OTP: {}", otpValue);
 
-         OtpPayload otpPayload = OtpPayload.builder()
+         OtpEmailPayload otpPayload = OtpEmailPayload.builder()
                         .email(register.getEmail())
                         .fullName(register.getFullName())
                         .otp(otpValue.toString())

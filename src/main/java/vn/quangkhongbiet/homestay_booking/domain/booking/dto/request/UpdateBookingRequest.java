@@ -3,6 +3,7 @@ package vn.quangkhongbiet.homestay_booking.domain.booking.dto.request;
 import java.time.Instant;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +14,10 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateBookingDTO {
-    @NotNull(message = "ID đặt phòng là bắt buộc")
+public class UpdateBookingRequest {
+    
+    @NotNull(message = "Booking ID is required")
+    @Positive(message = "Booking ID must be positive")
     private Long id;
 
     private BookingStatus status;

@@ -32,17 +32,22 @@ public class PaymentTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "transaction_id")
     private String transactionId; // Mã giao dịch từ cổng thanh toán
 
+    @Column(name = "status")
     private String status; // 00: PENDING, 01: SUCCESS, 02: FAILED, ...
 
+    @Column(name = "amount")
     private BigDecimal amount;
 
-    @Column(length = 1000)
+    @Column(name = "response_message")
     private String responseMessage; // lưu thông báo từ gateway
 
+    @Column(name = "request_id")
     private String requestId; 
 
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @OneToOne

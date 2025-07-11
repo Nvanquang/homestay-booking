@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResSearchHomestayDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.SearchHomestayResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 
 @Repository
@@ -116,7 +116,7 @@ public interface HomestayRepository extends JpaRepository<Homestay, Long>, JpaSp
                         ST_Transform(ST_SetSRID(ST_MakePoint(homestay_with_amenities.longitude, homestay_with_amenities.latitude), 4326), 3857)
                 )
                 """, nativeQuery = true)
-        List<ResSearchHomestayDTO> searchHomestay(@Param("longitude") Double longitude,
+        List<SearchHomestayResponse> searchHomestay(@Param("longitude") Double longitude,
                         @Param("latitude") Double latitude,
                         @Param("radius") Double radius,
                         @Param("checkinDate") LocalDate checkinDate,

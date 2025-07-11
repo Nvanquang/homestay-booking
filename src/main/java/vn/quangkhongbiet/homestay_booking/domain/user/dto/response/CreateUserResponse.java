@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResUserUpdatedDTO extends ResUserDTO {
-    private Instant updatedAt;
-    private String updatedBy;
+public class CreateUserResponse extends UserResponse {
+    private Instant createdAt;
+    private String createdBy;
 }

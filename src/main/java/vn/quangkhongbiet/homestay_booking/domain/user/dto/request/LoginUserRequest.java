@@ -11,11 +11,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReqLoginDTO {
-    @NotBlank(message = "Email không được để trống!")
-    @Email(message = "Email không hợp lệ!", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")	
+public class LoginUserRequest {
+    
+    @NotBlank(message = "Username is required")
+    @Email(message = "Email format is invalid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")	
     private String userName;
 
-    @NotBlank(message = "Password không được để trống!")
+    @NotBlank(message = "Password is required")
     private String password;
 }

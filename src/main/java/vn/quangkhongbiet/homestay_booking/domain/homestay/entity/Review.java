@@ -1,8 +1,8 @@
 package vn.quangkhongbiet.homestay_booking.domain.homestay.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +14,7 @@ import java.time.Instant;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "reviews")
@@ -23,18 +24,19 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Hãy đánh giá số sao")
+    @Column(name = "rating")
     private Integer rating;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "comment", columnDefinition = "TEXT")
     private String comment;
 
-    @Column(nullable = false)
+    @Column(name = "posting_date")
     private Instant postingDate;
 
+    @Column(name = "host_reply", columnDefinition = "TEXT")
     private String hostReply;
 
-    @ManyToOne // 1 chiều
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 

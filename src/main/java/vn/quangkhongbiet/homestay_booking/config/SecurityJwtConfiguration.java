@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.Base64;
 import vn.quangkhongbiet.homestay_booking.utils.SecurityUtil;
 
 @Configuration
-public class SecurityJwtConfiguaration {
+public class SecurityJwtConfiguration {
     @Value("${security.authentication.jwt.base64-secret}")
     private String jwtKey;
 

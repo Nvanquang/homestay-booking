@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResReviewDTO {
+public class ReviewResponse {
 
     private Integer rating;
 

@@ -13,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.ReqReviewDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResReviewDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateReviewRequest;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ReviewResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Review;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.repository.BookingRepository;
@@ -44,7 +44,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final HomestayRepository homestayRepository;
 
     @Override
-    public ResReviewDTO createReview(ReqReviewDTO dto) {
+    public ReviewResponse createReview(CreateReviewRequest dto) {
         log.debug("create Review with request: {}", dto);
         String email = SecurityUtil.getCurrentUserLogin() != null ? SecurityUtil.getCurrentUserLogin().get() : "";
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found", ENTITY_NAME, "usernotfound"));
@@ -61,7 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setHomestay(homestayRepository.getReferenceById(dto.getHomestayId()));
         review.setBooking(booking);
 
-        ResReviewDTO resReviewDTO = this.convertToResReviewDTO(reviewRepository.save(review));
+        ReviewResponse resReviewDTO = this.convertToResReviewDTO(reviewRepository.save(review));
         return resReviewDTO;
     }
 
@@ -106,20 +106,20 @@ public class ReviewServiceImpl implements ReviewService {
         meta.setTotal(pageReviews.getTotalElements());
 
         result.setMeta(meta);
-        List<ResReviewDTO> reviews = pageReviews.getContent().stream().map(item -> this.convertToResReviewDTO(item)).toList();
+        List<ReviewResponse> reviews = pageReviews.getContent().stream().map(item -> this.convertToResReviewDTO(item)).toList();
         result.setResult(reviews);
         return result;
     }
 
     @Override
-    public ResReviewDTO convertToResReviewDTO(Review review) {
-        ResReviewDTO.ReviewerInfo user = new ResReviewDTO.ReviewerInfo(
+    public ReviewResponse convertToResReviewDTO(Review review) {
+        ReviewResponse.ReviewerInfo user = new ReviewResponse.ReviewerInfo(
             review.getUser().getId(),
             review.getUser().getFullName(),
             null
         );
 
-        return ResReviewDTO.builder()
+        return ReviewResponse.builder()
             .rating(review.getRating())
             .comment(review.getComment())
             .postingDate(review.getPostingDate())

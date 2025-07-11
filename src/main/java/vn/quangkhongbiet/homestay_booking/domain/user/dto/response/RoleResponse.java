@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResRoleDTO {
+public class RoleResponse {
     private Long id;
     private String name;
     private Boolean active;

@@ -2,7 +2,7 @@ package vn.quangkhongbiet.homestay_booking.service.email;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.OtpPayload;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.OtpEmailPayload;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import java.nio.charset.StandardCharsets;
 
@@ -74,11 +74,11 @@ public class MailService {
     }
 
     @Async
-    public void sendEmailOtpFromTemplate(OtpPayload otp, String templateName, String titleKey) {
+    public void sendEmailOtpFromTemplate(OtpEmailPayload otp, String templateName, String titleKey) {
         this.sendEmailOtpFromTemplateSync(otp, templateName, titleKey);
     }
 
-    public void sendEmailOtpFromTemplateSync(OtpPayload otp, String subject, String templateName) {
+    public void sendEmailOtpFromTemplateSync(OtpEmailPayload otp, String subject, String templateName) {
         if (otp.getEmail() == null) {
             log.debug("Email doesn't exist for user '{}'", otp.getFullName());
             return;
@@ -90,7 +90,7 @@ public class MailService {
     }
 
     @Async
-    public void sendOtpEmail(OtpPayload otp) {
+    public void sendOtpEmail(OtpEmailPayload otp) {
         log.debug("Sending OTP email to '{}'", otp.getEmail());
         this.sendEmailOtpFromTemplateSync(otp, "email.otp.title", "mail/otpEmail");
     }

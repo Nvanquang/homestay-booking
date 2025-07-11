@@ -18,13 +18,17 @@ import java.time.LocalDate;
 public class HomestayAvailability {
 
     @Id
+    @Column(name = "homestay_id")
     private Long homestayId;
 
     @Id
+    @Column(name = "date")
     private LocalDate date;
 
+    @Column(name = "price")
     private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private AvailabilityStatus status;
 }

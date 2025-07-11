@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.RoleResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
 import vn.quangkhongbiet.homestay_booking.repository.PermissionRepository;
@@ -63,7 +63,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public ResRoleDTO findById(Long id) {
+    public RoleResponse findById(Long id) {
         log.debug("find Role by id: {}", id);
         return this.roleRepository.findById(id)
                 .map(this::convertToResRoleDTO)
@@ -85,7 +85,7 @@ public class RoleServiceImpl implements RoleService {
         meta.setTotal(pageRoles.getTotalElements());
 
         result.setMeta(meta);
-        List<ResRoleDTO> resRoles = pageRoles.getContent().stream()
+        List<RoleResponse> resRoles = pageRoles.getContent().stream()
                 .map(this::convertToResRoleDTO).toList();
         result.setResult(resRoles);
 
@@ -94,7 +94,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public Role updatePartialRole(UpdateRoleDTO role) {
+    public Role updatePartialRole(UpdateRoleRequest role) {
         log.debug("update Role partially with role: {}", role);
         return this.roleRepository.findById(role.getId()).map(existingRole -> {
             if (role.getName() != null) {
@@ -117,7 +117,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role addPermissionForRole(UpdateRoleDTO role) {
+    public Role addPermissionForRole(UpdateRoleRequest role) {
         log.debug("add permission for Role with id = ", role.getId());
         List<Long> permissions = role.getPermissions();
         Role roleDB = this.roleRepository.findById(role.getId()).orElseThrow(() -> new EntityNotFoundException("Role not found", ENTITY_NAME, "rolenotfound"));
@@ -143,7 +143,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void deletePermissionFromRole(UpdateRoleDTO role) {
+    public void deletePermissionFromRole(UpdateRoleRequest role) {
         log.debug("delete Permission from Role by id: {}", role.getId());
         List<Long> permissions = role.getPermissions();
         Role roleDB = this.roleRepository.findById(role.getId()).orElseThrow(() -> new EntityNotFoundException("Role not found", ENTITY_NAME, "rolenotfound"));
@@ -159,16 +159,16 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public ResRoleDTO convertToResRoleDTO(Role role) {
-        List<ResRoleDTO.ResPermission> permissions = role.getPermissions().stream()
-                .map(permission -> ResRoleDTO.ResPermission.builder()
+    public RoleResponse convertToResRoleDTO(Role role) {
+        List<RoleResponse.ResPermission> permissions = role.getPermissions().stream()
+                .map(permission -> RoleResponse.ResPermission.builder()
                         .apiPath(permission.getApiPath())
                         .method(permission.getMethod())
                         .module(permission.getModule())
                         .build())
                 .collect(java.util.stream.Collectors.toList());
 
-        ResRoleDTO resRoleDTO = ResRoleDTO.builder()
+        RoleResponse resRoleDTO = RoleResponse.builder()
                 .id(role.getId())
                 .name(role.getName())
                 .active(role.getActive())

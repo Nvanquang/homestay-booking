@@ -20,11 +20,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingStatusDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResVnpBookingDTO;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.CreateBookingRequest;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingRequest;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.BookingResponse;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.BookingStatusResponse;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.VnpayBookingResponse;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.service.booking.BookingService;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
@@ -58,15 +58,15 @@ public class BookingController {
         @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
         @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
-    public ResponseEntity<ResVnpBookingDTO> createBooking(
-        @Valid @RequestBody ReqBooking request, 
+    public ResponseEntity<VnpayBookingResponse> createBooking(
+        @Valid @RequestBody CreateBookingRequest request, 
         HttpServletRequest httpServletRequest) {
 
         String ipAddress = VnpayUtil.getIpAddress(httpServletRequest);
         request.setIpAddress(ipAddress);
 
         log.info("REST request to create Booking: {}", request);
-        ResVnpBookingDTO createdBooking = bookingService.createBooking(request);
+        VnpayBookingResponse createdBooking = bookingService.createBooking(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBooking);
     }
 
@@ -78,12 +78,12 @@ public class BookingController {
         @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
         @ApiResponse(responseCode = "404", description = "Booking not found", content = @Content())
     })
-    public ResponseEntity<ResBookingDTO> getBookingById(@PathVariable("id") Long id) {
+    public ResponseEntity<BookingResponse> getBookingById(@PathVariable("id") Long id) {
         log.info("REST request to get Booking by id: {}", id);
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
-        ResBookingDTO resBookingDTO = this.bookingService.convertToResBookingDTO(this.bookingService.findBookingById(id));
+        BookingResponse resBookingDTO = this.bookingService.convertToResBookingDTO(this.bookingService.findBookingById(id));
         return ResponseEntity.ok(resBookingDTO);
     }
 
@@ -95,7 +95,7 @@ public class BookingController {
         @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
     })
-    public ResponseEntity<List<ResBookingDTO>> getBookingHistory(@PathVariable("userId") Long userId) {
+    public ResponseEntity<List<BookingResponse>> getBookingHistory(@PathVariable("userId") Long userId) {
         log.info("REST request to get Booking History by userId: {}", userId);
         if(userId <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
@@ -114,7 +114,7 @@ public class BookingController {
         @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
         @ApiResponse(responseCode = "404", description = "Booking not found", content = @Content())
     })
-    public ResponseEntity<ResBookingStatusDTO> getBookingStatus(@PathVariable("id") Long id) {
+    public ResponseEntity<BookingStatusResponse> getBookingStatus(@PathVariable("id") Long id) {
         log.info("REST request to get Booking status by id: {}", id);
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
@@ -142,7 +142,7 @@ public class BookingController {
         @ApiResponse(responseCode = "404", description = "Booking not found", content = @Content()),
         @ApiResponse(responseCode = "500", description = "Cannot update booking", content = @Content())
     })
-    public ResponseEntity<ResBookingDTO> updatePartialBooking(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookingDTO dto) {
+    public ResponseEntity<BookingResponse> updatePartialBooking(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookingRequest dto) {
         log.info("REST request to update Booking partially, id: {}, body: {}", id, dto);
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
@@ -150,7 +150,7 @@ public class BookingController {
         if (!id.equals(dto.getId())) {
             throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idmismatch");
         }
-        ResBookingDTO updatedBooking = bookingService.updatePartialBooking(dto);
+        BookingResponse updatedBooking = bookingService.updatePartialBooking(dto);
         return ResponseEntity.ok(updatedBooking);
     }
 }

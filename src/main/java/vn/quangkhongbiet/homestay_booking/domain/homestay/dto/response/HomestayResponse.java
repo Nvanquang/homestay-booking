@@ -13,7 +13,7 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatu
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResHomestayDTO {
+public class HomestayResponse {
     private Long id;
     private String name;
     private String description;

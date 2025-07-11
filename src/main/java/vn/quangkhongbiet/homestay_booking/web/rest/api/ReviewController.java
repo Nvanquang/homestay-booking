@@ -18,8 +18,8 @@ import com.turkraft.springfilter.converter.FilterSpecificationConverter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.ReqReviewDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResReviewDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateReviewRequest;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ReviewResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Review;
 import vn.quangkhongbiet.homestay_booking.service.homestay.ReviewService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
@@ -54,7 +54,7 @@ public class ReviewController {
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content()),
         @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
-    public ResponseEntity<ResReviewDTO> createReview(@RequestBody @Valid ReqReviewDTO dto) {
+    public ResponseEntity<ReviewResponse> createReview(@RequestBody @Valid CreateReviewRequest dto) {
         log.info("REST request to create Review by request: {}", dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(dto));
     }

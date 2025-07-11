@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingStatusDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResVnpBookingDTO;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.CreateBookingRequest;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingRequest;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.BookingResponse;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.BookingStatusResponse;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.VnpayBookingResponse;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
@@ -32,7 +32,7 @@ public interface BookingService {
      * @throws EntityNotFoundException if user or homestay not found.
      * @throws BadRequestAlertException if request data invalid or homestay not active.
      */
-    ResVnpBookingDTO createBooking(ReqBooking request);
+    VnpayBookingResponse createBooking(CreateBookingRequest request);
 
     /**
      * Mark a booking as booked.
@@ -48,7 +48,7 @@ public interface BookingService {
      * @return the booking status DTO.
      * @throws EntityNotFoundException if booking not found.
      */
-    ResBookingStatusDTO findBookingStatus(Long id);
+    BookingStatusResponse findBookingStatus(Long id);
 
     /**
      * Find a booking by id.
@@ -63,7 +63,7 @@ public interface BookingService {
      * @param userId the user id.
      * @return list of booking DTOs.
      */
-    List<ResBookingDTO> findBookingByUser(Long userId);
+    List<BookingResponse> findBookingByUser(Long userId);
 
     /**
      * find all bookings with specification and pagination.
@@ -80,12 +80,12 @@ public interface BookingService {
      * @throws EntityNotFoundException if booking not found.
      * @throws BadRequestAlertException if booking is cancelled, completed, or status change invalid.
      */
-    ResBookingDTO updatePartialBooking(UpdateBookingDTO dto);
+    BookingResponse updatePartialBooking(UpdateBookingRequest dto);
 
     /**
      * Convert booking entity to booking DTO.
      * @param booking the booking entity.
      * @return the booking DTO.
      */
-    ResBookingDTO convertToResBookingDTO(Booking booking);
+    BookingResponse convertToResBookingDTO(Booking booking);
 }

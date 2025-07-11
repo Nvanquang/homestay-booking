@@ -15,19 +15,30 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResBookingDTO {
+public class BookingResponse {
 
     private Long id;
+
     private LocalDate checkinDate;
+
     private LocalDate checkoutDate;
+
     private Integer guests;
+
     private BookingStatus status;
+
     private BigDecimal subtotal;
+
     private BigDecimal fee;
+
     private BigDecimal discount;
+
     private BigDecimal totalAmount;
+
     private String note;
+
     private ResUser user;
+
     private ResHomestay homestay;
 
     @Getter

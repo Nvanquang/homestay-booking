@@ -3,8 +3,8 @@ package vn.quangkhongbiet.homestay_booking.service.homestay;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.ReqReviewDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResReviewDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateReviewRequest;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ReviewResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Review;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
@@ -21,7 +21,7 @@ public interface ReviewService {
      * @throws BadRequestAlertException if user chưa từng đặt homestay.
      * @throws ConflictException nếu đã đánh giá rồi.
      */
-    ResReviewDTO createReview(ReqReviewDTO dto);
+    ReviewResponse createReview(CreateReviewRequest dto);
 
     /**
      * find reviews for a homestay with specification and pagination.
@@ -36,5 +36,5 @@ public interface ReviewService {
      * @param review the review entity.
      * @return the review DTO.
      */
-    ResReviewDTO convertToResReviewDTO(Review review);
+    ReviewResponse convertToResReviewDTO(Review review);
 }

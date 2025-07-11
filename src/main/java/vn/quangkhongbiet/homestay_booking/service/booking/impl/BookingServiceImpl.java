@@ -15,11 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.dto.BookingPrice;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.ReqBooking;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResBookingStatusDTO;
-import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.ResVnpBookingDTO;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.CreateBookingRequest;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.request.UpdateBookingRequest;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.BookingResponse;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.BookingStatusResponse;
+import vn.quangkhongbiet.homestay_booking.domain.booking.dto.response.VnpayBookingResponse;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailability;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatus;
@@ -66,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @SneakyThrows
     @Transactional
-    public ResVnpBookingDTO createBooking(ReqBooking request) {
+    public VnpayBookingResponse createBooking(CreateBookingRequest request) {
         validateRequest(request);
         validateHomestay(request);
 
@@ -111,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
         InitPaymentResponse initPaymentResponse = vnpayPaymentService.init(initPaymentRequest);
 
         log.info("[request_id={}] User user_id={} created booking_id={} successfully", request.getRequestId(), request.getUserId(), booking.getId());
-        return ResVnpBookingDTO.builder()
+        return VnpayBookingResponse.builder()
                 .booking(this.convertToResBookingDTO(booking))
                 .payment(initPaymentResponse)
                 .build();
@@ -130,9 +130,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public ResBookingStatusDTO findBookingStatus(Long id) {
+    public BookingStatusResponse findBookingStatus(Long id) {
         Booking booking = this.bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Booking not found", ENTITY_NAME, "bookingnotfound"));
-        return ResBookingStatusDTO.builder()
+        return BookingStatusResponse.builder()
         .bookingId(booking.getId())
         .userId(booking.getUser().getId())
         .homestayId(booking.getHomestay().getId())
@@ -140,7 +140,7 @@ public class BookingServiceImpl implements BookingService {
         .build();
     }
 
-    public void validateRequest(ReqBooking request) {
+    public void validateRequest(CreateBookingRequest request) {
         LocalDate checkinDate = request.getCheckinDate();
         LocalDate checkoutDate = request.getCheckoutDate();
         LocalDate currentDate = LocalDate.now();
@@ -159,7 +159,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    public void validateHomestay(ReqBooking request) {
+    public void validateHomestay(CreateBookingRequest request) {
         Homestay homestay = homestayRepository.findById(request.getHomestayId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         ErrorConstants.ENTITY_NOT_FOUND_TYPE, "Homestay not found with id",
@@ -186,7 +186,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<ResBookingDTO> findBookingByUser(Long userId) {
+    public List<BookingResponse> findBookingByUser(Long userId) {
         List<Booking> bookingHistory = this.bookingRepository.findByUser(this.userRepository.findById(userId).get());
         return bookingHistory.stream().map(item -> this.convertToResBookingDTO(item)).toList();
     }
@@ -206,14 +206,14 @@ public class BookingServiceImpl implements BookingService {
 
         result.setMeta(meta);
 
-        List<ResBookingDTO> bookings = pageBookings.getContent().stream().map(item -> this.convertToResBookingDTO(item))
+        List<BookingResponse> bookings = pageBookings.getContent().stream().map(item -> this.convertToResBookingDTO(item))
                 .toList();
         result.setResult(bookings);
         return result;
     }
 
     @Override
-    public ResBookingDTO updatePartialBooking(UpdateBookingDTO dto) {
+    public BookingResponse updatePartialBooking(UpdateBookingRequest dto) {
         log.debug("update Booking partially with dto: {}", dto);
         return bookingRepository.findById(dto.getId()).map(existingBooking -> {
             validateBookingStatus(existingBooking);
@@ -234,7 +234,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void validateNewStatus(Booking existingBooking, UpdateBookingDTO dto) {
+    private void validateNewStatus(Booking existingBooking, UpdateBookingRequest dto) {
         if (dto.getStatus() == null)
             return;
         if (existingBooking.getStatus() == BookingStatus.BOOKED
@@ -246,15 +246,15 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void updateBookingFields(Booking existingBooking, UpdateBookingDTO dto) {
+    private void updateBookingFields(Booking existingBooking, UpdateBookingRequest dto) {
         if (dto.getStatus() != null) {
             existingBooking.setStatus(dto.getStatus());
         }
     }
 
     @Override
-    public ResBookingDTO convertToResBookingDTO(Booking booking) {
-        var builder = ResBookingDTO.builder()
+    public BookingResponse convertToResBookingDTO(Booking booking) {
+        var builder = BookingResponse.builder()
                 .id(booking.getId())
                 .checkinDate(booking.getCheckinDate())
                 .checkoutDate(booking.getCheckoutDate())
@@ -266,16 +266,16 @@ public class BookingServiceImpl implements BookingService {
                 .note(booking.getNote());
 
         // convert User to ResUser
-        ResBookingDTO.ResUser resUser = booking.getUser() != null
-                ? new ResBookingDTO.ResUser(booking.getUser().getId(), booking.getUser().getFullName())
-                : new ResBookingDTO.ResUser(null, null);
+        BookingResponse.ResUser resUser = booking.getUser() != null
+                ? new BookingResponse.ResUser(booking.getUser().getId(), booking.getUser().getFullName())
+                : new BookingResponse.ResUser(null, null);
         builder.user(resUser);
 
         // convert Homestay to ResHomestay
-        ResBookingDTO.ResHomestay resHomestay = booking.getHomestay() != null
-                ? new ResBookingDTO.ResHomestay(booking.getHomestay().getId(),
+        BookingResponse.ResHomestay resHomestay = booking.getHomestay() != null
+                ? new BookingResponse.ResHomestay(booking.getHomestay().getId(),
                         booking.getHomestay().getName(), booking.getHomestay().getAddress())
-                : new ResBookingDTO.ResHomestay(null, null, null);
+                : new BookingResponse.ResHomestay(null, null, null);
         builder.homestay(resHomestay);
         return builder.build();
     }

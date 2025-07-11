@@ -14,12 +14,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.ReqHomestaySearch;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResSearchHomestayDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.SearchHomestayRequest;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayRequest;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.CreateHomestayResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.HomestayResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.UpdateHomestayResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.SearchHomestayResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
@@ -53,7 +53,7 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     @Transactional
-    public ResHomestayCreateDTO createHomestay(Homestay homestay, MultipartFile[] files, String folder) {
+    public CreateHomestayResponse createHomestay(Homestay homestay, MultipartFile[] files, String folder) {
         log.debug("create Homestay with homestay: {}, folder: {}, files: {}", homestay, folder, files != null ? files.length : 0);
 
         homestay.setAmenities(this.amenityRepository
@@ -70,7 +70,7 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
-    public ResHomestayUpdatedDTO addAmenitiesToHomestay(long homestayId, List<Long> amenityIds) {
+    public UpdateHomestayResponse addAmenitiesToHomestay(long homestayId, List<Long> amenityIds) {
         log.debug("add amenities to Homestay, homestayId: {}, amenityIds: {}", homestayId, amenityIds);
         // Kiểm tra homestay tồn tại
         Homestay homestay = homestayRepository.findById(homestayId)
@@ -98,7 +98,7 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
-    public List<ResSearchHomestayDTO> searchHomestays(ReqHomestaySearch request) {
+    public List<SearchHomestayResponse> searchHomestays(SearchHomestayRequest request) {
         log.debug("search Homestay with request: {}", request);
         request.setStatus(AvailabilityStatus.AVAILABLE);
 
@@ -139,14 +139,14 @@ public class HomestayServiceImpl implements HomestayService {
         meta.setTotal(pageHomestays.getTotalElements());
 
         result.setMeta(meta);
-        List<ResHomestayDTO> homestays = pageHomestays.getContent().stream()
+        List<HomestayResponse> homestays = pageHomestays.getContent().stream()
                 .map(item -> this.convertToResHomestayDTO(item)).toList();
         result.setResult(homestays);
         return result;
     }
 
     @Override
-    public ResHomestayUpdatedDTO updatePartialHomestay(UpdateHomestayDTO updatedHomestay) {
+    public UpdateHomestayResponse updatePartialHomestay(UpdateHomestayRequest updatedHomestay) {
         log.debug("update Homestay partially with dto: {}", updatedHomestay);
         return this.homestayRepository.findById(updatedHomestay.getId()).map(existingHomestay -> {
             if (updatedHomestay.getName() != null) {
@@ -182,8 +182,8 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
-    public ResHomestayCreateDTO convertToResCreateHomestayDTO(Homestay homestay) {
-        var builder = ResHomestayCreateDTO.builder();
+    public CreateHomestayResponse convertToResCreateHomestayDTO(Homestay homestay) {
+        var builder = CreateHomestayResponse.builder();
         mapCommonFields(homestay, builder);
         return builder
                 .createdAt(homestay.getCreatedAt())
@@ -192,8 +192,8 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
-    public ResHomestayUpdatedDTO convertToResUpdatedHomestayDTO(Homestay homestay) {
-        var builder = ResHomestayUpdatedDTO.builder();
+    public UpdateHomestayResponse convertToResUpdatedHomestayDTO(Homestay homestay) {
+        var builder = UpdateHomestayResponse.builder();
         mapCommonFields(homestay, builder);
         return builder
                 .updatedAt(homestay.getUpdatedAt())
@@ -202,13 +202,13 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
-    public ResHomestayDTO convertToResHomestayDTO(Homestay homestay) {
-        var builder = ResHomestayDTO.builder();
+    public HomestayResponse convertToResHomestayDTO(Homestay homestay) {
+        var builder = HomestayResponse.builder();
         mapCommonFields(homestay, builder);
         return builder.build();
     }
 
-    private void mapCommonFields(Homestay homestay, ResHomestayDTO.ResHomestayDTOBuilder<?, ?> builder) {
+    private void mapCommonFields(Homestay homestay, HomestayResponse.HomestayResponseBuilder<?, ?> builder) {
         builder.id(homestay.getId())
                 .name(homestay.getName())
                 .description(homestay.getDescription())

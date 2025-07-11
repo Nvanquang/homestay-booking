@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.repository.PermissionRepository;
 import vn.quangkhongbiet.homestay_booking.service.user.PermissionService;
@@ -72,7 +72,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Permission updatePartialPermission(UpdatePermissionDTO permission) {
+    public Permission updatePartialPermission(UpdatePermissionRequest permission) {
         log.debug("update Permission partially with permission: {}", permission);
         return this.permissionRepository.findById(permission.getId()).map(existingPermission -> {
         if (permission.getName() != null) {

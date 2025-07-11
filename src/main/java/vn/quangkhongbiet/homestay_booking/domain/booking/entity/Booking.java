@@ -1,7 +1,6 @@
 package vn.quangkhongbiet.homestay_booking.domain.booking.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
@@ -26,40 +25,38 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Ngày nhận phòng là bắt buộc")
+    @Column(name = "checkin_date")
     private LocalDate checkinDate;
 
-    @NotNull(message = "Ngày trả phòng là bắt buộc")
+    @Column(name = "checkout_date")
     private LocalDate checkoutDate;
 
-    @Min(value = 1, message = "Số lượng khách phải ít nhất là 1")
+    @Column(name = "guests")
     private Integer guests;
 
-    @NotNull(message = "Trạng thái đặt phòng là bắt buộc")
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private BookingStatus status;
 
-    @Min(value = 0, message = "Tổng trước phí không được âm")
+    @Column(name = "subtotal")
     private BigDecimal subtotal;
 
-    @Max(value = 0, message = "Giảm giá không được dương")
+    @Column(name = "discount")
     private BigDecimal discount;
 
-    @Min(value = 0, message = "Tổng tiền không được âm")
+    @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
-    @Size(max = 1000, message = "Ghi chú không được vượt quá 1000 ký tự")
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "note", columnDefinition = "TEXT")
     private String note;
 
+    @Column(name = "request_id")
     private String requestId;
 
-    @NotNull(message = "Người dùng là bắt buộc")
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NotNull(message = "Homestay là bắt buộc")
     @ManyToOne
     @JoinColumn(name = "homestay_id")
     private Homestay homestay;

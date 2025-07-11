@@ -6,12 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.ReqHomestaySearch;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayCreateDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResHomestayUpdatedDTO;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ResSearchHomestayDTO;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.SearchHomestayRequest;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayRequest;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.CreateHomestayResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.HomestayResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.UpdateHomestayResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.SearchHomestayResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
@@ -38,7 +38,7 @@ public interface HomestayService {
      * @throws BadRequestAlertException if input data is invalid or upload fails
      * @throws EntityNotFoundException if related entity is not found
      */
-    ResHomestayCreateDTO createHomestay(Homestay homestay, MultipartFile[] files, String folder);
+    CreateHomestayResponse createHomestay(Homestay homestay, MultipartFile[] files, String folder);
 
     /**
      * Adds amenities to a specific homestay.
@@ -49,7 +49,7 @@ public interface HomestayService {
      * @throws BadRequestAlertException if input data is invalid
      * @throws EntityNotFoundException if the homestay or amenities are not found
      */
-    ResHomestayUpdatedDTO addAmenitiesToHomestay(long homestayId, List<Long> amenityIds);
+    UpdateHomestayResponse addAmenitiesToHomestay(long homestayId, List<Long> amenityIds);
 
     /**
      * Finds a homestay by its ID.
@@ -67,7 +67,7 @@ public interface HomestayService {
      * @return a list of search result DTOs
      * @throws BadRequestAlertException if search parameters are invalid
      */
-    List<ResSearchHomestayDTO> searchHomestays(ReqHomestaySearch request);
+    List<SearchHomestayResponse> searchHomestays(SearchHomestayRequest request);
 
     /**
      * Finds all homestays matching the given specification and pageable.
@@ -87,7 +87,7 @@ public interface HomestayService {
      * @throws BadRequestAlertException if update data is invalid
      * @throws EntityNotFoundException if the homestay is not found
      */
-    ResHomestayUpdatedDTO updatePartialHomestay(UpdateHomestayDTO homestay);
+    UpdateHomestayResponse updatePartialHomestay(UpdateHomestayRequest homestay);
 
     /**
      * Deletes a homestay by its ID.
@@ -104,7 +104,7 @@ public interface HomestayService {
      * @param homestay the Homestay entity
      * @return the response DTO for created homestay
      */
-    ResHomestayCreateDTO convertToResCreateHomestayDTO(Homestay homestay);
+    CreateHomestayResponse convertToResCreateHomestayDTO(Homestay homestay);
 
     /**
      * Converts a Homestay entity to a response DTO for update.
@@ -112,7 +112,7 @@ public interface HomestayService {
      * @param homestay the Homestay entity
      * @return the response DTO for updated homestay
      */
-    ResHomestayUpdatedDTO convertToResUpdatedHomestayDTO(Homestay homestay);
+    UpdateHomestayResponse convertToResUpdatedHomestayDTO(Homestay homestay);
 
     /**
      * Converts a Homestay entity to a response DTO.
@@ -120,5 +120,5 @@ public interface HomestayService {
      * @param homestay the Homestay entity
      * @return the response DTO for the homestay
      */
-    ResHomestayDTO convertToResHomestayDTO(Homestay homestay);
+    HomestayResponse convertToResHomestayDTO(Homestay homestay);
 }

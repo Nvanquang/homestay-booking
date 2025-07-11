@@ -11,8 +11,8 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResRoleDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.RoleResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
 import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
@@ -56,7 +56,7 @@ public class RoleController {
         @ApiResponse(responseCode = "200", description = "Success"),
         @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content())
     })
-    public ResponseEntity<Role> addPermissionForRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
+    public ResponseEntity<Role> addPermissionForRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleRequest role) {
         log.info("REST request to add permission for Role: id: {}, permissions: {}", id, role.getPermissions());
         if (role.getId() <= 0) {
             throw new BadRequestAlertException("Role id cannot be invalid", ENTITY_NAME, "invalidid");
@@ -75,7 +75,7 @@ public class RoleController {
         @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
         @ApiResponse(responseCode = "404", description = "Role not found", content = @Content())
     })
-    public ResponseEntity<ResRoleDTO> getRoleById(@PathVariable("id") Long id) {
+    public ResponseEntity<RoleResponse> getRoleById(@PathVariable("id") Long id) {
         log.info("REST request to get Role by id: {}", id);
         if (id == null || id <= 0) {
             throw new BadRequestAlertException("Role ID cannot be null or invalid", ENTITY_NAME, "invalidid");
@@ -106,7 +106,7 @@ public class RoleController {
         @ApiResponse(responseCode = "404", description = "Role not found", content = @Content()),
         @ApiResponse(responseCode = "500", description = "Cannot update role", content = @Content())
     })
-    public ResponseEntity<ResRoleDTO> updatePartialRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
+    public ResponseEntity<RoleResponse> updatePartialRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleRequest role) {
         log.info("REST request to update Role partially, id: {}, body: {}", id, role);
         if (role.getId() <= 0) {
             throw new BadRequestAlertException("Role invalid", ENTITY_NAME, "invalidrole");
@@ -143,7 +143,7 @@ public class RoleController {
         @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
         @ApiResponse(responseCode = "404", description = "Role not found", content = @Content())
     })
-    public ResponseEntity<Void> deletePermissionFromRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleDTO role) {
+    public ResponseEntity<Void> deletePermissionFromRole(@PathVariable("id") Long id, @Valid @RequestBody UpdateRoleRequest role) {
         log.info("REST request to delete permission from Role by id: {}, permissions: {}", id, role.getPermissions());
         if (id == null || id <= 0) {
             throw new BadRequestAlertException("Role ID cannot be null or invalid", ENTITY_NAME, "invalidid");

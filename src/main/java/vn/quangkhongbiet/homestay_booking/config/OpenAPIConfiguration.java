@@ -13,7 +13,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
-public class OpenAPIConfig {
+public class OpenAPIConfiguration {
 
     private SecurityScheme createAPIKeyScheme() {
         return new SecurityScheme()

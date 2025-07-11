@@ -1,7 +1,6 @@
 package vn.quangkhongbiet.homestay_booking.domain.homestay.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
 import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
@@ -26,41 +25,35 @@ public class Homestay implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Tên homestay là bắt buộc")
-    @Size(min = 2, max = 100, message = "Tên homestay phải có độ dài từ 2 đến 100 ký tự")
+    @Column(name = "name")
     private String name;
 
-    @Size(max = 2000, message = "Mô tả không được vượt quá 2000 ký tự")
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @NotNull(message = "Trạng thái homestay là bắt buộc")
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private HomestayStatus status;
 
-    @Min(value = 1, message = "Số khách tối đa phải ít nhất là 1")
+    @Column(name = "guests")
     private Integer guests;
 
-    @NotNull(message = "Số điện thoại của homestay là bắt buộc")
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @NotBlank(message = "Địa chỉ là bắt buộc")
-    @Size(max = 255, message = "Địa chỉ không được vượt quá 255 ký tự")
+    @Column(name = "address")
     private String address;
 
-    @NotNull
+    @Column(name = "longitude")
     private Double longitude;
 
-    @NotNull
+    @Column(name = "latitude")
     private Double latitude;
 
     @OneToMany(mappedBy = "homestay", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "homestay" })
     private List<HomestayImage> images;
 
-    @NotNull(message = "Homestay phải có ít nhất một tiện nghi")
-    @NotEmpty(message = "Danh sách tiện nghi không được để trống")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "homestay_amenity",
@@ -74,9 +67,16 @@ public class Homestay implements Auditable {
     @JsonIgnore
     private List<Review> reviews;
 
+    @Column(name = "created_at")
     private Instant createdAt;
+    
+    @Column(name = "created_by")
     private String createdBy;
+    
+    @Column(name = "updated_at")
     private Instant updatedAt;
+    
+    @Column(name = "updated_by")
     private String updatedBy;
 
     @PreRemove

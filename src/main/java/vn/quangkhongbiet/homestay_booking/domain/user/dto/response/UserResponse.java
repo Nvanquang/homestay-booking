@@ -12,7 +12,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.constant.Gender;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResUserDTO {
+public class UserResponse {
     private Long id;
     private String userName;
     private String email;

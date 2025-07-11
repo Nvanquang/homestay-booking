@@ -10,9 +10,9 @@ import vn.quangkhongbiet.homestay_booking.domain.payment.dto.response.InitPaymen
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ResVnpBookingDTO {
+public class VnpayBookingResponse {
     
-    ResBookingDTO booking;
+    BookingResponse booking;
 
     InitPaymentResponse payment;
 }

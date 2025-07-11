@@ -2,9 +2,9 @@ package vn.quangkhongbiet.homestay_booking.domain.user.dto.request.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.RegisterUserDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.RegisterUserRequest;
 
-public class RegisterCheckedValidator implements ConstraintValidator<RegisterChecked, RegisterUserDTO> {
+public class RegisterCheckedValidator implements ConstraintValidator<RegisterChecked, RegisterUserRequest> {
 
     @Override
     public void initialize(RegisterChecked constraintAnnotation) {
@@ -12,7 +12,7 @@ public class RegisterCheckedValidator implements ConstraintValidator<RegisterChe
     }
 
     @Override
-    public boolean isValid(RegisterUserDTO value, ConstraintValidatorContext context) {
+    public boolean isValid(RegisterUserRequest value, ConstraintValidatorContext context) {
         if (value == null) {
             return true; // Let @NotNull handle this if needed
         }

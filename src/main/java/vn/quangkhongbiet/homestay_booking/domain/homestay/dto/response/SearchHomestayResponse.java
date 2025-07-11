@@ -4,7 +4,7 @@ import java.util.List;
 
 import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatus;
 
-public interface ResSearchHomestayDTO {
+public interface SearchHomestayResponse {
     Long getId();
 
     String getName();

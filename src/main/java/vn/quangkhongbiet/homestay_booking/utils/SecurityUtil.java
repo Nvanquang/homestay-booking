@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 import com.nimbusds.jose.util.Base64;
 
 import lombok.RequiredArgsConstructor;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResLoginDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.LoginUserResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +48,8 @@ public class SecurityUtil {
     @Value("${security.authentication.jwt.base64-secret}")
     private String jwtKey;
 
-    public String createAccessToken(String email, ResLoginDTO resLoginDTO) {
-        ResLoginDTO.UserInsideToken userToken = resLoginDTO.new UserInsideToken();
+    public String createAccessToken(String email, LoginUserResponse resLoginDTO) {
+        LoginUserResponse.UserInsideToken userToken = resLoginDTO.new UserInsideToken();
         userToken.setId(resLoginDTO.getUser().getId());
         userToken.setEmail(resLoginDTO.getUser().getEmail());
         userToken.setName(resLoginDTO.getUser().getName());
@@ -75,8 +75,8 @@ public class SecurityUtil {
 
     }
 
-    public String createFreshToken(String email, ResLoginDTO resLoginDTO) {
-        ResLoginDTO.UserInsideToken userToken = resLoginDTO.new UserInsideToken();
+    public String createFreshToken(String email, LoginUserResponse resLoginDTO) {
+        LoginUserResponse.UserInsideToken userToken = resLoginDTO.new UserInsideToken();
         userToken.setId(resLoginDTO.getUser().getId());
         userToken.setEmail(resLoginDTO.getUser().getEmail());
         userToken.setName(resLoginDTO.getUser().getName());

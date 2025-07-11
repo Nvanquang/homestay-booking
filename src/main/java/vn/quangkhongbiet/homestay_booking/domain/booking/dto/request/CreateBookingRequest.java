@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Future;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,29 +18,32 @@ import vn.quangkhongbiet.homestay_booking.utils.VnpayUtil;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ReqBooking {
+public class CreateBookingRequest {
 
     private String requestId = VnpayUtil.getRandomNumber(8);
 
-    @NotNull(message = "user_id cannot be null")
-    @Positive(message = "user_id must be positive")
+    @NotNull(message = "User ID is required")
+    @Positive(message = "User ID must be positive")
     private Long userId;
 
-    @NotNull(message = "homestay_id cannot be blank")
-    @Positive(message = "homestay_id must be positive")
+    @NotNull(message = "Homestay ID is required")
+    @Positive(message = "Homestay ID must be positive")
     private Long homestayId;
 
-    @NotNull(message = "checkin_date cannot be blank")
+    @NotNull(message = "Check-in date is required")
+    @Future(message = "Check-in date must be in the future")
     private LocalDate checkinDate;
 
-    @NotNull(message = "checkout_date cannot be blank")
+    @NotNull(message = "Check-out date is required")
+    @Future(message = "Check-out date must be in the future")
     private LocalDate checkoutDate;
 
-    @Positive(message = "guests must be positive")
-    @Min(value = 1, message = "guests must be at least 1")
+    @NotNull(message = "Number of guests is required")
+    @Positive(message = "Number of guests must be positive")
+    @Min(value = 1, message = "Number of guests must be at least 1")
     private Integer guests;
 
-    @Length(max = 500, message = "note cannot be longer than 255 characters")
+    @Length(max = 1000, message = "Note cannot exceed 1000 characters")
     private String note;
 
     private String ipAddress;

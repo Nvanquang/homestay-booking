@@ -3,7 +3,7 @@ package vn.quangkhongbiet.homestay_booking.service.user;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
@@ -56,7 +56,7 @@ public interface PermissionService {
      * @return the updated permission entity.
      * @throws EntityNotFoundException if permission not found.
      */
-    Permission updatePartialPermission(UpdatePermissionDTO permission);
+    Permission updatePartialPermission(UpdatePermissionRequest permission);
 
     /**
      * Delete a permission by id.

@@ -12,7 +12,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResLoginDTO {
+public class LoginUserResponse {
 	
     private String access_token;
     private InformationUser user;

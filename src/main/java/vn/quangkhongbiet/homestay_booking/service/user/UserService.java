@@ -3,10 +3,10 @@ package vn.quangkhongbiet.homestay_booking.service.user;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserCreateDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserDTO;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.ResUserUpdatedDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.CreateUserResponse;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UserResponse;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UpdateUserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
@@ -35,7 +35,7 @@ public interface UserService {
      * @return the created user DTO.
      * @throws EmailAlreadyUsedException if email already exists.
      */
-    ResUserCreateDTO createUser(User user);
+    CreateUserResponse createUser(User user);
 
     /**
      * find a user by id.
@@ -43,7 +43,7 @@ public interface UserService {
      * @return the user DTO.
      * @throws EntityNotFoundException if user not found.
      */
-    ResUserDTO findUserById(Long id);
+    UserResponse findUserById(Long id);
 
     /**
      * find a user by email.
@@ -67,7 +67,7 @@ public interface UserService {
      * @return the updated user DTO.
      * @throws EntityNotFoundException if user not found.
      */
-    ResUserUpdatedDTO updatePartialUser(UpdateUserDTO dto);
+    UpdateUserResponse updatePartialUser(UpdateUserRequest dto);
 
     /**
      * Delete a user by id.
@@ -81,21 +81,21 @@ public interface UserService {
      * @param user the user entity.
      * @return the create user DTO.
      */
-    ResUserCreateDTO convertToResCreateUserDTO(User user);
+    CreateUserResponse convertToResCreateUserDTO(User user);
 
     /**
      * Convert user entity to updated user DTO.
      * @param user the user entity.
      * @return the updated user DTO.
      */
-    ResUserUpdatedDTO convertToResUpdatedUserDTO(User user);
+    UpdateUserResponse convertToResUpdatedUserDTO(User user);
 
     /**
      * Convert user entity to user DTO.
      * @param user the user entity.
      * @return the user DTO.
      */
-    ResUserDTO convertToResUserDTO(User user);
+    UserResponse convertToResUserDTO(User user);
 
     /**
      * Update user's refresh token by email.

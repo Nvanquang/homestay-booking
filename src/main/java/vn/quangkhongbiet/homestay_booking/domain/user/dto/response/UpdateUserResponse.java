@@ -1,21 +1,19 @@
 package vn.quangkhongbiet.homestay_booking.domain.user.dto.response;
 
+import java.time.Instant;
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
+@SuperBuilder
 @NoArgsConstructor
-public class OtpPayload {
-
-    private String email;
-
-    private String fullName;
-    
-    private String otp;
+@AllArgsConstructor
+public class UpdateUserResponse extends UserResponse {
+    private Instant updatedAt;
+    private String updatedBy;
 }

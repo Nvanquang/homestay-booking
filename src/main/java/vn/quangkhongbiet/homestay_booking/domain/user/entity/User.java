@@ -1,7 +1,6 @@
 package vn.quangkhongbiet.homestay_booking.domain.user.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
 import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
@@ -27,34 +26,30 @@ public class User implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Tên đăng nhập là bắt buộc")
-    @Size(min = 3, max = 50, message = "Tên đăng nhập phải có độ dài từ 3 đến 50 ký tự")
-    @Column(unique = true)
+    @Column(name = "user_name")
     private String userName;
 
-    @NotBlank(message = "Mật khẩu là bắt buộc")
-    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
+    @Column(name = "password")
     private String password;
 
-    @NotBlank(message = "Email là bắt buộc")
-    @Email(message = "Email không hợp lệ!", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-    @Column(unique = true)
+    @Column(name = "email")
     private String email;
 
-    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Số điện thoại phải hợp lệ")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Size(max = 100, message = "Họ tên không được vượt quá 100 ký tự")
+    @Column(name = "full_name")
     private String fullName;
 
-    @NotNull(message = "Giới tính là bắt buộc")
     @Enumerated(EnumType.STRING)
+    @Column(name = "gender")
     private Gender gender;
 
-    @Column(columnDefinition = "TEXT")
-	@JsonProperty("refresh_token")
-	private String refreshToken;
+    @Column(name = "refresh_token", columnDefinition = "TEXT")
+    @JsonProperty("refresh_token")
+    private String refreshToken;
 
+    @Column(name = "verified")
     private Boolean verified;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -65,9 +60,16 @@ public class User implements Auditable {
     @JsonIgnore
     private List<Booking> bookings;
 
+    @Column(name = "created_at")
     private Instant createdAt;
+    
+    @Column(name = "created_by")
     private String createdBy;
+    
+    @Column(name = "updated_at")
     private Instant updatedAt;
+    
+    @Column(name = "updated_by")
     private String updatedBy;
 
     @PreRemove

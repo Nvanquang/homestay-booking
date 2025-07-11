@@ -1,7 +1,6 @@
 package vn.quangkhongbiet.homestay_booking.domain.user.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
 import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
@@ -16,6 +15,7 @@ import java.util.List;
 @Table(name = "roles")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditTrailListener.class)
@@ -24,15 +24,13 @@ public class Role implements Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Tên vai trò là bắt buộc")
-    @Size(min = 2, max = 50, message = "Tên vai trò phải có độ dài từ 2 đến 50 ký tự")
-    @Column(unique = true)
+    @Column(name = "name")
     private String name;
 
-    @Size(max = 255, message = "Mô tả không được vượt quá 255 ký tự")
+    @Column(name = "description")
     private String description;
 
-    @NotNull(message = "Trạng thái hoạt động là bắt buộc")
+    @Column(name = "active")
     private Boolean active;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
@@ -47,9 +45,16 @@ public class Role implements Auditable {
     )
     private List<Permission> permissions;
 
+    @Column(name = "created_at")
     private Instant createdAt;
+    
+    @Column(name = "created_by")
     private String createdBy;
+    
+    @Column(name = "updated_at")
     private Instant updatedAt;
+    
+    @Column(name = "updated_by")
     private String updatedBy;
 
     @PreRemove

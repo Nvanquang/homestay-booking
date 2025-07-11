@@ -11,7 +11,7 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionDTO;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.service.user.PermissionService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
@@ -89,7 +89,7 @@ public class PermissionController {
         @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
         @ApiResponse(responseCode = "404", description = "Permission not found", content = @Content())
     })
-    public ResponseEntity<Permission> updatePartialPermission(@PathVariable("id") Long id, @Valid @RequestBody UpdatePermissionDTO permission) {
+    public ResponseEntity<Permission> updatePartialPermission(@PathVariable("id") Long id, @Valid @RequestBody UpdatePermissionRequest permission) {
         log.info("REST request to update Permission partially, id: {}, body: {}", id, permission);
         if (permission.getId() <= 0) {
             throw new BadRequestAlertException("Permission ID cannot be invalid", ENTITY_NAME, "invalidpermission");
