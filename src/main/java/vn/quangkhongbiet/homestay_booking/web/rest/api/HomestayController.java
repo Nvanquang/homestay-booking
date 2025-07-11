@@ -23,6 +23,7 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.SearchHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.CreateHomestayResponse;
@@ -59,11 +60,11 @@ public class HomestayController {
         @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
     public ResponseEntity<CreateHomestayResponse> createHomestay(
-            @Valid @RequestPart("homestay") Homestay homestay,
+            @Valid @RequestPart("homestay") CreateHomestayRequest request,
             @RequestPart("files") MultipartFile[] files,
             @RequestPart("folder") String folder) {
                 
-        log.info("REST request to create Homestay: {}, folder: {}, files count: {}", homestay, folder, files != null ? files.length : 0);
+        log.info("REST request to create Homestay: {}, folder: {}, files count: {}", request, folder, files != null ? files.length : 0);
 
         if (files == null || files.length == 0) {
             throw new BadRequestAlertException("No files uploaded", ENTITY_NAME, "nofiles");
@@ -71,7 +72,7 @@ public class HomestayController {
         if (folder == null || folder.trim().isEmpty()) {
             throw new BadRequestAlertException("Folder name cannot be empty", ENTITY_NAME, "folderempty");
         }
-        CreateHomestayResponse createHomestay = this.homestayService.createHomestay(homestay, files, folder);
+        CreateHomestayResponse createHomestay = this.homestayService.createHomestay(request, files, folder);
         return ResponseEntity.status(HttpStatus.CREATED).body(createHomestay);
     }
 
@@ -174,7 +175,7 @@ public class HomestayController {
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
-        homestayService.deleteHomestay(id);
+        this.homestayService.deleteHomestay(id);
         return ResponseEntity.noContent().build();
     }
 }

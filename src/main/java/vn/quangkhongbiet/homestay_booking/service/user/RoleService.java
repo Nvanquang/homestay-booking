@@ -3,6 +3,7 @@ package vn.quangkhongbiet.homestay_booking.service.user;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.CreateRoleRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.RoleResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
@@ -37,11 +38,11 @@ public interface RoleService {
 
     /**
      * Create a new role.
-     * @param role the role entity to create.
+     * @param request the CreateRoleRequest dto to create.
      * @return the created role entity.
      * @throws ConflictException if role name already exists.
      */
-    Role createRole(Role role);
+    Role createRole(CreateRoleRequest request);
 
     /**
      * Add permissions for a role.

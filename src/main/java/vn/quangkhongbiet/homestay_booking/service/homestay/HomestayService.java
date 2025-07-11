@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.SearchHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.CreateHomestayResponse;
@@ -31,14 +32,14 @@ public interface HomestayService {
     /**
      * Creates a new homestay with associated images.
      *
-     * @param homestay the Homestay entity to create
+     * @param request the CreateHomestayRequest dto to create
      * @param files    the array of image files to upload
      * @param folder   the folder to store images in
-     * @return the created homestay as a response DTO
+     * @return the created homestay as a CreateHomestayResponse DTO
      * @throws BadRequestAlertException if input data is invalid or upload fails
      * @throws EntityNotFoundException if related entity is not found
      */
-    CreateHomestayResponse createHomestay(Homestay homestay, MultipartFile[] files, String folder);
+    CreateHomestayResponse createHomestay(CreateHomestayRequest request, MultipartFile[] files, String folder);
 
     /**
      * Adds amenities to a specific homestay.

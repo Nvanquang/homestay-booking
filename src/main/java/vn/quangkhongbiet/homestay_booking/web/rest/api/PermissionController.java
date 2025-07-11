@@ -11,6 +11,7 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.CreatePermissionRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.service.user.PermissionService;
@@ -44,9 +45,9 @@ public class PermissionController {
         @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
         @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
-    public ResponseEntity<Permission> createPermission(@Valid @RequestBody Permission permission) {
-        log.info("REST request to create Permission: {}", permission);
-        Permission createdPermission = permissionService.createPermission(permission);
+    public ResponseEntity<Permission> createPermission(@Valid @RequestBody CreatePermissionRequest request) {
+        log.info("REST request to create Permission: {}", request);
+        Permission createdPermission = permissionService.createPermission(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(createdPermission);
     }

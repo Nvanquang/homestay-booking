@@ -3,8 +3,10 @@ package vn.quangkhongbiet.homestay_booking.service.homestay;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateAmenityRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException;
 
 /**
  * Service interface for managing amenities.
@@ -17,7 +19,7 @@ public interface AmenityService {
      * @return the created amenity entity.
      * @throws ConflictException if amenity already exists.
      */
-    Amenity createAmenity(Amenity amenity);
+    Amenity createAmenity(CreateAmenityRequest amenity);
 
     /**
      * Find an amenity by id.

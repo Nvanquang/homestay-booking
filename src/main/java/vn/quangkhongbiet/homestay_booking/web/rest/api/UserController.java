@@ -17,6 +17,7 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.CreateUserRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.CreateUserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UserResponse;
@@ -53,9 +54,9 @@ public class UserController {
         @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
         @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
-    public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody User user) {
-        log.info("REST request to create User: {}", user);
-        CreateUserResponse createdUser = this.userService.createUser(user);
+    public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
+        log.info("REST request to create User: {}", request);
+        CreateUserResponse createdUser = this.userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 

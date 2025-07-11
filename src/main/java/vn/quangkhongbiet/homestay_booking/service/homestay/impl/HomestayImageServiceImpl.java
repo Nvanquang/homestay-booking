@@ -178,7 +178,7 @@ public class HomestayImageServiceImpl implements HomestayImageService{
         }
 
         // Check if the image exists in homestay and remove
-        homestayImage.getHomestay().getImages().forEach(image -> this.homestayImageRepository.delete(homestayImage));
+        homestayImage.getHomestay().getImages().remove(homestayImage);
 
         // Delete from database
         homestayImageRepository.delete(homestayImage);

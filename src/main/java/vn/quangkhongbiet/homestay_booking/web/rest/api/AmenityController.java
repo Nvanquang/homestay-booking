@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateAmenityRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.service.homestay.AmenityService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
@@ -42,9 +42,9 @@ public class AmenityController {
         @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
         @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
-    public ResponseEntity<Amenity> createAmenity(@Valid @RequestBody Amenity amenity) {
-        log.info("REST request to create Amenity: {}", amenity);
-        Amenity savedAmenity = amenityService.createAmenity(amenity);
+    public ResponseEntity<Amenity> createAmenity(@Valid @RequestBody CreateAmenityRequest request) {
+        log.info("REST request to create Amenity: {}", request);
+        Amenity savedAmenity = amenityService.createAmenity(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedAmenity);
     }
 

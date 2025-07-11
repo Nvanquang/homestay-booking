@@ -11,6 +11,7 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.CreateRoleRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.RoleResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
@@ -42,9 +43,9 @@ public class RoleController {
         @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
         @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
     })
-    public ResponseEntity<Role> createRole(@Valid @RequestBody Role role) {
-        log.info("REST request to create Role: {}", role);
-        Role createdRole = roleService.createRole(role);
+    public ResponseEntity<Role> createRole(@Valid @RequestBody CreateRoleRequest request) {
+        log.info("REST request to create Role: {}", request);
+        Role createdRole = roleService.createRole(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(createdRole);
     }

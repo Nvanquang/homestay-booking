@@ -21,7 +21,7 @@ public interface ReviewService {
      * @throws BadRequestAlertException if user chưa từng đặt homestay.
      * @throws ConflictException nếu đã đánh giá rồi.
      */
-    ReviewResponse createReview(CreateReviewRequest dto);
+    ReviewResponse createReview(CreateReviewRequest request);
 
     /**
      * find reviews for a homestay with specification and pagination.

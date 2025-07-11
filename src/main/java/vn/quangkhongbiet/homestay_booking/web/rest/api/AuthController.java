@@ -77,24 +77,24 @@ public class AuthController {
         // xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticateUser(loginDTO);
 
-        // 2. Lấy thông tin người dùng
+        // Lấy thông tin người dùng
         LoginUserResponse resLoginDTO = buildUserInfoDTO(loginDTO.getUserName());
 
-        // 3. Tạo Access Token
+        // Tạo Access Token
         String accessToken = securityUtil.createAccessToken(authentication.getName(), resLoginDTO);
         resLoginDTO.setAccess_token(accessToken);
 
-        // 4. Tạo Refresh Token và cập nhật DB
+        // Tạo Refresh Token và cập nhật DB
         String refreshToken = securityUtil.createFreshToken(loginDTO.getUserName(), resLoginDTO);
         userService.updateUserToken(loginDTO.getUserName(), refreshToken);
 
-        // 5. Tạo HTTP-Only cookie
+        // Tạo HTTP-Only cookie
         ResponseCookie refreshTokenCookie = buildRefreshTokenCookie(refreshToken);
 
-        // 6. Gán Authentication vào context
+        // Gán Authentication vào context
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 7. Trả về response
+        // Trả về response
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(resLoginDTO);
@@ -236,18 +236,8 @@ public class AuthController {
     public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody RegisterUserRequest register) {
         log.info("REST request to register Auth: {}", register);
 
-        User user = User.builder()
-                        .userName(register.getUserName())
-                        .email(register.getEmail())
-                        .password(register.getPassword())
-                        .phoneNumber(register.getPhoneNumber())
-                        .fullName(register.getFullName())
-                        .gender(register.getGender())
-                        .verified(false)
-                        .build();
-        userService.createUser(user);
-
-        otpService.generateOtp(register);
+        this.userService.registerUser(register);
+        this.otpService.generateOtp(register);
         log.info("Registration OTP sent to {}", register.getEmail());
         return ResponseEntity.ok().build();
     }

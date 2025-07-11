@@ -8,8 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.CreatePermissionRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
+import vn.quangkhongbiet.homestay_booking.domain.user.mapper.PermissionMapper;
 import vn.quangkhongbiet.homestay_booking.repository.PermissionRepository;
 import vn.quangkhongbiet.homestay_booking.service.user.PermissionService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
@@ -25,6 +27,8 @@ public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionRepository permissionRepository;
 
+    private final PermissionMapper permissionMapper;
+
     @Override
     public boolean isExistsById(Long id) {
         log.debug("check Permission exists by id: {}", id);
@@ -38,12 +42,15 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Permission createPermission(Permission permission) {
-        log.debug("create Permission with permission: {}", permission);
-        if(permissionRepository.existsByApiPathAndMethodAndModule(permission.getApiPath() , permission.getMethod(), permission.getModule())) {
+    public Permission createPermission(CreatePermissionRequest request) {
+        log.debug("create Permission with permission: {}", request);
+
+        if(permissionRepository.existsByApiPathAndMethodAndModule(request.getApiPath(), request.getMethod(), request.getModule())) {
             throw new ConflictException("Permission with the same API path, method, and module already exists", ENTITY_NAME, "duplicatepermission");
         }
-        return permissionRepository.save(permission);
+
+        Permission newPermission = this.permissionMapper.createPermissionRequestToPermission(request);
+        return permissionRepository.save(newPermission);
     }
 
     @Override

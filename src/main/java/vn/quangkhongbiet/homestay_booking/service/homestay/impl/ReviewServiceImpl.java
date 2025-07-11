@@ -52,15 +52,15 @@ public class ReviewServiceImpl implements ReviewService {
         // validate information
         Booking booking = this.validateUserCanReviewHomestay(user.getId(), dto.getHomestayId());
 
-        // Tạo review
-        Review review = new Review();
-        review.setRating(dto.getRating());
-        review.setComment(dto.getComment());
-        review.setPostingDate(Instant.now());
-        review.setUser(userRepository.getReferenceById(user.getId()));
-        review.setHomestay(homestayRepository.getReferenceById(dto.getHomestayId()));
-        review.setBooking(booking);
-
+        Review review = Review.builder()
+                .rating(dto.getRating())
+                .comment(dto.getComment())
+                .postingDate(Instant.now())
+                .user(userRepository.getReferenceById(user.getId()))
+                .homestay(homestayRepository.getReferenceById(dto.getHomestayId()))
+                .booking(booking)
+                .build();
+    
         ReviewResponse resReviewDTO = this.convertToResReviewDTO(reviewRepository.save(review));
         return resReviewDTO;
     }

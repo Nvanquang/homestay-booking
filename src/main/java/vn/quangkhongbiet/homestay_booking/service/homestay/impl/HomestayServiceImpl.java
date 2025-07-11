@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.AvailabilityStatus;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.SearchHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.CreateHomestayResponse;
@@ -23,6 +24,7 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.SearchHom
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.mapper.HomestayMapper;
 import vn.quangkhongbiet.homestay_booking.repository.AmenityRepository;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
@@ -44,6 +46,8 @@ public class HomestayServiceImpl implements HomestayService {
     private final HomestayImageService homestayImageService;
 
     private final AmenityRepository amenityRepository;
+
+    private final HomestayMapper homestayMapper;
     
     @Override
     public Boolean existsById(Long id) {
@@ -53,26 +57,24 @@ public class HomestayServiceImpl implements HomestayService {
 
     @Override
     @Transactional
-    public CreateHomestayResponse createHomestay(Homestay homestay, MultipartFile[] files, String folder) {
-        log.debug("create Homestay with homestay: {}, folder: {}, files: {}", homestay, folder, files != null ? files.length : 0);
+    public CreateHomestayResponse createHomestay(CreateHomestayRequest request, MultipartFile[] files, String folder) {
+        log.debug("create Homestay with homestay: {}, folder: {}, files: {}", request, folder, files != null ? files.length : 0);
 
-        homestay.setAmenities(this.amenityRepository
-                .findByIdIn(homestay.getAmenities().stream().map(Amenity::getId).toList()));
+        Homestay newHomestay = this.homestayMapper.createHomestayRequestToHomestay(request);
+        newHomestay.setAmenities(this.amenityRepository.findByIdIn(request.getAmenityIds()));
 
-        Homestay createdHomestay = homestayRepository.save(homestay);
+        Homestay createdHomestay = homestayRepository.save(newHomestay);
 
-        createdHomestay.setImages(this.homestayImageService.createHomestayImages(files, createdHomestay.getId(), folder));
-        
-        Homestay homestayDB = homestayRepository.save(createdHomestay);
-        // Cập nhật geom cho homestay
-        homestayRepository.updateGeom(homestayDB.getId(), homestayDB.getLongitude(), homestayDB.getLatitude());
-        return this.convertToResCreateHomestayDTO(homestayDB);
+        createdHomestay.setImages(this.homestayImageService.createHomestayImages(files, createdHomestay.getId(), folder)); 
+        homestayRepository.updateGeom(createdHomestay.getId(), createdHomestay.getLongitude(), createdHomestay.getLatitude());
+
+        return this.convertToResCreateHomestayDTO(this.homestayRepository.save(createdHomestay));
     }
 
     @Override
     public UpdateHomestayResponse addAmenitiesToHomestay(long homestayId, List<Long> amenityIds) {
         log.debug("add amenities to Homestay, homestayId: {}, amenityIds: {}", homestayId, amenityIds);
-        // Kiểm tra homestay tồn tại
+        
         Homestay homestay = homestayRepository.findById(homestayId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
@@ -86,7 +88,7 @@ public class HomestayServiceImpl implements HomestayService {
                 homestay.getAmenities().add(amenity);
             }
         }
-        // save homestay with updated amenities
+        
         return this.convertToResUpdatedHomestayDTO(homestayRepository.save(homestay));
     }
 
@@ -174,7 +176,8 @@ public class HomestayServiceImpl implements HomestayService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
         // Check if the homestay has images and remove them
-        homestay.getImages().forEach(image -> {
+        List<HomestayImage> images = new ArrayList<>(homestay.getImages());
+        images.forEach(image -> {
             this.homestayImageService.deleteImage(image.getId());
         });
 

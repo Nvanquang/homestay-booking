@@ -3,6 +3,8 @@ package vn.quangkhongbiet.homestay_booking.service.user;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.CreateUserRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.RegisterUserRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.CreateUserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UserResponse;
@@ -31,11 +33,19 @@ public interface UserService {
     
     /**
      * Create a new user.
-     * @param user the user entity to create.
-     * @return the created user DTO.
+     * @param request the CreateUserRequest dto to create.
+     * @return the created CreateUserResponse DTO.
      * @throws EmailAlreadyUsedException if email already exists.
      */
-    CreateUserResponse createUser(User user);
+    CreateUserResponse createUser(CreateUserRequest request);
+
+    /**
+     * Register user.
+     * @param request the user entity to create.
+     * @return the RegisterUserRequest user DTO.
+     * @throws EmailAlreadyUsedException if email already exists.
+     */
+    CreateUserResponse registerUser(RegisterUserRequest request);
 
     /**
      * find a user by id.

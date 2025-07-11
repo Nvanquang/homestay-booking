@@ -3,6 +3,7 @@ package vn.quangkhongbiet.homestay_booking.service.user;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.CreatePermissionRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdatePermissionRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
@@ -28,11 +29,11 @@ public interface PermissionService {
 
     /**
      * Create a new permission.
-     * @param permission the permission entity to create.
+     * @param request the CreatePermissionRequest dto to create.
      * @return the created permission entity.
      * @throws ConflictException if permission with same API path, method, and module already exists.
      */
-    Permission createPermission(Permission permission);
+    Permission createPermission(CreatePermissionRequest request);
 
     /**
      * find a permission by id.

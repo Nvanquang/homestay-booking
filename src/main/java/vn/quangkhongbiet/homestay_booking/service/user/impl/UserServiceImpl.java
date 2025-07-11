@@ -12,16 +12,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.CreateUserRequest;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.RegisterUserRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateUserRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.CreateUserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UpdateUserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
+import vn.quangkhongbiet.homestay_booking.domain.user.mapper.UserMapper;
 import vn.quangkhongbiet.homestay_booking.repository.RoleRepository;
 import vn.quangkhongbiet.homestay_booking.repository.UserRepository;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EmailAlreadyUsedException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
@@ -38,6 +42,8 @@ public class UserServiceImpl implements UserService {
     
     private final PasswordEncoder passwordEncoder;
 
+    private final UserMapper userMapper;
+
     @Override
     public Boolean existsById(Long id) {
         log.debug("check User exists by id: {}", id);
@@ -52,18 +58,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public CreateUserResponse createUser(User user) {
-        log.debug("create User with user: {}", user);
-        if (user.getEmail() != null && userRepository.existsByEmail(user.getEmail())) {
+    public CreateUserResponse createUser(CreateUserRequest request) {
+        log.debug("create User with user: {}", request);
+        
+        if (request.getEmail() != null && userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyUsedException();
         }
-        // check role
-        if (user.getRole() != null) {
-            Optional<Role> roleOptional = this.roleRepository.findById(user.getRole().getId());
-            user.setRole(roleOptional.isPresent() ? roleOptional.get() : null);
+        if( request.getUserName() != null && userRepository.existsByUserName(request.getUserName())) {
+            throw new ConflictException("Username already exists", ENTITY_NAME, "usernameexists");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return this.convertToResCreateUserDTO(userRepository.save(user));
+
+        User newUser = userMapper.createUserRequestToUser(request);
+        if (request.getRoleId() != null) {
+            Optional<Role> roleOptional = this.roleRepository.findById(request.getRoleId());
+            newUser.setRole(roleOptional.isPresent() ? roleOptional.get() : null);
+        }
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        return this.convertToResCreateUserDTO(userRepository.save(newUser));
+    }
+
+    @Override
+    public CreateUserResponse registerUser(RegisterUserRequest request) {
+        log.debug("create User with user: {}", request);
+
+        if (request.getEmail() != null && userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyUsedException();
+        }
+        if( request.getUserName() != null && userRepository.existsByUserName(request.getUserName())) {
+            throw new ConflictException("Username already exists", ENTITY_NAME, "usernameexists");
+        }
+
+        User newUser = userMapper.registerUserRequestToUser(request);
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        return this.convertToResCreateUserDTO(userRepository.save(newUser));
     }
 
     @Override
@@ -119,7 +146,6 @@ public class UserServiceImpl implements UserService {
             if(dto.getVerified() != null){
                 existingUser.setVerified(dto.getVerified());
             }
-            // role
             if(dto.getRole() != null){
                 existingUser.setRole(this.roleRepository.findByName(dto.getRole()).get());
             }

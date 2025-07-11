@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.CreateRoleRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.UpdateRoleRequest;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.RoleResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Permission;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.Role;
+import vn.quangkhongbiet.homestay_booking.domain.user.mapper.RoleMapper;
 import vn.quangkhongbiet.homestay_booking.repository.PermissionRepository;
 import vn.quangkhongbiet.homestay_booking.repository.RoleRepository;
 import vn.quangkhongbiet.homestay_booking.service.user.RoleService;
@@ -32,6 +34,8 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
 
     private final PermissionRepository permissionRepository;
+
+    private final RoleMapper roleMapper;
 
     @Override
     public boolean isExistById(Long id) {
@@ -52,14 +56,18 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public Role createRole(Role role) {
-        log.debug("create Role with role: {}", role);
-        if(this.roleRepository.existsByName(role.getName())) {
-            throw new ConflictException("Role with name " + role.getName() + " already exists", ENTITY_NAME, "nameexists");
+    public Role createRole(CreateRoleRequest request) {
+        log.debug("create Role with role: {}", request);
+
+        if(this.roleRepository.existsByName(request.getName())) {
+            throw new ConflictException("Role with name " + request.getName() + " already exists", ENTITY_NAME, "nameexists");
         }
-        role.setPermissions(
-                this.permissionRepository.findByIdIn(role.getPermissions().stream().map(Permission::getId).toList()));
-        return this.roleRepository.save(role);
+
+        Role newRole = this.roleMapper.createRoleRequestToRole(request);
+
+        newRole.setPermissions(
+                this.permissionRepository.findByIdIn(request.getPermissionIds()));
+        return this.roleRepository.save(newRole);
     }
 
     @Override

@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateAmenityRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.mapper.AmenityMapper;
 import vn.quangkhongbiet.homestay_booking.repository.AmenityRepository;
 import vn.quangkhongbiet.homestay_booking.service.homestay.AmenityService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
@@ -24,17 +26,22 @@ public class AmenityServiceImpl implements AmenityService {
 
     private final AmenityRepository amenityRepository;
 
+    private final AmenityMapper amenityMapper;
+
     @Override
-    public Amenity createAmenity(Amenity amenity) {
-        log.debug("create Amenity with amenity: {}", amenity);
-        if (amenityRepository.existsByName(amenity.getName())) {
+    public Amenity createAmenity(CreateAmenityRequest request) {
+        log.debug("create Amenity with amenity: {}", request);
+
+        if (amenityRepository.existsByName(request.getName())) {
             throw new ConflictException(
                     "Amenity already exists",
                     ENTITY_NAME,
                     "amenityexists");
         }
 
-        return amenityRepository.save(amenity);
+        Amenity newAmenity = this.amenityMapper.createAmenityRequestToAmenity(request);
+        
+        return amenityRepository.save(newAmenity);
     }
 
     @Override
