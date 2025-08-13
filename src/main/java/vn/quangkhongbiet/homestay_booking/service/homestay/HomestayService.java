@@ -88,7 +88,7 @@ public interface HomestayService {
      * @throws BadRequestAlertException if update data is invalid
      * @throws EntityNotFoundException if the homestay is not found
      */
-    UpdateHomestayResponse updatePartialHomestay(UpdateHomestayRequest homestay);
+    UpdateHomestayResponse updatePartialHomestay(UpdateHomestayRequest homestay, MultipartFile[] files, String folder);
 
     /**
      * Deletes a homestay by its ID.

@@ -133,7 +133,7 @@ public class RoleController {
             throw new BadRequestAlertException("Role ID cannot be null or invalid", ENTITY_NAME, "invalidid");
         }
         roleService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(null);
     }
 
     @DeleteMapping("/roles/{id}/permissions")
@@ -153,6 +153,6 @@ public class RoleController {
             throw new BadRequestAlertException("Role ID in path and body must match", ENTITY_NAME, "idnotmatch");
         }
         roleService.deletePermissionFromRole(role);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(null);
     }
 }

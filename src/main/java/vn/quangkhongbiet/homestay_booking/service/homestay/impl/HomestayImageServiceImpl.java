@@ -32,7 +32,7 @@ public class HomestayImageServiceImpl implements HomestayImageService{
 
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
 
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    private static final long MAX_FILE_SIZE = 1024 * 1024; // 1MB
 
     private static final int MAX_FILES = 6;
 
@@ -168,6 +168,27 @@ public class HomestayImageServiceImpl implements HomestayImageService{
         HomestayImage homestayImage = homestayImageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Image with ID: " + id + " not found", ENTITY_NAME, "imagenotfound"));
+
+        // Delete from Cloudinary
+        try {
+            cloudinary.uploader().destroy(homestayImage.getPublicId(), ObjectUtils.emptyMap());
+        } catch (Exception e) {
+            throw new BadRequestAlertException(
+                    "Failed to delete image with public ID: " + homestayImage.getId(), ENTITY_NAME, "deletefailed");
+        }
+
+        // Check if the image exists in homestay and remove
+        homestayImage.getHomestay().getImages().remove(homestayImage);
+
+        // Delete from database
+        homestayImageRepository.delete(homestayImage);
+    }
+
+    @Override
+    public void deleteByImageUrl(String url) {
+        log.debug("delete HomestayImage by url: {}", url);
+        // Find the image in the database
+        HomestayImage homestayImage = homestayImageRepository.findByImageUrl(url);
 
         // Delete from Cloudinary
         try {

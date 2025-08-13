@@ -122,6 +122,6 @@ public class UserController {
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "invalidid");
         }
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(null);
     }
 }

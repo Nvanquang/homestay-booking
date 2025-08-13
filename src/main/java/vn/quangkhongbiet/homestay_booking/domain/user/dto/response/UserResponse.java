@@ -1,5 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.domain.user.dto.response;
 
+import java.time.Instant;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,8 @@ public class UserResponse {
     private String fullName;
     private Gender gender;
     private ResRole role;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     @Getter
     @Setter

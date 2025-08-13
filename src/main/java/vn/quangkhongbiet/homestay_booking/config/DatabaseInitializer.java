@@ -62,6 +62,8 @@ public class DatabaseInitializer implements CommandLineRunner {
 
             // Availability
             permissions.add(new Permission("Create homestay availability", "/api/v1/availabilities", "POST", "AVAILABILITY"));
+            permissions.add(new Permission("Update homestay availability", "/api/v1/availabilities", "PATCH", "AVAILABILITY"));
+            permissions.add(new Permission("Get all homestay availability", "/api/v1/availabilities", "GET", "AVAILABILITY"));
 
             // Permission
             permissions.add(new Permission("Create permission", "/api/v1/permissions", "POST", "PERMISSION"));

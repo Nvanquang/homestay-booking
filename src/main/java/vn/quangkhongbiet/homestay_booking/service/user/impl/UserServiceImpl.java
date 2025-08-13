@@ -74,6 +74,7 @@ public class UserServiceImpl implements UserService {
             newUser.setRole(roleOptional.isPresent() ? roleOptional.get() : null);
         }
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        newUser.setVerified(true);
         return this.convertToResCreateUserDTO(userRepository.save(newUser));
     }
 
@@ -198,7 +199,9 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .fullName(user.getFullName())
-                .gender(user.getGender());
+                .gender(user.getGender())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt());
 
         // Map Role to ResRole
         UserResponse.ResRole resRole = user.getRole() != null ? new UserResponse.ResRole(user.getRole().getId(), user.getRole().getName())

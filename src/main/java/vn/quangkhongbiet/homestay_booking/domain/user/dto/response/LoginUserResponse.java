@@ -1,7 +1,5 @@
 package vn.quangkhongbiet.homestay_booking.domain.user.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +23,7 @@ public class LoginUserResponse {
         private Long id;
         private String name;
         private String email;
-        @JsonIgnoreProperties("permissions")
+        // @JsonIgnoreProperties("permissions")
         private Role role;
     }
 

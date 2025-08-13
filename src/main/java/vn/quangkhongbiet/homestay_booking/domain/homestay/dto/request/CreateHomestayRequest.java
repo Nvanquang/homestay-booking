@@ -52,5 +52,5 @@ public class CreateHomestayRequest {
     private Double latitude;
 
     @Size(min = 1, message = "At least one amenity is required")
-    private List<Long> amenityIds;
+    private List<Long> amenities;
 }

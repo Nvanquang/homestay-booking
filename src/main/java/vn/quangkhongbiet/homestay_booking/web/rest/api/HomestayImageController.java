@@ -80,6 +80,6 @@ public class HomestayImageController {
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
         homestayImageService.deleteImage(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(null);
     }
 }

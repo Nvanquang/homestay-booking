@@ -125,7 +125,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingStatus.BOOKED);
         aDays.forEach(day -> day.setStatus(AvailabilityStatus.BOOKED));
 
-        availabilityService.saveAll(aDays);
+        this.availabilityService.saveAll(aDays);
         return bookingRepository.save(booking);
     }
 

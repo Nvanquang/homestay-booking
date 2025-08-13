@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 
 /**
  * Service interface for managing images related to a homestay.
@@ -39,5 +40,7 @@ public interface HomestayImageService {
      * @throws EntityNotFoundException if the image is not found
      */
     void deleteImage(long id);
+
+    void deleteByImageUrl(String url);
 
 }

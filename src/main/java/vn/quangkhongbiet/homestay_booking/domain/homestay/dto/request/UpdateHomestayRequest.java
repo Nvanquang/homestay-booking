@@ -3,6 +3,9 @@ package vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
+
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,4 +34,8 @@ public class UpdateHomestayRequest {
     @Positive(message = "Number of guests must be positive")
     @Min(value = 1, message = "Number of guests must be at least 1")
     private Integer guests;
+
+    private List<Long> amenities;
+
+    private List<String> deletedImages;
 }

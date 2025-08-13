@@ -37,6 +37,4 @@ public class CreateUserRequest {
     private Gender gender;
 
     private Long roleId;
-
-    private Boolean verified;
 }

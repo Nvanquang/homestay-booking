@@ -24,6 +24,7 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "refreshToken", ignore = true)
     @Mapping(target = "role", ignore = true)
+    @Mapping(target = "verified", ignore = true)
     @Mapping(target = "bookings", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)

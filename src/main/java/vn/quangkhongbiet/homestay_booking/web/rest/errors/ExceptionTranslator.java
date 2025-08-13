@@ -4,6 +4,7 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -46,7 +47,7 @@ import tech.jhipster.web.util.HeaderUtil;
 @ControllerAdvice
 public class ExceptionTranslator extends ResponseEntityExceptionHandler {
 
-    private static final String FIELD_ERRORS_KEY = "fieldErrors";
+    // private static final String FIELD_ERRORS_KEY = "fieldErrors";
     private static final String MESSAGE_KEY = "message";
     private static final String PATH_KEY = "path";
     private static final Boolean CASUAL_CHAIN_ENABLED = false;
@@ -116,8 +117,15 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         }
 
         if (problem.getDetail() == null) {
-            // higher precedence to cause
+            
+            if ((err instanceof MethodArgumentNotValidException fieldException)){
+                problem.setDetail(getFieldValidation(fieldException));
+            }
+            else{
+                // higher precedence to cause
             problem.setDetail(getCustomizedErrorDetails(err));
+            }
+            
         }
 
         Map<String, Object> problemProperties = problem.getProperties();
@@ -129,9 +137,9 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         if (problemProperties == null || !problemProperties.containsKey(PATH_KEY))
             problem.setProperty(PATH_KEY, getPathValue(request));
 
-        if ((err instanceof MethodArgumentNotValidException fieldException) &&
-                (problemProperties == null || !problemProperties.containsKey(FIELD_ERRORS_KEY)))
-            problem.setProperty(FIELD_ERRORS_KEY, getFieldErrors(fieldException));
+        // if ((err instanceof MethodArgumentNotValidException fieldException) &&
+        //         (problemProperties == null || !problemProperties.containsKey(FIELD_ERRORS_KEY)))
+        //     problem.setProperty(FIELD_ERRORS_KEY, getFieldErrors(fieldException));
 
         problem.setCause(buildCause(err.getCause(), request).orElse(null));
 
@@ -143,17 +151,29 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
                 : extractTitleForResponseStatus(err, statusCode);
     }
 
-    private List<FieldErrorVM> getFieldErrors(MethodArgumentNotValidException ex) {
-        return ex
+    // private List<FieldErrorVM> getFieldErrors(MethodArgumentNotValidException ex) {
+    //     return ex
+    //             .getBindingResult()
+    //             .getFieldErrors()
+    //             .stream()
+    //             .map(
+    //                     f -> new FieldErrorVM(
+    //                             f.getObjectName().replaceFirst("DTO$", ""),
+    //                             f.getField(),
+    //                             StringUtils.isNotBlank(f.getDefaultMessage()) ? f.getDefaultMessage() : f.getCode()))
+    //             .toList();
+    // }
+
+    private String getFieldValidation(MethodArgumentNotValidException ex) {
+        List<String> errors = new ArrayList<>();
+        ex
                 .getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(
-                        f -> new FieldErrorVM(
-                                f.getObjectName().replaceFirst("DTO$", ""),
-                                f.getField(),
-                                StringUtils.isNotBlank(f.getDefaultMessage()) ? f.getDefaultMessage() : f.getCode()))
+                        f -> errors.add(StringUtils.isNotBlank(f.getDefaultMessage()) ? f.getDefaultMessage() : f.getCode()))
                 .toList();
+        return String.join("\n", errors);
     }
 
     private String extractTitleForResponseStatus(Throwable err, Integer statusCode) {

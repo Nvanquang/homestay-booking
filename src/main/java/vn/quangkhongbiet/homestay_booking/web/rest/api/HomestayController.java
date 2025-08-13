@@ -148,7 +148,9 @@ public class HomestayController {
         @ApiResponse(responseCode = "500", description = "Cannot update homestay", content = @Content())
     })
     public ResponseEntity<UpdateHomestayResponse> updatePartialHomestay(@PathVariable("id") Long id,
-            @Valid @RequestBody UpdateHomestayRequest dto) {
+            @Valid @RequestPart("homestay") UpdateHomestayRequest dto,
+            @RequestPart(value = "files", required = false) MultipartFile[] files,
+            @RequestPart("folder") String folder) {
         log.info("REST request to update Homestay partially, id: {}, body: {}", id, dto);
 
         if (id <= 0) {
@@ -157,7 +159,7 @@ public class HomestayController {
         if (!id.equals(dto.getId())) {
             throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idmismatch");
         }
-        UpdateHomestayResponse updatedHomestay = this.homestayService.updatePartialHomestay(dto);
+        UpdateHomestayResponse updatedHomestay = this.homestayService.updatePartialHomestay(dto, files, folder);
         return ResponseEntity.ok(updatedHomestay);
     }
 
@@ -176,6 +178,6 @@ public class HomestayController {
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
         }
         this.homestayService.deleteHomestay(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(null);
     }
 }

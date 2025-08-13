@@ -66,7 +66,7 @@ public class RoleServiceImpl implements RoleService {
         Role newRole = this.roleMapper.createRoleRequestToRole(request);
 
         newRole.setPermissions(
-                this.permissionRepository.findByIdIn(request.getPermissionIds()));
+                this.permissionRepository.findByIdIn(request.getPermissions()));
         return this.roleRepository.save(newRole);
     }
 
@@ -170,6 +170,7 @@ public class RoleServiceImpl implements RoleService {
     public RoleResponse convertToResRoleDTO(Role role) {
         List<RoleResponse.ResPermission> permissions = role.getPermissions().stream()
                 .map(permission -> RoleResponse.ResPermission.builder()
+                        .id(permission.getId())
                         .apiPath(permission.getApiPath())
                         .method(permission.getMethod())
                         .module(permission.getModule())
@@ -182,6 +183,8 @@ public class RoleServiceImpl implements RoleService {
                 .active(role.getActive())
                 .permissions(permissions)
                 .description(role.getDescription())
+                .createdAt(role.getCreatedAt())
+                .updatedAt(role.getUpdatedAt())
                 .build();
         return resRoleDTO;
     }

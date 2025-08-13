@@ -116,6 +116,6 @@ public class PermissionController {
             throw new BadRequestAlertException("Permission ID cannot be null or invalid", ENTITY_NAME, "invalidid");
         }
         permissionService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(null);
     }
 }

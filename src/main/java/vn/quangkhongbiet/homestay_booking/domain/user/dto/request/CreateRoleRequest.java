@@ -25,6 +25,6 @@ public class CreateRoleRequest {
     private Boolean active;
 
     @Size(min = 1, message = "At least one permission is required")
-    private List<Long> permissionIds;
+    private List<Long> permissions;
 
 }

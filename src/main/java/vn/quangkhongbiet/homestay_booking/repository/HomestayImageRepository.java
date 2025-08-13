@@ -9,8 +9,13 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
 
 @Repository
 public interface HomestayImageRepository extends JpaRepository<HomestayImage, Long> {
+
     List<HomestayImage> findByIdIn(List<Long> ids);
 
     List<HomestayImage> findByHomestayId(Long homestayId);
+
+    HomestayImage findByImageUrl(String imageUrl);
+
+    void deleteByImageUrl(String url);
 
 }

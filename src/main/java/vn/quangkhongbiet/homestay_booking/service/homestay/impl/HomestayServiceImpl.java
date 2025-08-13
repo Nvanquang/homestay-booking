@@ -3,6 +3,7 @@ package vn.quangkhongbiet.homestay_booking.service.homestay.impl;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +49,7 @@ public class HomestayServiceImpl implements HomestayService {
     private final AmenityRepository amenityRepository;
 
     private final HomestayMapper homestayMapper;
-    
+
     @Override
     public Boolean existsById(Long id) {
         log.debug("check Homestay exists by id: {}", id);
@@ -58,15 +59,18 @@ public class HomestayServiceImpl implements HomestayService {
     @Override
     @Transactional
     public CreateHomestayResponse createHomestay(CreateHomestayRequest request, MultipartFile[] files, String folder) {
-        log.debug("create Homestay with homestay: {}, folder: {}, files: {}", request, folder, files != null ? files.length : 0);
+        log.debug("create Homestay with homestay: {}, folder: {}, files: {}", request, folder,
+                files != null ? files.length : 0);
 
         Homestay newHomestay = this.homestayMapper.createHomestayRequestToHomestay(request);
-        newHomestay.setAmenities(this.amenityRepository.findByIdIn(request.getAmenityIds()));
+        newHomestay.setAmenities(this.amenityRepository.findByIdIn(request.getAmenities()));
 
         Homestay createdHomestay = homestayRepository.save(newHomestay);
 
-        createdHomestay.setImages(this.homestayImageService.createHomestayImages(files, createdHomestay.getId(), folder)); 
-        homestayRepository.updateGeom(createdHomestay.getId(), createdHomestay.getLongitude(), createdHomestay.getLatitude());
+        createdHomestay
+                .setImages(this.homestayImageService.createHomestayImages(files, createdHomestay.getId(), folder));
+        homestayRepository.updateGeom(createdHomestay.getId(), createdHomestay.getLongitude(),
+                createdHomestay.getLatitude());
 
         return this.convertToResCreateHomestayDTO(this.homestayRepository.save(createdHomestay));
     }
@@ -74,7 +78,7 @@ public class HomestayServiceImpl implements HomestayService {
     @Override
     public UpdateHomestayResponse addAmenitiesToHomestay(long homestayId, List<Long> amenityIds) {
         log.debug("add amenities to Homestay, homestayId: {}, amenityIds: {}", homestayId, amenityIds);
-        
+
         Homestay homestay = homestayRepository.findById(homestayId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
@@ -88,7 +92,7 @@ public class HomestayServiceImpl implements HomestayService {
                 homestay.getAmenities().add(amenity);
             }
         }
-        
+
         return this.convertToResUpdatedHomestayDTO(homestayRepository.save(homestay));
     }
 
@@ -123,8 +127,7 @@ public class HomestayServiceImpl implements HomestayService {
                 checkoutDate,
                 nights,
                 request.getGuests(),
-                request.getStatus().toString()
-        );
+                request.getStatus().toString());
     }
 
     @Override
@@ -148,9 +151,11 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
-    public UpdateHomestayResponse updatePartialHomestay(UpdateHomestayRequest updatedHomestay) {
+    public UpdateHomestayResponse updatePartialHomestay(UpdateHomestayRequest updatedHomestay, MultipartFile[] files,
+            String folder) {
         log.debug("update Homestay partially with dto: {}", updatedHomestay);
         return this.homestayRepository.findById(updatedHomestay.getId()).map(existingHomestay -> {
+            Homestay homestayDB = this.homestayRepository.findById(updatedHomestay.getId()).get();
             if (updatedHomestay.getName() != null) {
                 existingHomestay.setName(updatedHomestay.getName());
             }
@@ -162,6 +167,32 @@ public class HomestayServiceImpl implements HomestayService {
             }
             if (updatedHomestay.getGuests() != 0) { // Kiểm tra khác 0 vì guests là kiểu Integer
                 existingHomestay.setGuests(updatedHomestay.getGuests());
+            }
+            if (updatedHomestay.getAmenities() != null) {
+                List<Amenity> currentAmenities = new ArrayList<>(homestayDB.getAmenities());
+                for (Amenity amenity : currentAmenities) {
+                    amenity.getHomestays().remove(homestayDB);
+                }
+                homestayDB.getAmenities().clear();
+
+                // Thêm amenities mới
+                List<Amenity> newAmenities = updatedHomestay.getAmenities().stream()
+                        .map(id -> amenityRepository.findById(id)
+                                .orElseThrow(() -> new BadRequestAlertException("Invalid amenity ID", "Homestay",
+                                        "amenityinvalid")))
+                        .collect(Collectors.toList());
+                homestayDB.setAmenities(newAmenities);
+                newAmenities.forEach(amenity -> amenity.getHomestays().add(homestayDB));
+            }
+            if(updatedHomestay.getDeletedImages() != null && !updatedHomestay.getDeletedImages().isEmpty()) {
+                for (String url : updatedHomestay.getDeletedImages()) {
+                    homestayImageService.deleteByImageUrl(url);
+                }
+            }
+            if (files != null && files.length > 0) {
+                // save image
+                existingHomestay.setImages(
+                        this.homestayImageService.createHomestayImages(files, updatedHomestay.getId(), folder));
             }
             return this.convertToResUpdatedHomestayDTO(this.homestayRepository.save(existingHomestay));
         }).orElseThrow(() -> new EntityNotFoundException(
@@ -217,6 +248,7 @@ public class HomestayServiceImpl implements HomestayService {
                 .description(homestay.getDescription())
                 .status(homestay.getStatus())
                 .address(homestay.getAddress())
+                .phoneNumber(homestay.getPhoneNumber())
                 .guests(homestay.getGuests())
                 .longitude(homestay.getLongitude())
                 .latitude(homestay.getLatitude());
@@ -228,13 +260,11 @@ public class HomestayServiceImpl implements HomestayService {
         builder.images(resImages);
 
         // Map List<Amenity> to List<String>
-        List<String> resAmenities = homestay.getAmenities() != null
-                ? homestay.getAmenities().stream().map(Amenity::getName).toList()
-                : new ArrayList<>();
-        builder.amenities(resAmenities);
+        // List<String> resAmenities = homestay.getAmenities() != null
+        // ? homestay.getAmenities().stream().map(Amenity::getName).toList()
+        // : new ArrayList<>();
+        builder.amenities(homestay.getAmenities());
 
     }
-
-    
 
 }
