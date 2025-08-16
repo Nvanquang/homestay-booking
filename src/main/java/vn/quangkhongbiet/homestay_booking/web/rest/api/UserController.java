@@ -27,10 +27,6 @@ import vn.quangkhongbiet.homestay_booking.service.user.UserService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
@@ -49,11 +45,6 @@ public class UserController {
 
     @PostMapping("/users")
     @ApiMessage("User created successfully")
-    @Operation(summary = "Create user", description = "Create a new user in the system")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
-        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
-    })
     public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
         log.info("REST request to create User: {}", request);
         CreateUserResponse createdUser = this.userService.createUser(request);
@@ -62,12 +53,6 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     @ApiMessage("Get user information successfully")
-    @Operation(summary = "Get user by ID", description = "Return user by specific ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "User found"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
-    })
     public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id) {
         log.info("REST request to get User by id: {}", id);
         if (id <= 0 ){
@@ -78,10 +63,6 @@ public class UserController {
 
     @GetMapping("/users")
     @ApiMessage("Get all users successfully")
-    @Operation(summary = "Get user list", description = "Return paginated and filtered user list")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success")
-    })
     public ResponseEntity<PagedResponse> getAllUsers(Pageable pageable, @Filter Specification<User> spec) {
         log.info("REST request to get all Users, pageable: {}", pageable);
         return ResponseEntity.ok(userService.findAllUsers(spec, pageable));
@@ -89,13 +70,6 @@ public class UserController {
 
     @PatchMapping("/users/{id}")
     @ApiMessage("User updated successfully")
-    @Operation(summary = "Update user", description = "Update user information by ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "User not found", content = @Content()),
-        @ApiResponse(responseCode = "500", description = "Cannot update user", content = @Content())
-    })
     public ResponseEntity<UpdateUserResponse> updatePartialUser(@PathVariable("id") Long id, @Valid @RequestBody UpdateUserRequest dto) {
         log.info("REST request to update User partially, id: {}, body: {}", id, dto);
         if (id <= 0 ){
@@ -110,12 +84,6 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     @ApiMessage("User deleted successfully")
-    @Operation(summary = "Delete user", description = "Delete user by ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
-    })
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         log.info("REST request to delete User by id: {}", id);
         if (id <= 0) {

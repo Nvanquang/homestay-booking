@@ -25,10 +25,6 @@ import vn.quangkhongbiet.homestay_booking.service.homestay.ReviewService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
@@ -48,12 +44,6 @@ public class ReviewController {
 
     @PostMapping("/reviews")
     @ApiMessage("Review created successfully")
-    @Operation(summary = "Create review", description = "Create a new review for homestay")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "User not found", content = @Content()),
-        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
-    })
     public ResponseEntity<ReviewResponse> createReview(@RequestBody @Valid CreateReviewRequest dto) {
         log.info("REST request to create Review by request: {}", dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(dto));
@@ -61,12 +51,6 @@ public class ReviewController {
 
     @GetMapping("/reviews/homestay/{homestayId}")
     @ApiMessage("Get review list by homestay successfully")
-    @Operation(summary = "Get review list by homestay", description = "Return review list of a homestay")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "Homestay not found", content = @Content())
-    })
     public ResponseEntity<PagedResponse> getReviews(
             @PathVariable("homestayId") Long homestayId,
             @Filter Specification<Review> spec,

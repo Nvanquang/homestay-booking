@@ -34,10 +34,6 @@ import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
@@ -53,12 +49,6 @@ public class HomestayController {
 
     @PostMapping("/homestays")
     @ApiMessage("Homestay created successfully")
-    @Operation(summary = "Create homestay", description = "Create a new homestay in the system")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
-        @ApiResponse(responseCode = "400", description = "Invalid information", content = @Content()),
-        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
-    })
     public ResponseEntity<CreateHomestayResponse> createHomestay(
             @Valid @RequestPart("homestay") CreateHomestayRequest request,
             @RequestPart("files") MultipartFile[] files,
@@ -78,12 +68,6 @@ public class HomestayController {
 
     @GetMapping("/homestays/{id}")
     @ApiMessage("Get homestay information successfully")
-    @Operation(summary = "Get homestay by ID", description = "Return homestay by specific ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Homestay found"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "Homestay not found", content = @Content())
-    })
     public ResponseEntity<Homestay> getHomestayById(@PathVariable("id") Long id) {
         log.info("REST request to get Homestay by id: {}", id);
 
@@ -95,11 +79,6 @@ public class HomestayController {
 
     @GetMapping("/homestays/search")
     @ApiMessage("Search homestay successfully")
-    @Operation(summary = "Search homestay", description = "Search homestay by conditions")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Invalid search information", content = @Content())
-    })
     public ResponseEntity<List<SearchHomestayResponse>> getAllHomestays(@Valid SearchHomestayRequest request) {
         log.info("REST request to search Homestay: {}", request);
         return ResponseEntity.ok(this.homestayService.searchHomestays(request));
@@ -107,10 +86,6 @@ public class HomestayController {
 
     @GetMapping("/homestays")
     @ApiMessage("Get all homestays successfully")
-    @Operation(summary = "Get homestay list", description = "Return paginated and filtered homestay list")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success")
-    })
     public ResponseEntity<PagedResponse> getAllHomestays(@Filter Specification<Homestay> spec,
             Pageable pageable) {
         log.info("REST request to get all Homestays, pageable: {}", pageable);
@@ -119,11 +94,6 @@ public class HomestayController {
 
     @PostMapping("/homestays/{homestayId}/amenities")
     @ApiMessage("Add amenities to homestay successfully")
-    @Operation(summary = "Add amenities to homestay", description = "Add amenities to homestay by ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content())
-    })
     public ResponseEntity<UpdateHomestayResponse> addAmenitiesToHomestay(
             @PathVariable("homestayId") Long homestayId,
             @RequestBody Map<String, List<Long>> request) {
@@ -140,13 +110,6 @@ public class HomestayController {
 
     @PatchMapping("/homestays/{id}")
     @ApiMessage("Homestay updated successfully")
-    @Operation(summary = "Update homestay", description = "Update homestay information by ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "Homestay not found", content = @Content()),
-        @ApiResponse(responseCode = "500", description = "Cannot update homestay", content = @Content())
-    })
     public ResponseEntity<UpdateHomestayResponse> updatePartialHomestay(@PathVariable("id") Long id,
             @Valid @RequestPart("homestay") UpdateHomestayRequest dto,
             @RequestPart(value = "files", required = false) MultipartFile[] files,
@@ -165,12 +128,6 @@ public class HomestayController {
 
     @DeleteMapping("/homestays/{id}")
     @ApiMessage("Homestay deleted successfully")
-    @Operation(summary = "Delete homestay", description = "Delete homestay by ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "Homestay not found", content = @Content())
-    })
     public ResponseEntity<Void> deleteHomestay(@PathVariable("id") Long id) {
         log.info("REST request to delete Homestay by id: {}", id);
 

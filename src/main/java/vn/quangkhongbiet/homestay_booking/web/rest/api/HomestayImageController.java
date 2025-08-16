@@ -10,10 +10,6 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
@@ -31,11 +27,6 @@ public class HomestayImageController {
 
     @PostMapping("/homestay/{homestayId}/images")
     @ApiMessage("Upload homestay images successfully")
-    @Operation(summary = "Upload homestay images", description = "Upload multiple images for a homestay")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Upload successful"),
-        @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content())
-    })
     public ResponseEntity<List<HomestayImage>> uploadHomestayImages(
             @PathVariable("homestayId") Long homestayId,
             @RequestPart("files") MultipartFile[] files,
@@ -54,11 +45,6 @@ public class HomestayImageController {
 
     @GetMapping("/homestay/{homestayId}/images")
     @ApiMessage("Get images by homestay ID successfully")
-    @Operation(summary = "Get images by homestay", description = "Get image list of a homestay")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "404", description = "Homestay not found", content = @Content())
-    })
     public ResponseEntity<List<HomestayImage>> findHomestayImageByHomestayId(
             @PathVariable("homestayId") Long homestayId) {
         log.info("REST request to get HomestayImage by homestayId: {}", homestayId);
@@ -68,12 +54,6 @@ public class HomestayImageController {
 
     @DeleteMapping("/homestay-images/{id}")
     @ApiMessage("Delete image by ID successfully")
-    @Operation(summary = "Delete image", description = "Delete image by ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "Image not found", content = @Content())
-    })
     public ResponseEntity<Void> deleteImage(@PathVariable("id") Long id) {
         log.info("REST request to delete HomestayImage by id: {}", id);
         if(id <= 0){

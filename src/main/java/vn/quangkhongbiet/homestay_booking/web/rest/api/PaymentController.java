@@ -19,13 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.servlet.http.HttpServletRequest;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -39,17 +33,6 @@ public class PaymentController {
     private final VnpayPaymentService paymentService;
 
     @GetMapping("/payments/vnpay_ipn")
-    @Operation(summary = "Process IPN from VNPay", description = "Receive and process payment result from VNPay via IPN standard")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Transaction processed", content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class), examples = {
-                @ExampleObject(name = "Success", value = "00|Transaction successful"),
-                @ExampleObject(name = "Invalid data", value = "01|Invalid transaction code"),
-                @ExampleObject(name = "Transaction error", value = "02|Transaction error"),
-                @ExampleObject(name = "Invalid amount", value = "04|Invalid amount"),
-                @ExampleObject(name = "Missing parameter", value = "97|Missing parameter in request"),
-                @ExampleObject(name = "System error", value = "99|Unknown error")
-        }))
-    })
     public ResponseEntity<String> processIpn(HttpServletRequest request) {
         log.info("[VNPay Ipn] request: {}", request);
         IpnResponse response = ipnHandler.process(request);
@@ -60,12 +43,6 @@ public class PaymentController {
 
     @GetMapping("/payments/{id}")
     @ApiMessage("Get PaymentTransaction successfully")
-    @Operation(summary = "Get PaymentTransaction by ID", description = "Return PaymentTransaction by specific ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "PaymentTransaction found"),
-            @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-            @ApiResponse(responseCode = "404", description = "PaymentTransaction not found", content = @Content())
-    })
     public ResponseEntity<PaymentTransaction> getPaymentTransactionById(@PathVariable("id") Long id) {
         log.info("REST request to get PaymentTransaction by id: {}", id);
         if (id <= 0) {
@@ -76,10 +53,6 @@ public class PaymentController {
 
     @GetMapping("/payments")
     @ApiMessage("Get PaymentTransaction list successfully")
-    @Operation(summary = "Get PaymentTransaction list", description = "Return paginated and filtered PaymentTransaction list")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success")
-    })
     public ResponseEntity<PagedResponse> getAllPaymentTransaction(
             @Filter Specification<PaymentTransaction> spec,
             Pageable pageable) {

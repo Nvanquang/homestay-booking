@@ -21,11 +21,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.entity.HomestayAvailabi
 import vn.quangkhongbiet.homestay_booking.service.booking.HomestayAvailabilityService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Slf4j
 @RestController
@@ -38,11 +34,6 @@ public class HomestayAvailabilityController {
 
     @PostMapping("/availabilities")
     @ApiMessage("Homestay availability created successfully")
-    @Operation(summary = "Create homestay availability", description = "Create a new list of homestay availabilities")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content())
-    })
     public ResponseEntity<Void> createHomestayAvailability(@Valid @RequestBody CreateAvailabilityRequest availabilities) {
         log.info("REST request to create HomestayAvailability: {}", availabilities);
         this.availabilityService.saveAll(availabilities);

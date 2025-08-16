@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.turkraft.springfilter.boot.Filter;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateAmenityRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Amenity;
@@ -37,11 +33,6 @@ public class AmenityController {
 
     @PostMapping("/amenities")
     @ApiMessage("Amenity created successfully")
-    @Operation(summary = "Create amenity", description = "Create a new amenity in the system")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
-        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
-    })
     public ResponseEntity<Amenity> createAmenity(@Valid @RequestBody CreateAmenityRequest request) {
         log.info("REST request to create Amenity: {}", request);
         Amenity savedAmenity = amenityService.createAmenity(request);
@@ -50,12 +41,6 @@ public class AmenityController {
 
     @GetMapping("/amenities/{id}")
     @ApiMessage("Get amenity by ID successfully")
-    @Operation(summary = "Get amenity by ID", description = "Return amenity by specific ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Amenity found"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "Amenity not found", content = @Content())
-    })
     public ResponseEntity<Amenity> findAmenityById(@PathVariable("id") Long id) {
         log.info("REST request to get Amenity by id: {}", id);
         if (id <= 0) {
@@ -66,10 +51,6 @@ public class AmenityController {
 
     @GetMapping("/amenities")
     @ApiMessage("Get all amenities successfully")
-    @Operation(summary = "Get amenity list", description = "Return paginated and filtered amenity list")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success")
-    })
     public ResponseEntity<PagedResponse> findAllAmenities(
             @Filter Specification<Amenity> spec, Pageable pageable) {
         log.info("REST request to get all Amenities, pageable: {}", pageable);
@@ -79,12 +60,6 @@ public class AmenityController {
 
     @DeleteMapping("/amenities/{id}")
     @ApiMessage("Amenity deleted successfully")
-    @Operation(summary = "Delete amenity", description = "Delete amenity by ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Deleted successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "Amenity not found", content = @Content())
-    })
     public ResponseEntity<Void> deleteAmenity(@PathVariable("id") Long id) {
         log.info("REST request to delete Amenity by id: {}", id);
         if (id <= 0) {

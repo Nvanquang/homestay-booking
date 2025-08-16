@@ -34,10 +34,6 @@ import vn.quangkhongbiet.homestay_booking.utils.SecurityUtil;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.UnauthorizedException;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.UpdateUserResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -60,11 +56,7 @@ public class AuthController {
     private long accessTokenExpiration;
 
     @PostMapping("/auth/login")
-    @Operation(summary = "Login", description = "Login to the system and receive access token, refresh token")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Login successful"),
-        @ApiResponse(responseCode = "401", description = "Invalid login information", content = @Content())
-    })
+    @ApiMessage("Login successful")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginUserRequest loginDTO) {
         log.info("REST request to login Auth: {}", loginDTO);
 
@@ -102,11 +94,6 @@ public class AuthController {
 
     @GetMapping("/auth/account")
     @ApiMessage("Get account information")
-    @Operation(summary = "Get account information", description = "Get current account information")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success"),
-        @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
-    })
     public ResponseEntity<LoginUserResponse.UserGetAccount> getAccount() {
         log.info("REST request to get Auth account");
         // get information of user from SecurityContext
@@ -129,11 +116,6 @@ public class AuthController {
 
     @GetMapping("/auth/refresh")
     @ApiMessage("Get new access token")
-    @Operation(summary = "Refresh access token", description = "Get new access token using refresh token")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Refresh successful"),
-        @ApiResponse(responseCode = "401", description = "Invalid or expired refresh token", content = @Content())
-    })
     public ResponseEntity<Object> handleRefreshToken(@CookieValue(name = "refresh_token") String refresh_token) {
         log.info("REST request to refresh Auth token, refresh_token: {}", refresh_token);
         // check refresh token
@@ -198,10 +180,6 @@ public class AuthController {
 
     @PostMapping("/auth/logout")
     @ApiMessage("Logout successful")
-    @Operation(summary = "Logout", description = "Logout from the system and remove refresh token")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Logout successful")
-    })
     public ResponseEntity<Void> handleLogout() {
         log.info("REST request to logout Auth");
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
@@ -227,12 +205,6 @@ public class AuthController {
 
     @Transactional
     @PostMapping("/auth/register")
-    @Operation(summary = "Register account", description = "Register a new user account")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Registration successful", content = @Content()),
-        @ApiResponse(responseCode = "409", description = "Email already exists", content = @Content()),
-        @ApiResponse(responseCode = "429", description = "Too many OTP requests", content = @Content())
-    })
     public ResponseEntity<CreateUserResponse> register(@Valid @RequestBody RegisterUserRequest register) {
         log.info("REST request to register Auth: {}", register);
 
@@ -243,12 +215,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/verify-otp")
-    @Operation(summary = "Verify OTP", description = "Verify OTP for user account. If successful, the account will be marked as verified.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Verification successful, return user information", content = @Content()),
-        @ApiResponse(responseCode = "401", description = "Email does not exist or is null", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "OTP does not exist or has expired", content = @Content())
-    })
+    @ApiMessage("Verify OTP and activate user account")
     public ResponseEntity<UpdateUserResponse> verifyOtp(@RequestBody VerifyOtpRequest req) {
         boolean isOtpValid = otpService.validateOTP(req.getEmail(), req.getOtp());
         if (!isOtpValid) {

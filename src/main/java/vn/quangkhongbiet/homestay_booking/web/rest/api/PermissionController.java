@@ -21,10 +21,6 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertExcepti
 
 import java.util.Map;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Slf4j
@@ -40,11 +36,6 @@ public class PermissionController {
 
     @PostMapping("/permissions")
     @ApiMessage("Permission created successfully")
-    @Operation(summary = "Create permission", description = "Create a new permission in the system")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Created successfully", content = @Content()),
-        @ApiResponse(responseCode = "409", description = "Data already exists", content = @Content())
-    })
     public ResponseEntity<Permission> createPermission(@Valid @RequestBody CreatePermissionRequest request) {
         log.info("REST request to create Permission: {}", request);
         Permission createdPermission = permissionService.createPermission(request);
@@ -54,12 +45,6 @@ public class PermissionController {
 
     @GetMapping("/permissions/{id}")
     @ApiMessage("Get permission successfully")
-    @Operation(summary = "Get permission by ID", description = "Return permission by specific ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Permission found"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "Permission not found", content = @Content())
-    })
     public ResponseEntity<Permission> getPermissionById(@PathVariable("id") Long id) {
         log.info("REST request to get Permission by id: {}", id);
         if (id == null || id <= 0) {
@@ -70,10 +55,6 @@ public class PermissionController {
 
     @GetMapping("/permissions")
     @ApiMessage("Get all permissions successfully")
-    @Operation(summary = "Get permission list", description = "Return paginated and filtered permission list")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Success")
-    })
     public ResponseEntity<PagedResponse> getAllPermissions(
             @Filter Specification<Permission> spec,
             Pageable pageable) {
@@ -84,12 +65,6 @@ public class PermissionController {
 
     @PatchMapping("/permissions/{id}")
     @ApiMessage("Permission updated successfully")
-    @Operation(summary = "Update permission", description = "Update permission information by ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid ID", content = @Content()),
-        @ApiResponse(responseCode = "404", description = "Permission not found", content = @Content())
-    })
     public ResponseEntity<Permission> updatePartialPermission(@PathVariable("id") Long id, @Valid @RequestBody UpdatePermissionRequest permission) {
         log.info("REST request to update Permission partially, id: {}, body: {}", id, permission);
         if (permission.getId() <= 0) {
@@ -104,12 +79,6 @@ public class PermissionController {
 
     @DeleteMapping("/permissions/{id}")
     @ApiMessage("Xóa permission thành công")
-    @Operation(summary = "Xóa permission", description = "Xóa permission theo ID")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Xóa thành công"),
-        @ApiResponse(responseCode = "400", description = "ID không hợp lệ"),
-        @ApiResponse(responseCode = "404", description = "Không tìm thấy permission")
-    })
     public ResponseEntity<Map<String, String>> deletePermissionById(@PathVariable("id") Long id) {
         log.info("REST request to delete Permission by id: {}", id);
         if (id == null || id <= 0) {
