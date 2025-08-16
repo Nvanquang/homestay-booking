@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.UnauthorizedException;
 
 
 
@@ -27,8 +29,11 @@ public class CustomUserDetailsService implements UserDetailsService{
         vn.quangkhongbiet.homestay_booking.domain.user.entity.User user = this.userService.findUserByEmail(email);
         
         if (user == null) {
-            throw new UsernameNotFoundException("Invalid User");
+            throw new EntityNotFoundException("Invalid User", "login", "email_not_found");
+        }
 
+        if(!user.getVerified()){
+            throw new UnauthorizedException("User is not verified", "user", "not_verified");
         }
 
         return new User(

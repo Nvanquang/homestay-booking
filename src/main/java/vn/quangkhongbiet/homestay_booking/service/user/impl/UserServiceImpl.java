@@ -28,6 +28,7 @@ import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EmailAlreadyUsedException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.UnauthorizedException;
 
 @Slf4j
 @Service
@@ -83,7 +84,20 @@ public class UserServiceImpl implements UserService {
         log.debug("create User with user: {}", request);
 
         if (request.getEmail() != null && userRepository.existsByEmail(request.getEmail())) {
-            throw new EmailAlreadyUsedException();
+            User existingUser = userRepository.findByEmail(request.getEmail()).get();
+            if(!existingUser.getVerified()) {
+                existingUser.setUserName(request.getUserName());
+                existingUser.setFullName(request.getFullName());
+                existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+                existingUser.setGender(request.getGender());
+                existingUser.setPhoneNumber(request.getPhoneNumber());
+                existingUser.setVerified(false);
+
+                return this.convertToResCreateUserDTO(this.userRepository.save(existingUser));
+            }
+            else {
+                throw new UnauthorizedException("Account already registered", ENTITY_NAME, "emailalreadyused");
+            }
         }
         if( request.getUserName() != null && userRepository.existsByUserName(request.getUserName())) {
             throw new ConflictException("Username already exists", ENTITY_NAME, "usernameexists");
