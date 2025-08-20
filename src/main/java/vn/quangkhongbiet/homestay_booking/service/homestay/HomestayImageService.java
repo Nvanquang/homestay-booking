@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 /**
  * Service interface for managing images related to a homestay.
@@ -21,7 +22,7 @@ public interface HomestayImageService {
      * @throws BadRequestAlertException if input data is invalid or upload fails
      * @throws EntityNotFoundException if the homestay is not found
      */
-    List<HomestayImage> createHomestayImages(MultipartFile[] files, Long homestayId, String folder);
+    void createHomestayImages(MultipartFile[] files, Long homestayId, String folder);
 
     /**
      * Finds all images associated with a specific homestay.

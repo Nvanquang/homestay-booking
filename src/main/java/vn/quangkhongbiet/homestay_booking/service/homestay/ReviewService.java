@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateReviewRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ReviewResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ReviewTotalResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Review;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 
@@ -37,4 +38,6 @@ public interface ReviewService {
      * @return the review DTO.
      */
     ReviewResponse convertToResReviewDTO(Review review);
+
+    ReviewTotalResponse findTotalReviewsByHomestayId(Long homestayId);
 }

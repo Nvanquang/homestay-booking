@@ -67,8 +67,7 @@ public class HomestayServiceImpl implements HomestayService {
 
         Homestay createdHomestay = homestayRepository.save(newHomestay);
 
-        createdHomestay
-                .setImages(this.homestayImageService.createHomestayImages(files, createdHomestay.getId(), folder));
+        this.homestayImageService.createHomestayImages(files, createdHomestay.getId(), folder);
         homestayRepository.updateGeom(createdHomestay.getId(), createdHomestay.getLongitude(),
                 createdHomestay.getLatitude());
 
@@ -97,10 +96,15 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
-    public Homestay findHomestayById(Long id) {
+    public HomestayResponse findHomestayById(Long id) {
         log.debug("find Homestay by id: {}", id);
-        return homestayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
-                "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
+        // return homestayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+        //         "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
+        if (!this.homestayRepository.existsById(id)) {
+            throw new EntityNotFoundException(
+                    "Homestay not found with id", ENTITY_NAME, "homestaynotfound");
+        }
+        return this.convertToResHomestayDTO(this.homestayRepository.findById(id).get());
     }
 
     @Override
@@ -151,6 +155,7 @@ public class HomestayServiceImpl implements HomestayService {
     }
 
     @Override
+    @Transactional
     public UpdateHomestayResponse updatePartialHomestay(UpdateHomestayRequest updatedHomestay, MultipartFile[] files,
             String folder) {
         log.debug("update Homestay partially with dto: {}", updatedHomestay);
@@ -191,8 +196,7 @@ public class HomestayServiceImpl implements HomestayService {
             }
             if (files != null && files.length > 0) {
                 // save image
-                existingHomestay.setImages(
-                        this.homestayImageService.createHomestayImages(files, updatedHomestay.getId(), folder));
+                this.homestayImageService.createHomestayImages(files, updatedHomestay.getId(), folder);
             }
             return this.convertToResUpdatedHomestayDTO(this.homestayRepository.save(existingHomestay));
         }).orElseThrow(() -> new EntityNotFoundException(

@@ -27,6 +27,7 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateHome
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.SearchHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.UpdateHomestayRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.CreateHomestayResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.HomestayResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.UpdateHomestayResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.SearchHomestayResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
@@ -68,7 +69,7 @@ public class HomestayController {
 
     @GetMapping("/homestays/{id}")
     @ApiMessage("Get homestay information successfully")
-    public ResponseEntity<Homestay> getHomestayById(@PathVariable("id") Long id) {
+    public ResponseEntity<HomestayResponse> getHomestayById(@PathVariable("id") Long id) {
         log.info("REST request to get Homestay by id: {}", id);
 
         if (id <= 0) {

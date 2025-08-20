@@ -15,6 +15,8 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.UpdateHom
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.SearchHomestayResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
+import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 /**
  * Service interface for managing homestay operations such as creation, update, search, and deletion.
@@ -59,7 +61,7 @@ public interface HomestayService {
      * @return the Homestay entity
      * @throws EntityNotFoundException if the homestay is not found
      */
-    Homestay findHomestayById(Long id);
+    HomestayResponse findHomestayById(Long id);
 
     /**
      * Searches for homestays based on the given search request.

@@ -35,7 +35,8 @@ public class SecurityConfiguration {
                                         "/api/v1/homestays/{id}",
                                         "/api/v1/homestays/search",
                                         "/api/v1/homestays",
-                                        "/api/v1/locations/{id}"
+                                        "/api/v1/locations/{id}",
+                                        "/api/v1/reviews/homestay/{homestayId}/total"
                                         ).permitAll()
                                 .anyRequest().authenticated()
                         )

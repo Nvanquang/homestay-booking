@@ -15,6 +15,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateReviewRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ReviewResponse;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ReviewTotalResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Review;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 import vn.quangkhongbiet.homestay_booking.repository.BookingRepository;
@@ -126,5 +127,10 @@ public class ReviewServiceImpl implements ReviewService {
             .hostReply(review.getHostReply())
             .user(user)
             .build();
+    }
+
+    @Override
+    public ReviewTotalResponse findTotalReviewsByHomestayId(Long homestayId) {
+        return this.reviewRepository.findTotalReviewsByHomestayId(homestayId);
     }
 }

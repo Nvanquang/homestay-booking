@@ -39,8 +39,8 @@ public class HomestayImageController {
             throw new BadRequestAlertException("Folder name cannot be empty", ENTITY_NAME, "folderempty");
         }
         // Gọi Service để xử lý upload
-        List<HomestayImage> savedImages = homestayImageService.createHomestayImages(files, homestayId, folder);
-        return ResponseEntity.ok(savedImages);
+        homestayImageService.createHomestayImages(files, homestayId, folder);
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/homestay/{homestayId}/images")
