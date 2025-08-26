@@ -94,6 +94,7 @@ public class DatabaseInitializer implements CommandLineRunner {
 
             // Review 
             permissions.add(new Permission("Create a new Review", "/api/v1/reviews", "POST", "REVIEW"));
+            permissions.add(new Permission("Get total reviews and average rating of homestay", "/api/v1/reviews/homestay/{homestayId}/total}", "GET", "REVIEW"));
             permissions.add(new Permission("Get all reviews of homestay", "/api/v1/reviews/homestay/{homestayId}", "GET", "REVIEW"));
 
             permissionRepository.saveAll(permissions);

@@ -111,7 +111,7 @@ public class VnpayIpnServiceImpl implements VnpayIpnService {
         PaymentTransaction payment = PaymentTransaction.builder()
             .transactionId(params.get(VNPayParams.TRANSACTION_NO))
             .status(params.get(VNPayParams.RESPONSE_CODE))
-            .amount(new BigDecimal(params.get(VNPayParams.AMOUNT)))
+            .amount(new BigDecimal(params.get(VNPayParams.AMOUNT)).divide(BigDecimal.valueOf(100))) 
             .responseMessage(params.get(VNPayParams.ORDER_INFO))
             .requestId(booking.getRequestId())
             .createdAt(java.time.Instant.now())

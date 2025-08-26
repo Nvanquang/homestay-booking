@@ -98,8 +98,6 @@ public class HomestayServiceImpl implements HomestayService {
     @Override
     public HomestayResponse findHomestayById(Long id) {
         log.debug("find Homestay by id: {}", id);
-        // return homestayRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
-        //         "Homestay not found with id", ENTITY_NAME, "homestaynotfound"));
         if (!this.homestayRepository.existsById(id)) {
             throw new EntityNotFoundException(
                     "Homestay not found with id", ENTITY_NAME, "homestaynotfound");

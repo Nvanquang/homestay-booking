@@ -67,7 +67,7 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/homestay/{homestayId}/total")
-    @ApiMessage("Get review list by homestay successfully")
+    @ApiMessage("Get total reviews and average rating of homestay successfully")
     public ResponseEntity<ReviewTotalResponse> getReviewsTotal(@PathVariable("homestayId") Long homestayId) {
         
         log.info("REST request to get all Reviews with homestayId: {}", homestayId);

@@ -40,7 +40,7 @@ public class HomestayAvailabilityController {
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
-    @PatchMapping("/availabilities")
+    @PatchMapping("/availabilities")    
     @ApiMessage("Homestay availability updated successfully")
     public ResponseEntity<HomestayAvailability> updateHomestayAvailability(@Valid @RequestBody HomestayAvailability availability) {
         log.info("REST request to update HomestayAvailability: {}", availability);

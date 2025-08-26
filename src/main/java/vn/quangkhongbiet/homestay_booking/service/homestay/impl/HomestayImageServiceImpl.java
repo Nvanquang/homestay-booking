@@ -1,14 +1,16 @@
 package vn.quangkhongbiet.homestay_booking.service.homestay.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,8 +19,8 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.FileData;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayImageRepository;
@@ -31,6 +33,10 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundExceptio
 @Service
 @RequiredArgsConstructor
 public class HomestayImageServiceImpl implements HomestayImageService {
+
+    @Autowired
+    @Qualifier("taskExecutor")
+    private Executor taskExecutor;
 
     private static final String ENTITY_NAME = "HomestayImage";
 
@@ -49,40 +55,63 @@ public class HomestayImageServiceImpl implements HomestayImageService {
     private final Cloudinary cloudinary;
 
     @Override
-    @Async
     public void createHomestayImages(MultipartFile[] files, Long homestayId, String folder) {
-        log.debug("create HomestayImage with files: {}, homestayId: {}, folder: {}", files != null ? files.length : 0,
-                homestayId, folder);
-        validateFile(files);
-        validateHomestayIdAndFolder(homestayId, folder);
-
         try {
-            File[] fileContents = new File[files.length];
-            for (int i = 0; i < files.length; i++) {
-                String originalName = files[i].getOriginalFilename();
-                String prefix = "upload-";
-                String suffix = originalName != null ? originalName : ".tmp";
-
-                File tempFile = File.createTempFile(prefix, suffix);
-                files[i].transferTo(tempFile);
-                fileContents[i] = tempFile;
+            // Chuyển đổi MultipartFile thành FileData tránh mất data (trước khi async)
+            List<FileData> fileDataList = new ArrayList<>();
+            for (MultipartFile file : files) {
+                FileData fileData = new FileData();
+                fileData.setOriginalFilename(file.getOriginalFilename());
+                fileData.setContentType(file.getContentType());
+                fileData.setSize(file.getSize());
+                fileData.setBytes(file.getBytes()); // Đọc bytes ngay để tránh mất data
+                fileDataList.add(fileData);
             }
 
-            this.uploadFilesAsync(fileContents, homestayId, folder);
-            Thread.sleep(1000); // Đợi một chút để đảm bảo upload hoàn tất
-        } catch (IOException e) {
-            throw new BadRequestAlertException("Failed to convert files", ENTITY_NAME, "fileconversionfailed");
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+            // Gọi async với data đã được serialize
+            CompletableFuture.runAsync(() -> {
+                createHomestayImagesAsync(fileDataList, homestayId, folder);
+            }, taskExecutor).exceptionally(throwable -> {
+                log.error("Error in async file upload for homestay {}", homestayId, throwable);
+                return null;
+            });
 
+        } catch (IOException e) {
+            log.error("Failed to read file data before async processing", e);
+            throw new BadRequestAlertException("Failed to read files", ENTITY_NAME, "filereadfailed");
+        }
     }
 
-    @Async
-    @SneakyThrows
-    public void uploadFilesAsync(File[] files, Long homestayId, String folder) {
-        log.debug("uploadFilesAsync with files: {}, homestayId: {}, folder: {}", files != null ? files.length : 0,
-                homestayId, folder);
+    public CompletableFuture<Void> createHomestayImagesWithResult(MultipartFile[] files, Long homestayId,
+            String folder) {
+        try {
+            // Chuyển đổi MultipartFile thành FileData
+            List<FileData> fileDataList = new ArrayList<>();
+            for (MultipartFile file : files) {
+                FileData fileData = new FileData();
+                fileData.setOriginalFilename(file.getOriginalFilename());
+                fileData.setContentType(file.getContentType());
+                fileData.setSize(file.getSize());
+                fileData.setBytes(file.getBytes());
+                fileDataList.add(fileData);
+            }
+
+            // Return CompletableFuture
+            return CompletableFuture.runAsync(() -> {
+                createHomestayImagesAsync(fileDataList, homestayId, folder);
+            }, taskExecutor);
+
+        } catch (IOException e) {
+            log.error("Failed to read file data before async processing", e);
+            throw new BadRequestAlertException("Failed to read files", ENTITY_NAME, "filereadfailed");
+        }
+    }
+
+    private void createHomestayImagesAsync(List<FileData> fileDataList, Long homestayId, String folder) {
+        log.debug("create HomestayImage with files: {}, homestayId: {}, folder: {}",
+                fileDataList.size(), homestayId, folder);
+
+        validateHomestayIdAndFolder(homestayId, folder);
 
         Homestay homestayDB = homestayRepository.findById(homestayId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -90,37 +119,36 @@ public class HomestayImageServiceImpl implements HomestayImageService {
 
         try {
             List<HomestayImage> savedImages = new ArrayList<>();
-            for (File file : files) {
-                try {
-                    // Upload lên Cloudinary
-                    Map<?, ?> uploadResult = cloudinary.uploader().upload(file, ObjectUtils.asMap(
-                            "folder", folder,
-                            "resource_type", "image"));
 
-                    // Tạo và lưu HomestayImage
+            for (FileData fileData : fileDataList) {
+                try {
+                    // Cách 1: Upload từ byte array
+                    Map<?, ?> uploadResult = cloudinary.uploader().upload(fileData.getBytes(),
+                            ObjectUtils.asMap(
+                                    "folder", folder,
+                                    "resource_type", "image",
+                                    "original_filename", fileData.getOriginalFilename()));
+
                     HomestayImage image = new HomestayImage();
                     image.setImageUrl(uploadResult.get("secure_url").toString());
                     image.setPublicId(uploadResult.get("public_id").toString());
                     image.setHomestay(homestayDB);
                     savedImages.add(homestayImageRepository.save(image));
 
+                    log.debug("Successfully uploaded file: {}", fileData.getOriginalFilename());
+
                 } catch (IOException e) {
-                    log.debug(
-                            "Failed to upload file: " + file.getName(),
-                            ENTITY_NAME,
-                            "uploadfailed");
-                } finally {
-                    // Xóa file tạm sau khi upload
-                    if (file.exists()) {
-                        file.delete();
-                    }
+                    log.error("Failed to upload file: {} - Error: {}", fileData.getOriginalFilename(), e.getMessage());
                 }
             }
 
             homestayDB.setImages(savedImages);
             homestayRepository.save(homestayDB);
+            log.debug("Successfully saved {} images for homestay {}", savedImages.size(), homestayId);
+
         } catch (Exception e) {
-            log.error("Error uploading files asynchronously", e);
+            log.error("Error uploading files for homestay {}", homestayId, e);
+            throw new RuntimeException("Upload failed", e);
         }
     }
 

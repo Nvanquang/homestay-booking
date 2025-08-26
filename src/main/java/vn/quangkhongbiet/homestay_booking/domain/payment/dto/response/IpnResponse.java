@@ -1,5 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.domain.payment.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.*;
 
 @Getter
@@ -7,9 +9,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IpnResponse {
+    @JsonProperty("RspCode")
+    private String RspCode;
 
-    private String responseCode;
-
-    private String message;
+    @JsonProperty("Message")
+    private String Message;
 }
 

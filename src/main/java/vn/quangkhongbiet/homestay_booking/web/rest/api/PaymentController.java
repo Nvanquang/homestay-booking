@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -33,12 +34,10 @@ public class PaymentController {
     private final VnpayPaymentService paymentService;
 
     @GetMapping("/payments/vnpay_ipn")
-    public ResponseEntity<String> processIpn(HttpServletRequest request) {
+    public ResponseEntity<IpnResponse> processIpn(HttpServletRequest request) {
         log.info("[VNPay Ipn] request: {}", request);
         IpnResponse response = ipnHandler.process(request);
-        return ResponseEntity.ok()
-                .contentType(MediaType.TEXT_PLAIN)
-                .body(response.getResponseCode() + "|" + response.getMessage());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
     @GetMapping("/payments/{id}")

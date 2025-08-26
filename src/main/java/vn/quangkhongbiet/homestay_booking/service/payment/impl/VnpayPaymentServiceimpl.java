@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.payment.constant.VNPayParams;
 import vn.quangkhongbiet.homestay_booking.domain.payment.dto.request.InitPaymentRequest;
@@ -79,7 +79,7 @@ public class VnpayPaymentServiceimpl implements VnpayPaymentService {
         vnp_Params.put(VNPayParams.TXN_REF, vnp_TxnRef);
         vnp_Params.put(VNPayParams.RETURN_URL, vnpReturnUrl);
 
-        vnp_Params.put(VNPayParams.ORDER_INFO, "Thanh toan don hang:" + vnp_TxnRef);
+        vnp_Params.put(VNPayParams.ORDER_INFO, "Thanh toan don hang: " + vnp_TxnRef);
         vnp_Params.put(VNPayParams.ORDER_TYPE, ORDER_TYPE);
 
         vnp_Params.put(VNPayParams.LOCALE, "vn");
@@ -96,8 +96,12 @@ public class VnpayPaymentServiceimpl implements VnpayPaymentService {
                 .build();
     }
 
-    @SneakyThrows
-    private String buildInitPaymentUrl(Map<String, String> vnp_Params){
+    @Async
+    private String buildInitPaymentUrl(Map<String, String> vnp_Params) {
+        return buildInitPaymentUrlAsync(vnp_Params);
+    }
+
+    private String buildInitPaymentUrlAsync(Map<String, String> vnp_Params){
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
         Collections.sort(fieldNames); // sort field name
         StringBuilder hashData = new StringBuilder();

@@ -55,6 +55,9 @@ public class AuthController {
     @Value("${security.authentication.jwt.access-token-validity-in-seconds}")
     private long accessTokenExpiration;
 
+    @Value("${security.authentication.jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenExpiration;
+
     @PostMapping("/auth/login")
     @ApiMessage("Login successful")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginUserRequest loginDTO) {
@@ -125,7 +128,7 @@ public class AuthController {
         // check user by email and token
         User currentUser = this.userService.findUserByRefreshTokenAndEmail(refresh_token, email);
         if (currentUser == null) {
-            throw new UnauthorizedException("Refresh token is invalid or expired!", "Authentication",
+            throw new EntityNotFoundException("Refresh token is invalid or expired!", "Authentication",
                     "invalid_refresh_token");
         }
 
@@ -138,13 +141,19 @@ public class AuthController {
 
         // Create refresh token and update DB
         String new_refresh_token = this.securityUtil.createFreshToken(email, resLoginDTO);
-        this.userService.updateUserToken(email, refresh_token);
+        this.userService.updateUserToken(email, new_refresh_token);
 
         // 5. Tạo HTTP-Only cookie
-        ResponseCookie refreshTokenCookie = buildRefreshTokenCookie(new_refresh_token);
+        ResponseCookie springCookie = ResponseCookie
+                .from("refresh_token", new_refresh_token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenExpiration)
+                .build();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, springCookie.toString())
                 .body(resLoginDTO);
     }
 
