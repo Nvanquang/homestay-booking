@@ -39,4 +39,6 @@ public class RegisterUserRequest {
     private String fullName;
     
     private Gender gender;
+
+    private String avatar;
 }

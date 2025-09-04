@@ -16,6 +16,6 @@ public class PermissionInterceptorConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(permissionInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/v1/auth/**", "/vnpay", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html");
+                .excludePathPatterns("/api/v1/auth/**", "/vnpay", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/chat/**");
     }
 }

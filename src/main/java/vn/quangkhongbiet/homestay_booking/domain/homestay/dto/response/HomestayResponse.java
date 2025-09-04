@@ -1,6 +1,7 @@
 package vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response;
 
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,18 @@ public class HomestayResponse {
     private String phoneNumber;
     private Double longitude;
     private Double latitude;
+    private HostInfo host;
+    private Integer totalReviews;
+    private Double averageRating;
     private List<String> images;
     private List<Amenity> amenities;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @SuperBuilder
+    public static class HostInfo {
+        private Long id;
+        private String name;
+    }
 }

@@ -8,6 +8,7 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 @Mapper(componentModel = "spring")
 public interface HomestayMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "host", ignore = true)
     @Mapping(target = "images", ignore = true)
     @Mapping(target = "amenities", ignore = true)
     @Mapping(target = "reviews", ignore = true)

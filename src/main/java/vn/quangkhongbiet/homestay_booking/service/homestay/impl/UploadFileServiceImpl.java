@@ -1,6 +1,14 @@
 package vn.quangkhongbiet.homestay_booking.service.homestay.impl;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +19,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,14 +34,14 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayImageRepository;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayRepository;
-import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
+import vn.quangkhongbiet.homestay_booking.service.homestay.UploadFileService;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class HomestayImageServiceImpl implements HomestayImageService {
+public class UploadFileServiceImpl implements UploadFileService {
 
     @Autowired
     @Qualifier("taskExecutor")
@@ -44,7 +53,7 @@ public class HomestayImageServiceImpl implements HomestayImageService {
 
     private static final long MAX_FILE_SIZE = 1024 * 1024; // 1MB
 
-    private static final int MAX_FILES = 6;
+    private static final int MAX_FILES = 5;
 
     private static final Pattern FOLDER_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]+$");
 
@@ -54,8 +63,13 @@ public class HomestayImageServiceImpl implements HomestayImageService {
 
     private final Cloudinary cloudinary;
 
+    @Value("${quangkhongbiet.upload-file.base-uri}")
+    private String baseURI;
+
     @Override
     public void createHomestayImages(MultipartFile[] files, Long homestayId, String folder) {
+        validateFolder(folder);
+        validateFiles(files);
         try {
             // Chuyển đổi MultipartFile thành FileData tránh mất data (trước khi async)
             List<FileData> fileDataList = new ArrayList<>();
@@ -64,7 +78,7 @@ public class HomestayImageServiceImpl implements HomestayImageService {
                 fileData.setOriginalFilename(file.getOriginalFilename());
                 fileData.setContentType(file.getContentType());
                 fileData.setSize(file.getSize());
-                fileData.setBytes(file.getBytes()); // Đọc bytes ngay để tránh mất data
+                fileData.setBytes(file.getBytes());
                 fileDataList.add(fileData);
             }
 
@@ -82,36 +96,12 @@ public class HomestayImageServiceImpl implements HomestayImageService {
         }
     }
 
-    public CompletableFuture<Void> createHomestayImagesWithResult(MultipartFile[] files, Long homestayId,
-            String folder) {
-        try {
-            // Chuyển đổi MultipartFile thành FileData
-            List<FileData> fileDataList = new ArrayList<>();
-            for (MultipartFile file : files) {
-                FileData fileData = new FileData();
-                fileData.setOriginalFilename(file.getOriginalFilename());
-                fileData.setContentType(file.getContentType());
-                fileData.setSize(file.getSize());
-                fileData.setBytes(file.getBytes());
-                fileDataList.add(fileData);
-            }
-
-            // Return CompletableFuture
-            return CompletableFuture.runAsync(() -> {
-                createHomestayImagesAsync(fileDataList, homestayId, folder);
-            }, taskExecutor);
-
-        } catch (IOException e) {
-            log.error("Failed to read file data before async processing", e);
-            throw new BadRequestAlertException("Failed to read files", ENTITY_NAME, "filereadfailed");
-        }
-    }
-
     private void createHomestayImagesAsync(List<FileData> fileDataList, Long homestayId, String folder) {
         log.debug("create HomestayImage with files: {}, homestayId: {}, folder: {}",
                 fileDataList.size(), homestayId, folder);
 
-        validateHomestayIdAndFolder(homestayId, folder);
+        validateHomestay(homestayId);
+        validateFolder(folder);
 
         Homestay homestayDB = homestayRepository.findById(homestayId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -152,15 +142,64 @@ public class HomestayImageServiceImpl implements HomestayImageService {
         }
     }
 
-    void validateHomestayIdAndFolder(Long homestayId, String folder) {
-        // Kiểm tra homestayId
+    @Override
+    public void createDirectory(String folder) {
+        log.debug("create directory: {}", folder);
+
+        validateFolder(folder);
+        try {
+            URI uri = new URI(folder);
+            Path path = Paths.get(uri);
+            File tmpDir = new File(path.toString());
+            if (!tmpDir.isDirectory()) {
+                try {
+                    Files.createDirectory(tmpDir.toPath());
+                    log.debug("Create directory successfull: {}", folder);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                log.debug("Directory already exists: {}", folder);
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String store(MultipartFile file, String folder) {
+        log.debug("store file: {} to folder: {}", file.getOriginalFilename(), folder);
+
+        validateFolder(folder);
+        validateFile(file);
+        String finalName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+
+        try {
+            URI uri = new URI(baseURI + folder + "/" + finalName);
+            Path path = Paths.get(uri);
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, path,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new BadRequestAlertException("Failed to store file " + finalName, ENTITY_NAME,
+                        "filestoragefailed");
+            }
+        } catch (URISyntaxException e) {
+            // TODO: handle exception
+        }
+        return finalName;
+    }
+
+    void validateHomestay(Long homestayId) {
         if (!homestayRepository.existsById(homestayId)) {
             throw new EntityNotFoundException(
                     "Homestay not found with id",
                     ENTITY_NAME,
                     "homestaynotfound");
         }
+    }
 
+    void validateFolder(String folder) {
         // Kiểm tra folder
         if (!FOLDER_PATTERN.matcher(folder).matches()) {
             throw new BadRequestAlertException(
@@ -168,9 +207,28 @@ public class HomestayImageServiceImpl implements HomestayImageService {
                     ENTITY_NAME,
                     "invalidfolder");
         }
+
+        try {
+            URI uri = new URI(baseURI + folder);
+            Path folderPath = Paths.get(uri);
+
+            Path destinationFile = folderPath.resolve(Paths.get("avatar.png"))
+                    .toAbsolutePath();
+            if (!destinationFile.getParent().equals(folderPath.toAbsolutePath())) {
+                // This is a security check
+                throw new BadRequestAlertException(
+                        "Cannot store file outside current directory.", ENTITY_NAME, "invalidfolder");
+            }
+        } catch (URISyntaxException e) {
+            throw new BadRequestAlertException(
+                    "Invalid folder URI: " + folder,
+                    ENTITY_NAME,
+                    "invalidfolder");
+        }
+
     }
 
-    void validateFile(MultipartFile[] files) {
+    void validateFiles(MultipartFile[] files) {
         // Kiểm tra số lượng file
         if (files.length > MAX_FILES) {
             throw new BadRequestAlertException(
@@ -181,31 +239,36 @@ public class HomestayImageServiceImpl implements HomestayImageService {
 
         // Kiểm tra từng file
         for (MultipartFile file : files) {
-            // Kiểm tra file rỗng
-            if (file.isEmpty()) {
-                throw new BadRequestAlertException(
-                        "File " + file.getOriginalFilename() + " is empty",
-                        ENTITY_NAME,
-                        "emptyfile");
-            }
-
-            // Kiểm tra kích thước file
-            if (file.getSize() > MAX_FILE_SIZE) {
-                throw new BadRequestAlertException(
-                        "File " + file.getOriginalFilename() + " exceeds maximum size of 5MB",
-                        ENTITY_NAME,
-                        "filetoolarge");
-            }
-
-            // Kiểm tra định dạng file
-            String originalFilename = file.getOriginalFilename();
-            if (originalFilename == null || !isAllowedExtension(originalFilename)) {
-                throw new BadRequestAlertException(
-                        "File " + originalFilename + " has an invalid extension. Allowed: " + ALLOWED_EXTENSIONS,
-                        ENTITY_NAME,
-                        "invalidfileextension");
-            }
+            validateFile(file);
         }
+    }
+
+    void validateFile(MultipartFile file) {
+        // Kiểm tra file rỗng
+        if (file.isEmpty()) {
+            throw new BadRequestAlertException(
+                    "File " + file.getOriginalFilename() + " is empty",
+                    ENTITY_NAME,
+                    "emptyfile");
+        }
+
+        // Kiểm tra kích thước file
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new BadRequestAlertException(
+                    "File " + file.getOriginalFilename() + " exceeds maximum size of 5MB",
+                    ENTITY_NAME,
+                    "filetoolarge");
+        }
+
+        // Kiểm tra định dạng file
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !isAllowedExtension(originalFilename)) {
+            throw new BadRequestAlertException(
+                    "File " + originalFilename + " has an invalid extension. Allowed: " + ALLOWED_EXTENSIONS,
+                    ENTITY_NAME,
+                    "invalidfileextension");
+        }
+
     }
 
     private boolean isAllowedExtension(String filename) {

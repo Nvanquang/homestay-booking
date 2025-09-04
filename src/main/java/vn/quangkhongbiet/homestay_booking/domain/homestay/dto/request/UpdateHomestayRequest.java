@@ -30,6 +30,8 @@ public class UpdateHomestayRequest {
     private String description;
     
     private HomestayStatus status;
+
+    private Long hostId;
     
     @Positive(message = "Number of guests must be positive")
     @Min(value = 1, message = "Number of guests must be at least 1")

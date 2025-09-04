@@ -33,6 +33,8 @@ public class UpdateUserRequest {
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Phone number format is invalid")
     private String phoneNumber;
 
+    private String avatar;
+
     private Boolean verified;
 
     @Size(max = 50, message = "Role name cannot exceed 50 characters")

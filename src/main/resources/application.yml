@@ -81,12 +81,19 @@ security:
             access-token-validity-in-seconds: ${ACCESS-TOKEN-VALIDITY-IN-SECONDS}
             refresh-token-validity-in-seconds: ${REFRESH-TOKEN-VALIDITY-IN-SECONDS}
 
+# base path
+quangkhongbiet:
+    upload-file:
+        base-uri: file:///D:/github-tutorio-demo/upload_homestay_img/
+
 logging:
     level:
         org:
             springframework:
                 web:
                     client: DEBUG
+                #     socket: DEBUG
+                # messaging: DEBUG
         # com:
         #     zaxxer:
         #         hikari: DEBUG

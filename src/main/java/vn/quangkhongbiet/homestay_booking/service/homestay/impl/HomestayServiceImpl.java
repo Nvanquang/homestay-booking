@@ -28,7 +28,8 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.HomestayImage;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.mapper.HomestayMapper;
 import vn.quangkhongbiet.homestay_booking.repository.AmenityRepository;
 import vn.quangkhongbiet.homestay_booking.repository.HomestayRepository;
-import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayImageService;
+import vn.quangkhongbiet.homestay_booking.repository.UserRepository;
+import vn.quangkhongbiet.homestay_booking.service.homestay.UploadFileService;
 import vn.quangkhongbiet.homestay_booking.service.homestay.HomestayService;
 import vn.quangkhongbiet.homestay_booking.utils.DateUtil;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
@@ -44,11 +45,13 @@ public class HomestayServiceImpl implements HomestayService {
 
     private final HomestayRepository homestayRepository;
 
-    private final HomestayImageService homestayImageService;
+    private final UploadFileService homestayImageService;
 
     private final AmenityRepository amenityRepository;
 
     private final HomestayMapper homestayMapper;
+
+    private final UserRepository userRepository;
 
     @Override
     public Boolean existsById(Long id) {
@@ -64,6 +67,8 @@ public class HomestayServiceImpl implements HomestayService {
 
         Homestay newHomestay = this.homestayMapper.createHomestayRequestToHomestay(request);
         newHomestay.setAmenities(this.amenityRepository.findByIdIn(request.getAmenities()));
+        newHomestay.setHost(this.userRepository.findById(request.getHostId()).orElseThrow(() -> new EntityNotFoundException(
+                "Host not found with id", "Homestay", "hostnotfound")));
 
         Homestay createdHomestay = homestayRepository.save(newHomestay);
 
@@ -168,8 +173,12 @@ public class HomestayServiceImpl implements HomestayService {
             if (updatedHomestay.getStatus() != null) {
                 existingHomestay.setStatus(updatedHomestay.getStatus());
             }
-            if (updatedHomestay.getGuests() != 0) { // Kiểm tra khác 0 vì guests là kiểu Integer
+            if (updatedHomestay.getGuests() != 0 || updatedHomestay.getGuests() != null) { // Kiểm tra khác 0 vì guests là kiểu Integer
                 existingHomestay.setGuests(updatedHomestay.getGuests());
+            }
+            if (updatedHomestay.getHostId() != null) {
+                existingHomestay.setHost(this.userRepository.findById(updatedHomestay.getHostId()).orElseThrow(() -> new EntityNotFoundException(
+                        "Host not found with id", "Homestay", "hostnotfound")));
             }
             if (updatedHomestay.getAmenities() != null) {
                 List<Amenity> currentAmenities = new ArrayList<>(homestayDB.getAmenities());
@@ -253,19 +262,26 @@ public class HomestayServiceImpl implements HomestayService {
                 .phoneNumber(homestay.getPhoneNumber())
                 .guests(homestay.getGuests())
                 .longitude(homestay.getLongitude())
-                .latitude(homestay.getLatitude());
+                .latitude(homestay.getLatitude())
+                .totalReviews(homestay.getReviews() != null ? homestay.getReviews().size() : 0)
+                .averageRating(homestay.getReviews() != null ? homestay.getReviews().stream()
+                        .mapToInt(r -> r.getRating())
+                        .average()
+                        .orElse(0.0) : 0.0);
 
-        // Map List<HomestayImage> to List<String>
+        
         List<String> resImages = homestay.getImages() != null
                 ? homestay.getImages().stream().map(HomestayImage::getImageUrl).toList()
                 : new ArrayList<>();
         builder.images(resImages);
 
-        // Map List<Amenity> to List<String>
-        // List<String> resAmenities = homestay.getAmenities() != null
-        // ? homestay.getAmenities().stream().map(Amenity::getName).toList()
-        // : new ArrayList<>();
         builder.amenities(homestay.getAmenities());
+
+        HomestayResponse.HostInfo hostInfo = HomestayResponse.HostInfo.builder()
+                .id(homestay.getHost() != null ? homestay.getHost().getId() : null)
+                .name(homestay.getHost() != null ? homestay.getHost().getFullName() : null)
+                .build();
+        builder.host(hostInfo);
 
     }
 

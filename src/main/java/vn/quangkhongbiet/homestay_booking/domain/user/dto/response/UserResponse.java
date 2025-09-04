@@ -21,6 +21,7 @@ public class UserResponse {
     private String phoneNumber;
     private String fullName;
     private Gender gender;
+    private String avatar;
     private ResRole role;
     private Instant createdAt;
     private Instant updatedAt;

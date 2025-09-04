@@ -5,6 +5,7 @@ import lombok.*;
 import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
 import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
+import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Homestay;
 import vn.quangkhongbiet.homestay_booking.domain.user.constant.Gender;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,6 +46,8 @@ public class User implements Auditable {
     @Column(name = "gender")
     private Gender gender;
 
+    private String avatar;
+
     @Column(name = "refresh_token", columnDefinition = "TEXT")
     @JsonProperty("refresh_token")
     private String refreshToken;
@@ -59,6 +62,10 @@ public class User implements Auditable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Booking> bookings;
+
+    @OneToMany(mappedBy = "host", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Homestay> homestay;
 
     @Column(name = "created_at")
     private Instant createdAt;

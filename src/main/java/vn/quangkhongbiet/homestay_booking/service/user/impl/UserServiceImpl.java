@@ -158,6 +158,9 @@ public class UserServiceImpl implements UserService {
             if (dto.getFullName() != null) {
                 existingUser.setFullName(dto.getFullName());
             }
+            if (dto.getAvatar() != null) {
+                existingUser.setAvatar(dto.getAvatar());
+            }
             if(dto.getVerified() != null){
                 existingUser.setVerified(dto.getVerified());
             }

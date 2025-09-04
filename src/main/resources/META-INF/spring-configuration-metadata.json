@@ -45,6 +45,10 @@
     {
       "name": "security.authentication.jwt.refresh-token-validity-in-seconds",
       "type": "java.lang.Integer"
+    },
+    {
+      "name": "quangkhongbiet.upload-file.base-uri",
+      "type": "java.lang.String"
     }
   ]
 } 

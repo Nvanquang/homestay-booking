@@ -11,7 +11,7 @@ import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundExceptio
 /**
  * Service interface for managing images related to a homestay.
  */
-public interface HomestayImageService {
+public interface UploadFileService {
     /**
      * Creates and saves images for a specific homestay.
      *
@@ -43,5 +43,9 @@ public interface HomestayImageService {
     void deleteImage(long id);
 
     void deleteByImageUrl(String url);
+
+    void createDirectory(String folder);
+
+    String store(MultipartFile file, String folder);
 
 }

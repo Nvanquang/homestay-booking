@@ -5,6 +5,7 @@ import lombok.*;
 import vn.quangkhongbiet.homestay_booking.domain.audit.AuditTrailListener;
 import vn.quangkhongbiet.homestay_booking.domain.audit.Auditable;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.constant.HomestayStatus;
+import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -66,6 +67,11 @@ public class Homestay implements Auditable {
     @OneToMany(mappedBy = "homestay")
     @JsonIgnore
     private List<Review> reviews;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "host_id")
+    private User host;
 
     @Column(name = "created_at")
     private Instant createdAt;

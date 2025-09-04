@@ -3,6 +3,7 @@ package vn.quangkhongbiet.homestay_booking.web.rest.api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.payment.dto.response.IpnResponse;
+import vn.quangkhongbiet.homestay_booking.domain.payment.dto.response.PaymentNotification;
 import vn.quangkhongbiet.homestay_booking.domain.payment.entity.PaymentTransaction;
 import vn.quangkhongbiet.homestay_booking.service.payment.VnpayIpnService;
 import vn.quangkhongbiet.homestay_booking.service.payment.VnpayPaymentService;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import com.turkraft.springfilter.boot.Filter;
@@ -33,10 +35,25 @@ public class PaymentController {
 
     private final VnpayPaymentService paymentService;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     @GetMapping("/payments/vnpay_ipn")
     public ResponseEntity<IpnResponse> processIpn(HttpServletRequest request) {
         log.info("[VNPay Ipn] request: {}", request);
+
         IpnResponse response = ipnHandler.process(request);
+        if (!response.getRspCode().equals("00")) {
+            PaymentNotification notification = PaymentNotification.builder()
+                    .transactionId(null)
+                    .status("faild")
+                    .message("Thanh toán không thành công! Vui lòng thử lại sau.")
+                    .bookingId(null)
+                    .build();
+
+            messagingTemplate.convertAndSend(
+                    "/topic/payments." + request.getParameter("vnp_TxnRef"), notification);
+        }
+
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
 

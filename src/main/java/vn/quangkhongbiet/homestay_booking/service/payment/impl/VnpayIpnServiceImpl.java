@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
 import vn.quangkhongbiet.homestay_booking.domain.payment.constant.VNPayParams;
 import vn.quangkhongbiet.homestay_booking.domain.payment.constant.VnpIpnResponseConst;
 import vn.quangkhongbiet.homestay_booking.domain.payment.dto.response.IpnResponse;
+import vn.quangkhongbiet.homestay_booking.domain.payment.dto.response.PaymentNotification;
 import vn.quangkhongbiet.homestay_booking.domain.payment.entity.PaymentTransaction;
 import vn.quangkhongbiet.homestay_booking.repository.PaymentTransactionRepository;
 import vn.quangkhongbiet.homestay_booking.service.booking.BookingService;
@@ -34,13 +36,15 @@ public class VnpayIpnServiceImpl implements VnpayIpnService {
 
     private final PaymentTransactionRepository paymentRepository;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     @Override
     public IpnResponse process(HttpServletRequest request) {
         log.debug("[VNPay Ipn] request with raw parameters: {}", request.getQueryString());
         try {
             Map<String, String> params = extractFields(request);
             String secureHash = request.getParameter("vnp_SecureHash");
-      
+
             if (!validateChecksum(params, secureHash)) {
                 return VnpIpnResponseConst.SIGNATURE_FAILED;
             }
@@ -63,7 +67,6 @@ public class VnpayIpnServiceImpl implements VnpayIpnService {
         log.debug("[VNPay Ipn] fields for checksum validation: {}", fields);
         return fields;
     }
-   
 
     private boolean validateChecksum(Map<String, String> fields, String receivedHash) {
         String calculatedHash = VnpayUtil.hashAllFields(secretKey, fields);
@@ -82,7 +85,8 @@ public class VnpayIpnServiceImpl implements VnpayIpnService {
         log.debug("[VNPay Ipn] response code: {}", responseCode);
 
         Booking booking = this.bookingService.findBookingById(Long.parseLong(txnRef));
-        if (booking == null) return VnpIpnResponseConst.ORDER_NOT_FOUND;
+        if (booking == null)
+            return VnpIpnResponseConst.ORDER_NOT_FOUND;
 
         String amountStr = booking.getTotalAmount()
                 .multiply(BigDecimal.valueOf(100)) // VNPAY nhân 100 lần
@@ -96,35 +100,45 @@ public class VnpayIpnServiceImpl implements VnpayIpnService {
 
         if ("00".equals(responseCode)) {
             booking.setStatus(BookingStatus.COMPLETED);
-            
+
         } else {
             booking.setStatus(BookingStatus.PAYMENT_FAILED);
         }
 
-        bookingService.markBooked(booking.getId());       
+        bookingService.markBooked(booking.getId());
         buildPaymentTransaction(fields, booking);
         log.debug("[VNPay Ipn] successfull");
+
+        PaymentNotification notification = PaymentNotification.builder()
+                .transactionId(fields.get("vnp_TransactionNo"))
+                .status("success")
+                .message("Đặt chỗ của bạn đã được xác nhận. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.")
+                .bookingId(Long.parseLong(txnRef))
+                .build();
+
+        messagingTemplate.convertAndSend(
+                "/topic/payments." + booking.getId(), notification);
         return VnpIpnResponseConst.SUCCESS;
     }
 
-    private void buildPaymentTransaction(Map<String, String> params, Booking booking){
+    private void buildPaymentTransaction(Map<String, String> params, Booking booking) {
         PaymentTransaction payment = PaymentTransaction.builder()
-            .transactionId(params.get(VNPayParams.TRANSACTION_NO))
-            .status(params.get(VNPayParams.RESPONSE_CODE))
-            .amount(new BigDecimal(params.get(VNPayParams.AMOUNT)).divide(BigDecimal.valueOf(100))) 
-            .responseMessage(params.get(VNPayParams.ORDER_INFO))
-            .requestId(booking.getRequestId())
-            .createdAt(java.time.Instant.now())
-            .booking(booking)
-            .build();
-        
+                .transactionId(params.get(VNPayParams.TRANSACTION_NO))
+                .status(params.get(VNPayParams.RESPONSE_CODE))
+                .amount(new BigDecimal(params.get(VNPayParams.AMOUNT)).divide(BigDecimal.valueOf(100)))
+                .responseMessage(params.get(VNPayParams.ORDER_INFO))
+                .requestId(booking.getRequestId())
+                .createdAt(java.time.Instant.now())
+                .booking(booking)
+                .build();
+
         log.debug("[VNPay Ipn] saving PaymentTransaction for bookingId: {}, transactionId: {}, amount: {}",
-            booking.getId(),
-            payment.getTransactionId(),
-            payment.getAmount());
-        
+                booking.getId(),
+                payment.getTransactionId(),
+                payment.getAmount());
+
         this.paymentRepository.save(payment);
-            
+
     }
 
 }

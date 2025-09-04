@@ -112,9 +112,9 @@ public class HomestayController {
     @PatchMapping("/homestays/{id}")
     @ApiMessage("Homestay updated successfully")
     public ResponseEntity<UpdateHomestayResponse> updatePartialHomestay(@PathVariable("id") Long id,
-            @Valid @RequestPart("homestay") UpdateHomestayRequest dto,
+            @RequestPart("homestay") UpdateHomestayRequest dto,
             @RequestPart(value = "files", required = false) MultipartFile[] files,
-            @RequestPart("folder") String folder) {
+            @RequestPart(value = "folder", required = false) String folder) {
         log.info("REST request to update Homestay partially, id: {}, body: {}", id, dto);
 
         if (id <= 0) {

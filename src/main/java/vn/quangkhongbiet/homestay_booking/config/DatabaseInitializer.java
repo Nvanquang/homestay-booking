@@ -17,7 +17,7 @@ import vn.quangkhongbiet.homestay_booking.repository.RoleRepository;
 import vn.quangkhongbiet.homestay_booking.repository.UserRepository;
 
 @Service
-@RequiredArgsConstructor 
+@RequiredArgsConstructor
 public class DatabaseInitializer implements CommandLineRunner {
 
     private final PermissionRepository permissionRepository;
@@ -41,7 +41,8 @@ public class DatabaseInitializer implements CommandLineRunner {
             // Booking
             permissions.add(new Permission("Create booking", "/api/v1/bookings", "POST", "BOOKING"));
             permissions.add(new Permission("Get booking by ID", "/api/v1/bookings/{id}", "GET", "BOOKING"));
-            permissions.add(new Permission("Get booking history by userId", "/api/v1/bookings/history/{userId}", "GET", "BOOKING"));
+            permissions.add(new Permission("Get booking history by userId", "/api/v1/bookings/history/{userId}", "GET",
+                    "BOOKING"));
             permissions.add(new Permission("Get booking sattus by ID", "/api/v1/bookings/{id}/status", "GET", "BOOKING"));
             permissions.add(new Permission("Get all bookings", "/api/v1/bookings", "GET", "BOOKING"));
             permissions.add(new Permission("Update booking", "/api/v1/bookings/{id}", "PATCH", "BOOKING"));
@@ -55,10 +56,11 @@ public class DatabaseInitializer implements CommandLineRunner {
             permissions.add(new Permission("Update homestay", "/api/v1/homestays/{id}", "PATCH", "HOMESTAY"));
             permissions.add(new Permission("Delete homestay", "/api/v1/homestays/{id}", "DELETE", "HOMESTAY"));
 
-            // Homestay Image
-            permissions.add(new Permission("Upload homestay images", "/api/v1/homestay/{homestayId}/images", "POST", "HOMESTAY_IMAGE"));
-            permissions.add(new Permission("Get homestay images by homestayId", "/api/v1/homestay/{homestayId}/images", "GET", "HOMESTAY_IMAGE"));
-            permissions.add(new Permission("Delete homestay image", "/api/v1/homestay-images/{id}", "DELETE", "HOMESTAY_IMAGE"));
+            // Upload Image
+            permissions.add(new Permission("Upload single file", "/api/v1/files", "POST", "UPLOAD_FILE"));
+            permissions.add(new Permission("Upload homestay images", "/api/v1/files/homestay/{homestayId}/images", "POST", "UPLOAD_FILE"));
+            permissions.add(new Permission("Get homestay images by homestayId", "/api/v1/files/homestay/{homestayId}/images", "GET", "UPLOAD_FILE"));
+            permissions.add(new Permission("Delete homestay image", "/api/v1/files/homestay-images/{id}", "DELETE", "UPLOAD_FILE"));
 
             // Availability
             permissions.add(new Permission("Create homestay availability", "/api/v1/availabilities", "POST", "AVAILABILITY"));
@@ -92,10 +94,21 @@ public class DatabaseInitializer implements CommandLineRunner {
             permissions.add(new Permission("Get payment by ID", "/api/v1/payments/{id}", "GET", "PAYMENT"));
             permissions.add(new Permission("Get all payments", "/api/v1/payments", "GET", "PAYMENT"));
 
-            // Review 
+            // Review
             permissions.add(new Permission("Create a new Review", "/api/v1/reviews", "POST", "REVIEW"));
-            permissions.add(new Permission("Get total reviews and average rating of homestay", "/api/v1/reviews/homestay/{homestayId}/total}", "GET", "REVIEW"));
             permissions.add(new Permission("Get all reviews of homestay", "/api/v1/reviews/homestay/{homestayId}", "GET", "REVIEW"));
+
+            // Conversation
+            permissions.add(new Permission("Create a new Conversation", "/api/v1/conversations", "POST", "CONVERSATION"));
+            permissions.add(new Permission("Get conversations by User", "/api/v1/conversations/user/{userId}", "GET", "CONVERSATION"));
+            permissions.add(new Permission("Get conversation by ID", "/api/v1/conversations/{id}", "GET", "CONVERSATION"));
+            permissions.add(new Permission("Update conversation unread count", "/api/v1/conversations/{id}/unread", "PATCH", "CONVERSATION"));
+            permissions.add(new Permission("Delete a conversation", "/api/v1/conversations/{id}", "DELETE", "CONVERSATION"));
+
+            // Message
+            permissions.add(new Permission("Send a new Message", "/api/v1/messages", "POST", "MESSAGE"));
+            permissions.add(new Permission("Mark message as read", "/api/v1/messages/{id}/read", "PATCH", "MESSAGE"));
+            permissions.add(new Permission("Get messages by conversation", "/api/v1/conversations/{conversationId}/messages", "GET", "MESSAGE"));
 
             permissionRepository.saveAll(permissions);
         }

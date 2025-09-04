@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.request.CreateReviewRequest;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ReviewResponse;
-import vn.quangkhongbiet.homestay_booking.domain.homestay.dto.response.ReviewTotalResponse;
 import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Review;
 import vn.quangkhongbiet.homestay_booking.service.homestay.ReviewService;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
@@ -64,17 +63,5 @@ public class ReviewController {
         Specification<Review> reviewInHomestay = fsc.convert(fb.field("homestay").equal(fb.input(homestayId)).get());
         Specification<Review> finalSpec = reviewInHomestay.and(spec);
         return ResponseEntity.ok(this.reviewService.findReviewsForHomestay(finalSpec, pageable));
-    }
-
-    @GetMapping("/reviews/homestay/{homestayId}/total")
-    @ApiMessage("Get total reviews and average rating of homestay successfully")
-    public ResponseEntity<ReviewTotalResponse> getReviewsTotal(@PathVariable("homestayId") Long homestayId) {
-        
-        log.info("REST request to get all Reviews with homestayId: {}", homestayId);
-        if(homestayId == null || homestayId <= 0){
-            throw new BadRequestAlertException("Homestay ID cannot be null or invalid", ENTITY_NAME, "invalidid");
-        }
-
-        return ResponseEntity.ok(this.reviewService.findTotalReviewsByHomestayId(homestayId));
     }
 }

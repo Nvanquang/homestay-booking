@@ -53,4 +53,8 @@ public class CreateHomestayRequest {
 
     @Size(min = 1, message = "At least one amenity is required")
     private List<Long> amenities;
+
+    @NotNull(message = "Host ID is required")
+    @Positive(message = "Host ID must be positive")
+    private Long hostId;
 }

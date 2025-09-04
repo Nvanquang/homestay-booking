@@ -36,5 +36,7 @@ public class CreateUserRequest {
     
     private Gender gender;
 
+    private String avatar;
+
     private Long roleId;
 }
