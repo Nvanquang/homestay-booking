@@ -51,7 +51,8 @@ public class ConversationController {
         Conversation conversation = conversationService.createConversation(
             request.getUserId(), 
             request.getHostId(), 
-            request.getHomestayId()
+            request.getHomestayId(),
+            request.getFirstMessage()
         );
         
         CreateConversationResponse response = new CreateConversationResponse(
@@ -92,8 +93,8 @@ public class ConversationController {
     @ApiMessage("Get messages by conversation successfully")
     public ResponseEntity<List<MessageResponse>> getMessages(
             @PathVariable("conversationId") Long conversationId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "20") int size) {
         log.info("REST request to get Messages by conversation: {}, page: {}, size: {}", conversationId, page, size);
         
         if (conversationId <= 0) {

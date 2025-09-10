@@ -51,7 +51,7 @@ public class UploadFileServiceImpl implements UploadFileService {
 
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
 
-    private static final long MAX_FILE_SIZE = 1024 * 1024; // 1MB
+    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; //2MB
 
     private static final int MAX_FILES = 5;
 

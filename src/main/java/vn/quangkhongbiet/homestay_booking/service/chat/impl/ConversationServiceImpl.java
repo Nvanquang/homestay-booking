@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.chat.constant.MessageStatus;
+import vn.quangkhongbiet.homestay_booking.domain.chat.constant.MessageType;
 import vn.quangkhongbiet.homestay_booking.domain.chat.dto.response.ConversationResponse;
 import vn.quangkhongbiet.homestay_booking.domain.chat.dto.response.ConversationResponse.UserInfo;
 import vn.quangkhongbiet.homestay_booking.domain.chat.entity.Conversation;
@@ -41,28 +44,55 @@ public class ConversationServiceImpl implements ConversationService {
 
     private final HomestayRepository homestayRepository;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     @Override
     @Transactional
-    public Conversation createConversation(Long userId, Long hostId, Long homestayId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found", CONVERSATION, "usernotfound"));
-        User host = userRepository.findById(hostId)
-                .orElseThrow(() -> new EntityNotFoundException("Host not found", CONVERSATION, "usernotfound"));
+        public Conversation createConversation(Long userId, Long hostId, Long homestayId, String message) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found", CONVERSATION, "usernotfound"));
+            User host = userRepository.findById(hostId)
+                    .orElseThrow(() -> new EntityNotFoundException("Host not found", CONVERSATION, "usernotfound"));
 
-        Conversation existingConversation = conversationRepository.findByUserAndHostAndHomestayId(user, host, homestayId);
-        if (existingConversation != null) {
-            return existingConversation;
+            Conversation existingConversation = conversationRepository.findByUserAndHostAndHomestayId(user, host, homestayId);
+            if (existingConversation != null) {
+                return existingConversation;
+            }
+
+            Conversation conversation = new Conversation();
+            conversation.setUser(user);
+            conversation.setHost(host);
+            conversation.setHomestayId(homestayId);
+            conversation.setUnreadCount(0);
+            conversation.setCreatedAt(Instant.now());
+            conversation.setMessages(new ArrayList<>());
+
+            Conversation conversationDb = conversationRepository.save(conversation);
+
+            
+            Message firstmessage = Message.builder()
+            .sender(user)
+            .content(message)
+            .type(MessageType.TEXT)
+            .status(MessageStatus.SENT)
+            .readAt(null)
+            .timestamp(Instant.now())
+            .conversation(conversationDb)
+            .build();
+            Long firstMessageId = this.messageRepository.save(firstmessage).getId();
+
+            conversationDb.getMessages().add(firstmessage);
+            conversationDb.setLastMessageId(firstMessageId);
+            conversationDb.setLastActivity(firstmessage.getTimestamp());
+
+             messagingTemplate.convertAndSend(
+                "/topic/conversation." + conversationDb.getId(), 
+                firstmessage
+            );
+
+            return conversationDb;
+
         }
-
-        Conversation conversation = new Conversation();
-        conversation.setUser(user);
-        conversation.setHost(host);
-        conversation.setHomestayId(homestayId);
-        conversation.setUnreadCount(0);
-        conversation.setCreatedAt(Instant.now());
-
-        return conversationRepository.save(conversation);
-    }
 
     @Override
     public List<ConversationResponse> getConversationsByUser(Long userId) {

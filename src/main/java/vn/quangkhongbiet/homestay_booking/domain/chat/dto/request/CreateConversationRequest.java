@@ -20,4 +20,6 @@ public class CreateConversationRequest {
     
     @NotNull(message = "Homestay ID is required")
     private Long homestayId;
+
+    private String firstMessage;
 }

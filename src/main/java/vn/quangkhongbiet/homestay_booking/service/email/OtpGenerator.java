@@ -82,7 +82,7 @@ public class OtpGenerator {
 
         Integer otp = 100000 + random.nextInt(900000);
         otpCache.put(email, otp.toString());
-        log.info("Generated OTP for email: {}", email);
+        log.info("Generated OTP for email: {}, otp: {}", email, otpCache.getIfPresent(email));
         return otp;
     }
 

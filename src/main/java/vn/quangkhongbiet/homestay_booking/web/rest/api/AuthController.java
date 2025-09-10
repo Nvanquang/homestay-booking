@@ -235,7 +235,7 @@ public class AuthController {
         UpdateUserRequest updateUser = UpdateUserRequest.builder()
             .id(realUser.getId())
             .verified(true)
-            .role("User")
+            .role("USER")
             .build();
         UpdateUserResponse updatedUser = this.userService.updatePartialUser(updateUser);
         log.info("User account created for {}", req.getEmail());

@@ -92,8 +92,6 @@ logging:
             springframework:
                 web:
                     client: DEBUG
-                #     socket: DEBUG
-                # messaging: DEBUG
         # com:
         #     zaxxer:
         #         hikari: DEBUG

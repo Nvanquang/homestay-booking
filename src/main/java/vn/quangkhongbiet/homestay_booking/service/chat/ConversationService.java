@@ -8,7 +8,7 @@ import vn.quangkhongbiet.homestay_booking.domain.chat.entity.Conversation;
 
 public interface ConversationService {
 
-    Conversation createConversation(Long userId, Long hostId, Long homestayId);
+    Conversation createConversation(Long userId, Long hostId, Long homestayId, String firstMessage);
 
     List<ConversationResponse> getConversationsByUser(Long userId);
 

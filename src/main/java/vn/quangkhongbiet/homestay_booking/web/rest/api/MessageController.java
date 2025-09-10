@@ -22,7 +22,7 @@ public class MessageController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat.sendMessage")
-    public void sendMessage(SendMessageRequest request) { // Bỏ @RequestBody và @Valid
+    public void sendMessage(SendMessageRequest request) {
         log.info("WebSocket request to send Message: {}", request);
         
         try {
