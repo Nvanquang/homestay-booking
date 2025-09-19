@@ -22,7 +22,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
 
     boolean existsByUserIdAndHomestayIdAndStatusIn(Long userId, Long homestayId, List<BookingStatus> statuses);
     
-    Optional<Booking> findTopByUserIdAndHomestayIdAndStatusInOrderByCheckoutDateDesc(
-        Long userId, Long homestayId, List<BookingStatus> statuses
+    Optional<Booking> findByIdAndUserIdAndStatusIn(
+        Long id, Long userId, List<BookingStatus> statuses
     );
 }

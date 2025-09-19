@@ -13,6 +13,7 @@ import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
  * Provides methods for creating, querying, and converting reviews.
  */
 public interface ReviewService {
+    Boolean checkReviewed(Long bookingId, Long userId, Long homestayId);
     /**
      * Create a new review.
      * @param dto the review request DTO.

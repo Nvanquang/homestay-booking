@@ -280,6 +280,7 @@ public class HomestayServiceImpl implements HomestayService {
         HomestayResponse.HostInfo hostInfo = HomestayResponse.HostInfo.builder()
                 .id(homestay.getHost() != null ? homestay.getHost().getId() : null)
                 .name(homestay.getHost() != null ? homestay.getHost().getFullName() : null)
+                .avatar(homestay.getHost() != null ? homestay.getHost().getAvatar() : null)
                 .build();
         builder.host(hostInfo);
 

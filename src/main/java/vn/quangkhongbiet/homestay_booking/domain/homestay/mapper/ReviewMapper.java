@@ -9,7 +9,6 @@ import vn.quangkhongbiet.homestay_booking.domain.homestay.entity.Review;
 public interface ReviewMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "postingDate", ignore = true)
-    @Mapping(target = "hostReply", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "homestay", ignore = true)
     @Mapping(target = "booking", ignore = true)

@@ -38,8 +38,10 @@ public class SecurityConfiguration {
                                         "/api/v1/locations/{id}",
                                         "/api/v1/reviews/homestay/{homestayId}",
                                         "/api/v1/availabilities",
+                                        "/api/v1/files",
                                         "/chat/**"
                                         ).permitAll()
+                                .requestMatchers("/storage/**").permitAll()
                                 .anyRequest().authenticated()
                         )
                         .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())

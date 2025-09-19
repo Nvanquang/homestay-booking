@@ -148,7 +148,7 @@ public class UploadFileServiceImpl implements UploadFileService {
 
         validateFolder(folder);
         try {
-            URI uri = new URI(folder);
+            URI uri = new URI(baseURI + folder);
             Path path = Paths.get(uri);
             File tmpDir = new File(path.toString());
             if (!tmpDir.isDirectory()) {

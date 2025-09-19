@@ -32,6 +32,7 @@ import vn.quangkhongbiet.homestay_booking.repository.UserRepository;
 import vn.quangkhongbiet.homestay_booking.service.booking.BookingService;
 import vn.quangkhongbiet.homestay_booking.service.booking.HomestayAvailabilityService;
 import vn.quangkhongbiet.homestay_booking.service.booking.PriceService;
+import vn.quangkhongbiet.homestay_booking.service.homestay.ReviewService;
 import vn.quangkhongbiet.homestay_booking.service.payment.VnpayPaymentService;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
@@ -57,6 +58,8 @@ public class BookingServiceImpl implements BookingService {
 
     private final VnpayPaymentService vnpayPaymentService;
 
+    private final ReviewService reviewService;
+
     @Override
     public Boolean existsById(Long id) {
         log.debug("check Booking exists by id: {}", id);
@@ -74,9 +77,12 @@ public class BookingServiceImpl implements BookingService {
         final LocalDate checkinDate = request.getCheckinDate();
         final LocalDate checkoutDate = request.getCheckoutDate();
 
-        log.debug("[request_id={}] User user_id={} is acquiring lock homestay_id={} from checkin_date={} to checkout_date={}", request.getRequestId(), request.getUserId(), homestayId, checkinDate, checkoutDate);
+        log.debug(
+                "[request_id={}] User user_id={} is acquiring lock homestay_id={} from checkin_date={} to checkout_date={}",
+                request.getRequestId(), request.getUserId(), homestayId, checkinDate, checkoutDate);
         final var aDays = availabilityService.checkAvailabilityForBooking(homestayId, checkinDate, checkoutDate);
-        log.debug("[request_id={}] User user_id={} locked homestay_id={} from checkin_date={} to checkout_date={}", request.getRequestId(), request.getUserId(), request.getHomestayId(), checkinDate, checkoutDate);
+        log.debug("[request_id={}] User user_id={} locked homestay_id={} from checkin_date={} to checkout_date={}",
+                request.getRequestId(), request.getUserId(), request.getHomestayId(), checkinDate, checkoutDate);
 
         Thread.sleep(5000);
 
@@ -110,7 +116,8 @@ public class BookingServiceImpl implements BookingService {
 
         InitPaymentResponse initPaymentResponse = vnpayPaymentService.init(initPaymentRequest);
 
-        log.info("[request_id={}] User user_id={} created booking_id={} successfully", request.getRequestId(), request.getUserId(), booking.getId());
+        log.info("[request_id={}] User user_id={} created booking_id={} successfully", request.getRequestId(),
+                request.getUserId(), booking.getId());
         return VnpayBookingResponse.builder()
                 .booking(this.convertToResBookingDTO(booking))
                 .payment(initPaymentResponse)
@@ -118,10 +125,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking markBooked(Long bookingId){
-        Booking booking = this.bookingRepository.findById(bookingId).orElseThrow(() -> new EntityNotFoundException("Booking not found", ENTITY_NAME, "bookingnotfound"));
+    public Booking markBooked(Long bookingId) {
+        Booking booking = this.bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new EntityNotFoundException("Booking not found", ENTITY_NAME, "bookingnotfound"));
 
-        List<HomestayAvailability> aDays = this.availabilityService.getRange(booking.getHomestay().getId(), booking.getCheckinDate(), booking.getCheckoutDate());
+        List<HomestayAvailability> aDays = this.availabilityService.getRange(booking.getHomestay().getId(),
+                booking.getCheckinDate(), booking.getCheckoutDate());
         booking.setStatus(BookingStatus.BOOKED);
         aDays.forEach(day -> day.setStatus(AvailabilityStatus.BOOKED));
 
@@ -131,13 +140,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingStatusResponse findBookingStatus(Long id) {
-        Booking booking = this.bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Booking not found", ENTITY_NAME, "bookingnotfound"));
+        Booking booking = this.bookingRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Booking not found", ENTITY_NAME, "bookingnotfound"));
         return BookingStatusResponse.builder()
-        .bookingId(booking.getId())
-        .userId(booking.getUser().getId())
-        .homestayId(booking.getHomestay().getId())
-        .status(booking.getStatus())
-        .build();
+                .bookingId(booking.getId())
+                .userId(booking.getUser().getId())
+                .homestayId(booking.getHomestay().getId())
+                .status(booking.getStatus())
+                .build();
     }
 
     public void validateRequest(CreateBookingRequest request) {
@@ -187,6 +197,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponse> findBookingByUser(Long userId) {
+        log.debug("find Booking by userId: {}", userId);
+        if (!this.userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("User not found", ENTITY_NAME, "usernotfound");
+        }
         List<Booking> bookingHistory = this.bookingRepository.findByUser(this.userRepository.findById(userId).get());
         return bookingHistory.stream().map(item -> this.convertToResBookingDTO(item)).toList();
     }
@@ -206,22 +220,22 @@ public class BookingServiceImpl implements BookingService {
 
         result.setMeta(meta);
 
-        List<BookingResponse> bookings = pageBookings.getContent().stream().map(item -> this.convertToResBookingDTO(item))
+        List<BookingResponse> bookings = pageBookings.getContent().stream()
+                .map(item -> this.convertToResBookingDTO(item))
                 .toList();
         result.setResult(bookings);
         return result;
     }
 
     @Override
-    public BookingResponse updatePartialBooking(UpdateBookingRequest dto) {
+    public void updatePartialBooking(UpdateBookingRequest dto) {
         log.debug("update Booking partially with dto: {}", dto);
-        return bookingRepository.findById(dto.getId()).map(existingBooking -> {
-            validateBookingStatus(existingBooking);
-            validateNewStatus(existingBooking, dto);
-            updateBookingFields(existingBooking, dto);
-            return this.convertToResBookingDTO(bookingRepository.save(existingBooking));
-        }).orElseThrow(() -> new EntityNotFoundException(ErrorConstants.ENTITY_NOT_FOUND_TYPE,
-                "Booking not found with id" + dto.getId(), ENTITY_NAME, "bookingnotfound"));
+        Booking existingBooking = bookingRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Booking not found with id" + dto.getId(), ENTITY_NAME, "bookingnotfound"));
+        validateBookingStatus(existingBooking);
+        validateNewStatus(existingBooking, dto);
+        updateBookingFields(existingBooking, dto);
+        this.bookingRepository.save(existingBooking);
     }
 
     private void validateBookingStatus(Booking existingBooking) {
@@ -229,7 +243,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestAlertException("Unable to update cancelled bookings", ENTITY_NAME, "bookingcancelled");
         }
         if (existingBooking.getStatus() == BookingStatus.COMPLETED) {
-            throw new BadRequestAlertException("Unable tp update completed bookings", ENTITY_NAME,
+            throw new BadRequestAlertException("Unable to update completed bookings", ENTITY_NAME,
                     "bookingcompleted");
         }
     }
@@ -244,6 +258,12 @@ public class BookingServiceImpl implements BookingService {
                     "Status can only change from BOOKED to COMPLETED or CANCELLED", ENTITY_NAME,
                     "bookingstatusinvalid");
         }
+        if (existingBooking.getStatus() == BookingStatus.PAYMENT_PROCESSING
+                && (dto.getStatus() != BookingStatus.PAYMENT_FAILED && dto.getStatus() != BookingStatus.CANCELLED)) {
+            throw new BadRequestAlertException(
+                    "Status can only change from PAYMENT_PROCESSING to PAYMENT_FAILED or CANCELLED", ENTITY_NAME,
+                    "bookingstatusinvalid");
+        }
     }
 
     private void updateBookingFields(Booking existingBooking, UpdateBookingRequest dto) {
@@ -254,6 +274,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse convertToResBookingDTO(Booking booking) {
+        Boolean isReviewed = this.reviewService.checkReviewed(booking.getId(), booking.getUser().getId(), booking.getHomestay().getId());
+
         var builder = BookingResponse.builder()
                 .id(booking.getId())
                 .checkinDate(booking.getCheckinDate())
@@ -263,7 +285,8 @@ public class BookingServiceImpl implements BookingService {
                 .subtotal(booking.getSubtotal())
                 .discount(booking.getDiscount())
                 .totalAmount(booking.getTotalAmount())
-                .note(booking.getNote());
+                .note(booking.getNote())
+                .isReviewed(isReviewed);
 
         // convert User to ResUser
         BookingResponse.ResUser resUser = booking.getUser() != null

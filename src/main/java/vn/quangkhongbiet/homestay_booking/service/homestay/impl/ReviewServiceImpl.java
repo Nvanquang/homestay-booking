@@ -25,7 +25,6 @@ import vn.quangkhongbiet.homestay_booking.service.homestay.ReviewService;
 import vn.quangkhongbiet.homestay_booking.utils.SecurityUtil;
 import vn.quangkhongbiet.homestay_booking.web.dto.response.PagedResponse;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.BadRequestAlertException;
-import vn.quangkhongbiet.homestay_booking.web.rest.errors.ConflictException;
 import vn.quangkhongbiet.homestay_booking.web.rest.errors.EntityNotFoundException;
 
 @Slf4j
@@ -49,8 +48,18 @@ public class ReviewServiceImpl implements ReviewService {
         String email = SecurityUtil.getCurrentUserLogin() != null ? SecurityUtil.getCurrentUserLogin().get() : "";
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found", ENTITY_NAME, "usernotfound"));
 
-        // validate information
-        Booking booking = this.validateUserCanReviewHomestay(user.getId(), dto.getHomestayId());
+        if (!validateUserCanReviewHomestay(dto.getBookingId(), user.getId(), dto.getHomestayId())) {
+            throw new BadRequestAlertException("You cannot review this homestay", ENTITY_NAME, "cannotreview");
+        }
+
+        List<BookingStatus> validStatuses = List.of(BookingStatus.BOOKED, BookingStatus.COMPLETED);
+        Optional<Booking> bookingOpt = bookingRepository
+                .findByIdAndUserIdAndStatusIn(dto.getBookingId(), user.getId(), validStatuses);
+
+        if (bookingOpt.isEmpty()) {
+            throw new BadRequestAlertException("You have never booked this homestay, cannot rate", ENTITY_NAME, "cannotrate");
+        }
+        Booking booking = bookingOpt.get();
 
         Review review = Review.builder()
                 .rating(dto.getRating())
@@ -65,31 +74,26 @@ public class ReviewServiceImpl implements ReviewService {
         return resReviewDTO;
     }
 
-    private Booking validateUserCanReviewHomestay(Long userId, Long homestayId) {
-        if (!userRepository.existsById(userId)) {
-            throw new EntityNotFoundException("User not found", ENTITY_NAME, "usernotfound");
-        }
-
+    private Boolean validateUserCanReviewHomestay(Long bookingId, Long userId, Long homestayId) {
         if (!homestayRepository.existsById(homestayId)) {
-            throw new EntityNotFoundException("Homestay not found", ENTITY_NAME, "homestaynotfound");
+            return false;
         }
 
         List<BookingStatus> validStatuses = List.of(BookingStatus.BOOKED, BookingStatus.COMPLETED);
         Optional<Booking> bookingOpt = bookingRepository
-                .findTopByUserIdAndHomestayIdAndStatusInOrderByCheckoutDateDesc(userId, homestayId, validStatuses);
+                .findByIdAndUserIdAndStatusIn(bookingId, userId, validStatuses);
 
         if (bookingOpt.isEmpty()) {
-            throw new BadRequestAlertException("You have never booked this homestay, cannot rate", ENTITY_NAME,
-                    "cannotrate");
+            return false;
         }
 
         Booking booking = bookingOpt.get();
 
         if (reviewRepository.existsByBookingId(booking.getId())) {
-            throw new ConflictException("You have already rated this homestay", ENTITY_NAME, "haverated");
+            return false;
         }
 
-        return booking;
+        return true; // User can review the homestay
     }
 
     @Override
@@ -106,7 +110,8 @@ public class ReviewServiceImpl implements ReviewService {
         meta.setTotal(pageReviews.getTotalElements());
 
         result.setMeta(meta);
-        List<ReviewResponse> reviews = pageReviews.getContent().stream().map(item -> this.convertToResReviewDTO(item)).toList();
+        List<ReviewResponse> reviews = pageReviews.getContent().stream().map(item -> this.convertToResReviewDTO(item))
+                .toList();
         result.setResult(reviews);
         return result;
     }
@@ -114,17 +119,24 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponse convertToResReviewDTO(Review review) {
         ReviewResponse.ReviewerInfo user = new ReviewResponse.ReviewerInfo(
-            review.getUser().getId(),
-            review.getUser().getFullName(),
-            null
-        );
+                review.getUser().getId(),
+                review.getUser().getFullName(),
+                review.getUser().getAvatar());
 
         return ReviewResponse.builder()
-            .rating(review.getRating())
-            .comment(review.getComment())
-            .postingDate(review.getPostingDate())
-            .hostReply(review.getHostReply())
-            .user(user)
-            .build();
+                .rating(review.getRating())
+                .comment(review.getComment())
+                .postingDate(review.getPostingDate())
+                .user(user)
+                .build();
+    }
+
+    @Override
+    public Boolean checkReviewed(Long bookingId, Long userId, Long homestayId) {
+        if (this.validateUserCanReviewHomestay(bookingId, userId, homestayId)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

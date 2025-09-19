@@ -110,6 +110,7 @@ public class AuthController {
                 currentUserDB.getId(),
                 currentUserDB.getUserName(),
                 currentUserDB.getEmail(),
+                currentUserDB.getAvatar(),
                 currentUserDB.getRole());
 
         LoginUserResponse.UserGetAccount userGetAccount = new LoginUserResponse().new UserGetAccount(userLogin);
@@ -172,7 +173,7 @@ public class AuthController {
 
         LoginUserResponse res = new LoginUserResponse();
         LoginUserResponse.InformationUser info = res.new InformationUser(
-                user.getId(), user.getUserName(), user.getEmail(), user.getRole());
+                user.getId(), user.getUserName(), user.getEmail(), user.getAvatar(), user.getRole());
         res.setUser(info);
 
         return res;

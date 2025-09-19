@@ -38,5 +38,6 @@ public class HomestayResponse {
     public static class HostInfo {
         private Long id;
         private String name;
+        private String avatar;
     }
 }

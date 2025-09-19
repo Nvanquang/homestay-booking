@@ -29,8 +29,6 @@ public class BookingResponse {
 
     private BigDecimal subtotal;
 
-    private BigDecimal fee;
-
     private BigDecimal discount;
 
     private BigDecimal totalAmount;
@@ -40,6 +38,8 @@ public class BookingResponse {
     private ResUser user;
 
     private ResHomestay homestay;
+
+    private Boolean isReviewed;
 
     @Getter
     @Setter

@@ -25,6 +25,7 @@ public class UserResponse {
     private ResRole role;
     private Instant createdAt;
     private Instant updatedAt;
+    private Boolean isVerified;
 
     @Getter
     @Setter

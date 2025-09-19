@@ -80,7 +80,7 @@ public interface BookingService {
      * @throws EntityNotFoundException if booking not found.
      * @throws BadRequestAlertException if booking is cancelled, completed, or status change invalid.
      */
-    BookingResponse updatePartialBooking(UpdateBookingRequest dto);
+    void updatePartialBooking(UpdateBookingRequest dto);
 
     /**
      * Convert booking entity to booking DTO.

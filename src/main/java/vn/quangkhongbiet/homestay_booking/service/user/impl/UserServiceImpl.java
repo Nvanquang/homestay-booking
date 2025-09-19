@@ -217,8 +217,11 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .fullName(user.getFullName())
                 .gender(user.getGender())
+                .avatar(user.getAvatar())
                 .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt());
+                .updatedAt(user.getUpdatedAt())
+                .isVerified(user.getVerified());
+                
 
         // Map Role to ResRole
         UserResponse.ResRole resRole = user.getRole() != null ? new UserResponse.ResRole(user.getRole().getId(), user.getRole().getName())

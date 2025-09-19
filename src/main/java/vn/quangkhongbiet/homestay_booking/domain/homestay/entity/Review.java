@@ -33,9 +33,6 @@ public class Review {
     @Column(name = "posting_date")
     private Instant postingDate;
 
-    @Column(name = "host_reply", columnDefinition = "TEXT")
-    private String hostReply;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

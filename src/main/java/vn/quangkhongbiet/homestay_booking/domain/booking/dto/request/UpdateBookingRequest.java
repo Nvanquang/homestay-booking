@@ -1,7 +1,5 @@
 package vn.quangkhongbiet.homestay_booking.domain.booking.dto.request;
 
-import java.time.Instant;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -21,6 +19,4 @@ public class UpdateBookingRequest {
     private Long id;
 
     private BookingStatus status;
-
-    private Instant paymentDate;
 }

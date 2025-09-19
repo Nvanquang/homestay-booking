@@ -32,7 +32,7 @@ public class ReviewResponse {
     public static class ReviewerInfo {
         private Long id;
         private String name;
-        private String avatarUrl;
+        private String avatar;
     }
 
 }

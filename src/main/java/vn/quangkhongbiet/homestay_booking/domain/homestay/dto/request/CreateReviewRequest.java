@@ -27,4 +27,8 @@ public class CreateReviewRequest {
     @NotNull(message = "Homestay ID is required")
     @Positive(message = "Homestay ID must be positive")
     private Long homestayId;
+
+    @NotNull(message = "Booking ID is required")
+    @Positive(message = "Booking ID must be positive")
+    private Long bookingId;
 }

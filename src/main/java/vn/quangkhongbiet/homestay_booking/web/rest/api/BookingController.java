@@ -104,7 +104,7 @@ public class BookingController {
 
     @PatchMapping("/bookings/{id}")
     @ApiMessage("Booking updated successfully")
-    public ResponseEntity<BookingResponse> updatePartialBooking(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookingRequest dto) {
+    public ResponseEntity<Void> updatePartialBooking(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookingRequest dto) {
         log.info("REST request to update Booking partially, id: {}, body: {}", id, dto);
         if(id <= 0){
             throw new BadRequestAlertException("Invalid Id", ENTITY_NAME, "idinvalid");
@@ -112,7 +112,7 @@ public class BookingController {
         if (!id.equals(dto.getId())) {
             throw new BadRequestAlertException("ID in URL not match content", ENTITY_NAME, "idmismatch");
         }
-        BookingResponse updatedBooking = bookingService.updatePartialBooking(dto);
-        return ResponseEntity.ok(updatedBooking);
+        this.bookingService.updatePartialBooking(dto);
+        return ResponseEntity.ok(null);
     }
 }

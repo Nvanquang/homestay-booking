@@ -23,7 +23,7 @@ public class LoginUserResponse {
         private Long id;
         private String name;
         private String email;
-        // @JsonIgnoreProperties("permissions")
+        private String avatar;
         private Role role;
     }
 
