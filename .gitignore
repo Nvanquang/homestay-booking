@@ -37,5 +37,3 @@ out/
 .vscode/
 
 .env
-
-/resources/META-INF/serviceAccountKey.json

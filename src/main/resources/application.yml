@@ -86,7 +86,7 @@ quangkhongbiet:
     upload-file:
         base-uri: file:///D:/github-tutorio-demo/upload_homestay_img/
     firebase:
-        config-path: src/main/resources/META-INF/serviceAccountKey.json
+        config-path: D:/github-tutorio-demo/serviceAccountKey.json
 
 
 logging:
