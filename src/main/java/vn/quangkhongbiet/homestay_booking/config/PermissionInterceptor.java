@@ -36,7 +36,9 @@ public class PermissionInterceptor implements HandlerInterceptor {
         Map.entry("/api/v1/reviews/homestay/{homestayId}", "GET"),
         Map.entry("/api/v1/reviews/homestay/{homestayId}/total", "GET"),
         Map.entry("/api/v1/availabilities", "GET"),
-        Map.entry("/api/v1/files", "POST")
+        Map.entry("/api/v1/files", "POST"),
+        Map.entry("/api/v1/notifications/register", "POST"),
+        Map.entry("/api/v1/notifications/unregister", "POST")
     );
 
     @Override

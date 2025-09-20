@@ -49,6 +49,10 @@
     {
       "name": "quangkhongbiet.upload-file.base-uri",
       "type": "java.lang.String"
+    },
+    {
+      "name": "quangkhongbiet.firebase.config-path",
+      "type": "java.lang.String"
     }
   ]
 } 

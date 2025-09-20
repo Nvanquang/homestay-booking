@@ -19,4 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Optional<User> findByEmail(String email);
 
     User findByRefreshTokenAndEmail(String token, String email);
+
+    User findByFcmToken(String fcmToken);
+
+    Optional<User> findByIdAndFcmToken(Long id, String fcmToken);
 }

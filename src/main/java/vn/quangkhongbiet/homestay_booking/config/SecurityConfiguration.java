@@ -41,7 +41,7 @@ public class SecurityConfiguration {
                                         "/api/v1/files",
                                         "/chat/**"
                                         ).permitAll()
-                                .requestMatchers("/storage/**").permitAll()
+                                .requestMatchers("/storage/**", "/api/v1/notifications/**").permitAll()
                                 .anyRequest().authenticated()
                         )
                         .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())

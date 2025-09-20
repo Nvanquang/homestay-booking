@@ -48,6 +48,10 @@ public class User implements Auditable {
 
     private String avatar;
 
+    @Column(name = "fcm_token", columnDefinition = "TEXT")
+    @JsonProperty("fcm_token")
+    private String fcmToken;
+
     @Column(name = "refresh_token", columnDefinition = "TEXT")
     @JsonProperty("refresh_token")
     private String refreshToken;

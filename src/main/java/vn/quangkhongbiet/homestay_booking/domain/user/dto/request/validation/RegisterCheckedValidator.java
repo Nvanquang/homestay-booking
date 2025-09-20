@@ -45,14 +45,14 @@ public class RegisterCheckedValidator implements ConstraintValidator<RegisterChe
         }
 
         // Basic password strength check (contains letters and numbers)
-        // boolean hasLetter = password.chars().anyMatch(Character::isLetter);
-        // boolean hasDigit = password.chars().anyMatch(Character::isDigit);
-        // if (!hasLetter || !hasDigit) {
-        //     context.disableDefaultConstraintViolation();
-        //     context.buildConstraintViolationWithTemplate("Password must contain at least one letter and one number")
-        //             .addPropertyNode("password").addConstraintViolation();
-        //     return false;
-        // }
+        boolean hasLetter = password.chars().anyMatch(Character::isLetter);
+        boolean hasDigit = password.chars().anyMatch(Character::isDigit);
+        if (!hasLetter || !hasDigit) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("Password must contain at least one letter and one number")
+                    .addPropertyNode("password").addConstraintViolation();
+            return false;
+        }
 
         // Check if confirmPassword matches password
         if (!password.equals(confirmPassword)) {

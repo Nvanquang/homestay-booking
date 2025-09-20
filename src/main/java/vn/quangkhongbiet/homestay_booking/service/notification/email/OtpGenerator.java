@@ -1,4 +1,4 @@
-package vn.quangkhongbiet.homestay_booking.service.email;
+package vn.quangkhongbiet.homestay_booking.service.notification.email;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

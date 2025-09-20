@@ -28,7 +28,7 @@ import vn.quangkhongbiet.homestay_booking.domain.user.dto.request.VerifyOtpReque
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.LoginUserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.dto.response.CreateUserResponse;
 import vn.quangkhongbiet.homestay_booking.domain.user.entity.User;
-import vn.quangkhongbiet.homestay_booking.service.email.OtpService;
+import vn.quangkhongbiet.homestay_booking.service.notification.email.OtpService;
 import vn.quangkhongbiet.homestay_booking.service.user.UserService;
 import vn.quangkhongbiet.homestay_booking.utils.SecurityUtil;
 import vn.quangkhongbiet.homestay_booking.utils.anotation.ApiMessage;
