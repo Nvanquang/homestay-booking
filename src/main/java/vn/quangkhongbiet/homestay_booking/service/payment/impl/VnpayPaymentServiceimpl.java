@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -96,12 +95,7 @@ public class VnpayPaymentServiceimpl implements VnpayPaymentService {
                 .build();
     }
 
-    @Async
     private String buildInitPaymentUrl(Map<String, String> vnp_Params) {
-        return buildInitPaymentUrlAsync(vnp_Params);
-    }
-
-    private String buildInitPaymentUrlAsync(Map<String, String> vnp_Params){
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
         Collections.sort(fieldNames); // sort field name
         StringBuilder hashData = new StringBuilder();
@@ -137,6 +131,7 @@ public class VnpayPaymentServiceimpl implements VnpayPaymentService {
 
         return paymentUrl;
     }
+
 
     @Override
     public boolean existsById(Long id){

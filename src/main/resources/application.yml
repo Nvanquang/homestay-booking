@@ -30,6 +30,17 @@ spring:
             ddl-auto: update
         # show-sql: true
 
+    task:
+        execution:
+            thread-name-prefix: myapp-task-
+            pool:
+                core-size: 1
+                max-size: 50
+                queue-capacity: 1000
+        scheduling:
+            thread-name-prefix: myapp-scheduling-
+            pool:
+                size: 10
 
     mail:
         host: smtp.gmail.com

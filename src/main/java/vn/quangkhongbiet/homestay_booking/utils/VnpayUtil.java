@@ -12,19 +12,12 @@ import java.util.Random;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.scheduling.annotation.Async;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 public class VnpayUtil {
     
     //Util for VNPAY
-    @Async
     public static String hashAllFields(String secretKey, Map<String, String> fields) {
-        return hashAllFieldsAsync(secretKey, fields);
-    }
-
-    public static String hashAllFieldsAsync(String secretKey, Map<String, String> fields) {
         List<String> fieldNames = new ArrayList<>(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();
@@ -44,12 +37,7 @@ public class VnpayUtil {
         return hmacSHA512(secretKey, sb.toString());
     }
 
-    @Async
     public static String hmacSHA512(final String key, final String data) {
-        return hmacSHA512Async(key, data);
-    }
-
-    public static String hmacSHA512Async(final String key, final String data) {
         try {
 
             if (key == null || data == null) {

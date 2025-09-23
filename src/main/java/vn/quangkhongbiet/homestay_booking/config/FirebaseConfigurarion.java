@@ -12,27 +12,11 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import jakarta.annotation.PostConstruct;
-
 @Configuration
 public class FirebaseConfigurarion {
 
     @Value("${quangkhongbiet.firebase.config-path}")
     private String firebaseConfigPath;
-
-    @PostConstruct
-    public void init() throws IOException {
-        // Load file service account
-        FileInputStream serviceAccount = new FileInputStream(firebaseConfigPath);
-
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build();
-
-        if (FirebaseApp.getApps().isEmpty()) {
-            FirebaseApp.initializeApp(options);
-        }
-    }
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {

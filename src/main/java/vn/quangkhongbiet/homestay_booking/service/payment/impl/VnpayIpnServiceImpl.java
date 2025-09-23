@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import vn.quangkhongbiet.homestay_booking.domain.booking.constant.BookingStatus;
 import vn.quangkhongbiet.homestay_booking.domain.booking.entity.Booking;
@@ -75,6 +76,7 @@ public class VnpayIpnServiceImpl implements VnpayIpnService {
         return calculatedHash.equals(receivedHash);
     }
 
+    @SneakyThrows
     private IpnResponse handleValidRequest(Map<String, String> fields) {
         String txnRef = fields.get("vnp_TxnRef");
         String vnpAmount = fields.get("vnp_Amount");
@@ -115,6 +117,9 @@ public class VnpayIpnServiceImpl implements VnpayIpnService {
                 .message("Đặt chỗ của bạn đã được xác nhận. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.")
                 .bookingId(Long.parseLong(txnRef))
                 .build();
+
+        // Delay chờ client kết nối đến websocket
+        Thread.sleep(2500);
 
         messagingTemplate.convertAndSend(
                 "/topic/payments." + booking.getId(), notification);
