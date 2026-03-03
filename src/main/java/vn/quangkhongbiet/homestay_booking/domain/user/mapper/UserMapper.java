@@ -13,6 +13,7 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "refreshToken", ignore = true)
     @Mapping(target = "verified", constant = "false")
+    @Mapping(target = "fcmToken", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "bookings", ignore = true)
     @Mapping(target = "homestay", ignore = true)
@@ -24,6 +25,7 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "refreshToken", ignore = true)
+    @Mapping(target = "fcmToken", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "homestay", ignore = true)
     @Mapping(target = "verified", ignore = true)
