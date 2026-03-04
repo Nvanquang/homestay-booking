@@ -17,24 +17,25 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/storage/**")
                 .addResourceLocations(baseURI);
     }
-    
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Áp dụng cho tất cả các endpoint
 
-            // Danh sách origins được phép
-            .allowedOrigins("http://localhost:3000", "http://localhost:4173", "http://localhost:5173")
+                // Danh sách origins được phép
+                .allowedOrigins("http://localhost:3000", "http://localhost:4173", "http://localhost:5173",
+                        "https://homestay-app-gamma.vercel.app")
 
-            // Các phương thức HTTP được phép
-            .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                // Các phương thức HTTP được phép
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
 
-            // Cho phép tất cả headers
-            .allowedHeaders("Authorization", "Content-Type", "Accept", "x-no-retry")
+                // Cho phép tất cả headers
+                .allowedHeaders("Authorization", "Content-Type", "Accept", "x-no-retry")
 
-            // Cho phép gửi cookie hoặc thông tin xác thực
-            .allowCredentials(true)
+                // Cho phép gửi cookie hoặc thông tin xác thực
+                .allowCredentials(true)
 
-            // Thời gian cache CORS preflight request (giây)
-            .maxAge(3600);
+                // Thời gian cache CORS preflight request (giây)
+                .maxAge(3600);
     }
 }
