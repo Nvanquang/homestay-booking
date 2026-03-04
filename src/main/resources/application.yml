@@ -1,5 +1,5 @@
 server:
-    port: ${POST}
+    port: ${PORT:8080}
     
 spring:
     application:
@@ -95,9 +95,9 @@ security:
 # base path
 quangkhongbiet:
     upload-file:
-        base-uri: file:///D:/github-tutorio-demo/upload_homestay_img/
+        base-uri: file:///E:/github-tutorio-demo/upload_homestay_img/
     firebase:
-        config-path: D:/github-tutorio-demo/serviceAccountKey.json
+        config-path: ${FIREBASE_CONFIG_PATH}
 
 
 logging:

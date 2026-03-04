@@ -39,7 +39,8 @@ public class SecurityConfiguration {
                                         "/api/v1/reviews/homestay/{homestayId}",
                                         "/api/v1/availabilities",
                                         "/api/v1/files",
-                                        "/chat/**"
+                                        "/chat/**",
+                                        "/call/**"
                                         ).permitAll()
                                 .requestMatchers("/storage/**", "/api/v1/notifications/**").permitAll()
                                 .anyRequest().authenticated()

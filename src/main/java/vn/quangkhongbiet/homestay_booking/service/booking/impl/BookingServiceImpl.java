@@ -246,6 +246,10 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestAlertException("Unable to update completed bookings", ENTITY_NAME,
                     "bookingcompleted");
         }
+        if (existingBooking.getStatus() == BookingStatus.PAYMENT_FAILED) {
+            throw new BadRequestAlertException("Unable to update completed bookings", ENTITY_NAME,
+                    "bookingfailed");
+        }
     }
 
     private void validateNewStatus(Booking existingBooking, UpdateBookingRequest dto) {

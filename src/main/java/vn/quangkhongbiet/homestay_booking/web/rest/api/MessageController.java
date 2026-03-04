@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.quangkhongbiet.homestay_booking.domain.chat.dto.request.CallSignalMessageRequest;
 import vn.quangkhongbiet.homestay_booking.domain.chat.dto.request.SendMessageRequest;
 import vn.quangkhongbiet.homestay_booking.domain.chat.dto.response.MessageResponse;
 import vn.quangkhongbiet.homestay_booking.domain.chat.entity.Conversation;
@@ -60,8 +61,7 @@ public class MessageController {
 
             // Send messages with FCM
             fcmService.sendSimple(receiver.getFcmToken(), title,
-            response.getContent());
-
+                    response.getContent());
 
             log.info("Message sent successfully to conversation {}", request.getConversationId());
 
@@ -72,5 +72,12 @@ public class MessageController {
                     "/topic/conversation." + request.getConversationId() + ".error",
                     "Error: " + e.getMessage());
         }
+    }
+
+    @MessageMapping("/call.signal")
+    public void handleCallSignal(CallSignalMessageRequest msg) {
+        // Bạn có thể thêm kiểm tra quyền: user thuộc conversation này?
+        String topic = "/topic/call." + msg.getConversationId();
+        messagingTemplate.convertAndSend(topic, msg);
     }
 }
