@@ -12,6 +12,7 @@ COPY gradlew.bat ./
 COPY src ./src
 
 # Build the application without running tests for faster build
+RUN chmod +x ./gradlew
 RUN ./gradlew clean build -x test --no-daemon
 
 # Run stage
