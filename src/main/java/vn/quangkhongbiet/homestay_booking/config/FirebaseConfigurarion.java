@@ -20,11 +20,23 @@ public class FirebaseConfigurarion {
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        // Load file service account
-        FileInputStream serviceAccount = new FileInputStream(firebaseConfigPath);
+        GoogleCredentials credentials;
+
+        // First check if credentials are provided via environment variable (useful for
+        // Render/Render)
+        String firebaseCredentialsJson = System.getenv("FIREBASE_CREDENTIALS");
+        if (firebaseCredentialsJson != null && !firebaseCredentialsJson.trim().isEmpty()) {
+            java.io.ByteArrayInputStream serviceAccountStream = new java.io.ByteArrayInputStream(
+                    firebaseCredentialsJson.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            credentials = GoogleCredentials.fromStream(serviceAccountStream);
+        } else {
+            // Fall back to reading from file
+            FileInputStream serviceAccountFile = new FileInputStream(firebaseConfigPath);
+            credentials = GoogleCredentials.fromStream(serviceAccountFile);
+        }
 
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setCredentials(credentials)
                 .build();
 
         if (FirebaseApp.getApps().isEmpty()) {
